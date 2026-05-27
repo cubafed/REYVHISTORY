@@ -6,47 +6,159 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Special+Elite&family=Yeseva+One&display=swap" rel="stylesheet">
 <style>
-:root{--red:#c8362a;--gold:#e8b13a;--green:#1d6a3b;--paper:#f1e1bd;--ink:#1a1208}
+:root{
+  --red:#c8362a;
+  --gold:#e8b13a;
+  --green:#1d6a3b;
+  --paper:#f1e1bd;
+  --ink:#1a1208;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#020508;font-family:'Oswald',sans-serif;color:var(--paper);cursor:none}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  background:#050810;
+  font-family:'Special Elite',serif;
+  color:var(--paper);
+  cursor:none;
+}
 canvas{position:fixed;inset:0;display:block}
-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
-  padding:14px 36px;background:linear-gradient(180deg,rgba(2,5,8,.96),transparent);backdrop-filter:blur(8px)}
-.brand{font-family:'Alfa Slab One';font-size:17px;color:var(--gold);letter-spacing:.04em;text-decoration:none;display:flex;align-items:center;gap:8px}
-.brand .d{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);animation:pd 1.6s infinite}
-@keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
-nav ul{display:flex;gap:4px;list-style:none}
-nav ul a{font-family:'Special Elite';font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);text-decoration:none;padding:6px 10px;border:1px solid transparent;transition:all .2s;opacity:.6}
-nav ul a:hover,nav ul a.on{opacity:1;border-color:var(--gold);color:var(--gold)}
-.stage{position:fixed;bottom:44px;left:50%;transform:translateX(-50%);z-index:30;
-  display:flex;flex-direction:column;align-items:center;gap:12px;width:min(560px,88vw)}
-.ask-lbl{font-family:'Special Elite';font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:rgba(241,225,189,.38)}
+
+/* ── НАВИГАЦИЯ ───────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 36px;
+  background:linear-gradient(180deg,rgba(5,8,16,.97) 0%,rgba(5,8,16,.6) 70%,transparent);
+  backdrop-filter:blur(6px);
+}
+.brand{
+  font-family:'Alfa Slab One';font-size:17px;color:var(--gold);
+  letter-spacing:.04em;text-decoration:none;
+  display:flex;align-items:center;gap:9px;
+}
+.brand-dot{
+  width:11px;height:11px;border-radius:50%;
+  background:var(--red);box-shadow:0 0 12px var(--red),0 0 24px rgba(200,54,42,.4);
+  animation:pulseDot 1.6s ease-in-out infinite;
+}
+@keyframes pulseDot{
+  0%,100%{transform:scale(1);box-shadow:0 0 10px var(--red)}
+  50%{transform:scale(1.55);box-shadow:0 0 18px var(--red),0 0 36px rgba(200,54,42,.5)}
+}
+nav ul{display:flex;gap:2px;list-style:none}
+nav ul a{
+  font-family:'Special Elite';font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--paper);text-decoration:none;
+  padding:7px 11px;border:1px solid transparent;
+  transition:all .22s;opacity:.55;
+}
+nav ul a:hover,nav ul a.on{
+  opacity:1;border-color:rgba(232,177,58,.6);color:var(--gold);
+  background:rgba(232,177,58,.06);
+}
+
+/* ── ПОЛЕ ВВОДА СНИЗУ ────────────────────────── */
+.stage{
+  position:fixed;bottom:40px;left:50%;transform:translateX(-50%);
+  z-index:30;display:flex;flex-direction:column;align-items:center;gap:13px;
+  width:min(580px,90vw);
+}
+.ask-lbl{
+  font-family:'Special Elite';font-size:11px;letter-spacing:.34em;
+  text-transform:uppercase;color:rgba(241,225,189,.32);
+}
 .ask-row{display:flex;width:100%}
-.ask-input{flex:1;font-family:'Special Elite';font-size:15px;letter-spacing:.1em;padding:14px 18px;
-  background:rgba(15,35,20,.55);border:2px solid rgba(29,106,59,.55);border-right:none;
-  color:var(--paper);outline:none;transition:border-color .2s}
-.ask-input:focus{border-color:var(--gold)}
-.ask-input::placeholder{color:rgba(241,225,189,.25)}
-.ask-btn{font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;text-transform:uppercase;
-  background:var(--red);color:var(--paper);border:2px solid var(--red);padding:14px 22px;cursor:pointer;transition:all .2s;white-space:nowrap}
-.ask-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--ink)}
-.ask-btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
-.hint{position:fixed;top:50%;left:50%;transform:translate(-50%,230px);z-index:20;
-  font-family:'Special Elite';font-size:12px;letter-spacing:.26em;text-transform:uppercase;
-  color:rgba(241,225,189,.3);text-align:center;pointer-events:none;animation:hf 4s ease-out 2s forwards}
-@keyframes hf{from{opacity:1}to{opacity:0}}
-.hist{position:fixed;left:28px;bottom:28px;z-index:40;max-width:240px}
-.hist-title{font-family:'Special Elite';font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(241,225,189,.28);margin-bottom:8px}
-.hi{padding:9px 12px;border-left:3px solid var(--green);margin-bottom:5px;background:rgba(2,5,8,.88);backdrop-filter:blur(4px);animation:hIn .4s ease-out}
-@keyframes hIn{from{transform:translateX(-16px);opacity:0}to{transform:translateX(0);opacity:1}}
-.hq{font-family:'Special Elite';font-size:9px;letter-spacing:.1em;color:rgba(241,225,189,.38);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ha{font-family:'Yeseva One';font-size:11px;color:var(--gold);margin-top:2px;font-style:italic;line-height:1.35}
-.mute-btn{position:fixed;top:22px;right:36px;z-index:55;font-family:'Special Elite';font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(241,225,189,.42);cursor:pointer;padding:4px 8px;border:1px solid rgba(241,225,189,.16);background:transparent;transition:all .2s}
-.mute-btn:hover{color:var(--gold);border-color:var(--gold)}
-#cur{position:fixed;width:18px;height:18px;border-radius:50%;border:2px solid var(--gold);pointer-events:none;z-index:999;transform:translate(-50%,-50%);mix-blend-mode:exclusion;transition:width .15s,height .15s}
-.sp{position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:60;animation:spOut .8s ease-out forwards}
-@keyframes spOut{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0);opacity:0}}
+.ask-input{
+  flex:1;font-family:'Special Elite';font-size:15px;letter-spacing:.08em;
+  padding:14px 18px;
+  background:rgba(10,22,14,.65);
+  border:2px solid rgba(29,106,59,.5);
+  border-right:none;color:var(--paper);
+  outline:none;transition:border-color .25s,background .25s;
+}
+.ask-input:focus{
+  border-color:rgba(232,177,58,.8);
+  background:rgba(14,32,20,.75);
+}
+.ask-input::placeholder{color:rgba(241,225,189,.22)}
+.ask-btn{
+  font-family:'Alfa Slab One';font-size:12px;letter-spacing:.08em;
+  text-transform:uppercase;
+  background:var(--red);color:var(--paper);
+  border:2px solid var(--red);padding:14px 24px;
+  cursor:pointer;transition:all .22s;white-space:nowrap;
+}
+.ask-btn:hover:not(:disabled){
+  background:var(--gold);border-color:var(--gold);color:var(--ink);
+}
+.ask-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* ── ПОДСКАЗКА ───────────────────────────────── */
+.hint{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,215px);
+  z-index:20;pointer-events:none;
+  font-family:'Special Elite';font-size:11px;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(241,225,189,.28);text-align:center;
+  animation:fadeHint 5s ease-out 2.5s forwards;
+}
+@keyframes fadeHint{from{opacity:1}to{opacity:0;visibility:hidden}}
+
+/* ── HISTORY ─────────────────────────────────── */
+.hist{
+  position:fixed;left:24px;bottom:24px;z-index:40;max-width:230px;
+}
+.hist-title{
+  font-family:'Special Elite';font-size:9px;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(241,225,189,.22);margin-bottom:10px;
+}
+.hi{
+  padding:8px 12px;margin-bottom:6px;
+  border-left:3px solid var(--green);
+  background:rgba(5,8,16,.85);
+  backdrop-filter:blur(6px);
+  animation:slideIn .35s ease-out;
+}
+@keyframes slideIn{from{transform:translateX(-14px);opacity:0}to{transform:translateX(0);opacity:1}}
+.hq{
+  font-family:'Special Elite';font-size:9px;letter-spacing:.1em;
+  color:rgba(241,225,189,.35);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ha{
+  font-family:'Yeseva One';font-size:11px;
+  color:var(--gold);margin-top:3px;line-height:1.35;font-style:italic;
+}
+
+/* ── MUTE ────────────────────────────────────── */
+.mute-btn{
+  position:fixed;top:20px;right:36px;z-index:55;
+  font-family:'Special Elite';font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(241,225,189,.38);cursor:pointer;
+  padding:5px 9px;border:1px solid rgba(241,225,189,.14);
+  background:transparent;transition:all .2s;
+}
+.mute-btn:hover{color:var(--gold);border-color:rgba(232,177,58,.5)}
+
+/* ── CURSOR ──────────────────────────────────── */
+#cur{
+  position:fixed;width:18px;height:18px;
+  border-radius:50%;border:2px solid rgba(232,177,58,.8);
+  pointer-events:none;z-index:999;
+  transform:translate(-50%,-50%);
+  mix-blend-mode:exclusion;
+  transition:width .12s,height .12s,opacity .12s;
+}
+
+/* ── SPARK PARTICLES ─────────────────────────── */
+.sp{
+  position:fixed;width:7px;height:7px;border-radius:50%;
+  pointer-events:none;z-index:60;
+  animation:spOut .9s ease-out forwards;
+}
+@keyframes spOut{
+  0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0);opacity:0}
+}
 </style>
 </head>
 <body>
@@ -55,7 +167,9 @@ nav ul a:hover,nav ul a.on{opacity:1;border-color:var(--gold);color:var(--gold)}
 <div id="cur"></div>
 
 <nav>
-  <a href="../vintage/index.html" class="brand"><span class="d"></span>ПОТУЖНОСТЬ&nbsp;РУ</a>
+  <a href="../vintage/index.html" class="brand">
+    <span class="brand-dot"></span>ПОТУЖНОСТЬ&nbsp;РУ
+  </a>
   <ul>
     <li><a href="../vintage/index.html">Эфир</a></li>
     <li><a href="../zalipay/index.html">Залипай</a></li>
@@ -64,7 +178,9 @@ nav ul a:hover,nav ul a.on{opacity:1;border-color:var(--gold);color:var(--gold)}
     <li><a href="../shar/index.html" class="on">Шар</a></li>
   </ul>
 </nav>
+
 <div class="hint">Тащи · Крути · Enter</div>
+
 <div class="stage">
   <div class="ask-lbl">✦ Задай вопрос Джаху ✦</div>
   <div class="ask-row">
@@ -72,391 +188,661 @@ nav ul a:hover,nav ul a.on{opacity:1;border-color:var(--gold);color:var(--gold)}
     <button class="ask-btn" id="askBtn">СПРОСИТЬ</button>
   </div>
 </div>
-<div class="hist" id="hist"><div class="hist-title">История вопросов</div></div>
+
+<div class="hist" id="hist">
+  <div class="hist-title">История вопросов</div>
+</div>
+
 <button class="mute-btn" id="muteBtn">🔊 ЗВУК</button>
 
+<script src="../assets/radio-state.js"></script>
+<script src="../assets/audio-engine.js"></script>
+<script src="../assets/miniplayer.js"></script>
 <script>
-const ANSWERS=['Джа знает. Доверься басу.','Корень глубже. Держись.','Дым ответит, когда осядет.','Не сегодня. Подожди.',
-  'Один Лав — иди.','Послушай ещё трек.','Огонь покажет путь.','Солнечный Джа озаряет путь.',
-  'Бас гудит — значит да.','Тишина тоже ответ.','Ответ в корнях.','Да, но сначала чай.',
-  'Нет, и это благословение.','Луна знает. Жди ночи.','Дорога открыта.','Звезда не гаснет.',
-  'Джа смеётся. Хороший знак.','Семь раз подумай.','Ответ придёт с дымом.',
-  'Три раза да.','Смотри вниз — корни.','Рябь скажет больше.','Твой ответ внутри.',
-  'One Love. Это всё.','Расслабься. Придёт само.','Нет пустоты — есть начало.','Бас подтверждает.'];
+// ── ANSWERS ───────────────────────────────────
+const ANSWERS = [
+  'Джа знает. Доверься басу.',
+  'Корень глубже. Держись.',
+  'Дым ответит, когда осядет.',
+  'Не сегодня. Подожди.',
+  'Один Лав — иди.',
+  'Послушай ещё трек.',
+  'Огонь покажет путь.',
+  'Солнечный Джа озаряет путь.',
+  'Бас гудит — значит да.',
+  'Тишина тоже ответ.',
+  'Ответ в корнях.',
+  'Да, но сначала чай.',
+  'Нет, и это благословение.',
+  'Луна знает. Жди ночи.',
+  'Дорога открыта.',
+  'Звезда не гаснет.',
+  'Джа смеётся. Хороший знак.',
+  'Семь раз подумай.',
+  'Ответ придёт с дымом.',
+  'Три раза да.',
+  'Смотри вниз — корни.',
+  'Твой ответ внутри.',
+  'One Love. Это всё.',
+  'Расслабься. Придёт само.',
+  'Нет пустоты — есть начало.',
+  'Бас подтверждает.',
+  'Джа видит. Доверься.',
+  'Дорога сама откроется.',
+];
 
-// ── CANVAS ────────────────────────────────────
-const canvas=document.getElementById('canvas');
-const ctx=canvas.getContext('2d');
-// offscreen for smoke (screen blend without affecting main context state)
-const smkCvs=document.createElement('canvas');
-const smkCtx=smkCvs.getContext('2d');
+// ── CANVAS SETUP ──────────────────────────────
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+// offscreen canvas for additive smoke compositing
+const smkCvs = document.createElement('canvas');
+const smkCtx = smkCvs.getContext('2d');
 
-function resize(){canvas.width=smkCvs.width=window.innerWidth;canvas.height=smkCvs.height=window.innerHeight}
-resize();window.addEventListener('resize',resize);
+function resize() {
+  canvas.width = smkCvs.width = window.innerWidth;
+  canvas.height = smkCvs.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
 
-// ── BACKGROUND ELEMENTS ───────────────────────
-const STARS=Array.from({length:220},()=>({
-  x:Math.random(),y:Math.random(),r:Math.random()*2+.4,ph:Math.random()*Math.PI*2,spd:0.8+Math.random()*2,
-  c:[Math.random()<.33?[232,177,58]:Math.random()<.5?[200,54,42]:[29,106,59]].flat()
-}));
-const NBLOBS=Array.from({length:6},()=>({
-  x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.00022,vy:(Math.random()-.5)*.00018,
-  r:0.22+Math.random()*.2,
-  c:[Math.random()<.33?[29,106,59]:Math.random()<.5?[200,54,42]:[232,177,58]].flat()
-}));
+// ── BACKGROUND STARS ──────────────────────────
+const STARS = Array.from({length: 260}, () => {
+  const rnd = Math.random();
+  let col;
+  if (rnd < 0.33) col = [232, 177, 58];
+  else if (rnd < 0.55) col = [200, 54, 42];
+  else col = [35, 130, 65];
+  return {
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 1.8 + 0.3,
+    ph: Math.random() * Math.PI * 2,
+    spd: 0.6 + Math.random() * 2.2,
+    col,
+  };
+});
 
-// ── SMOKE BLOBS ───────────────────────────────
-// Large misty blobs, NOT dots
-const BN=58;
-const bOX=new Float32Array(BN),bOY=new Float32Array(BN); // original base
-const bBX=new Float32Array(BN),bBY=new Float32Array(BN); // current base (rotated)
-const bCX=new Float32Array(BN),bCY=new Float32Array(BN); // current draw pos
-const bTX=new Float32Array(BN),bTY=new Float32Array(BN); // target pos
-const bR =new Float32Array(BN); // radius (fraction of sphere r)
-const bPh=new Float32Array(BN),bPh2=new Float32Array(BN),bSpd=new Float32Array(BN);
-// Rasta smoke colors
-const BCOLS=[[175,20,20],[195,130,15],[20,105,42],[130,25,12],[155,95,8],[14,75,32],[160,60,8],[88,14,14],[9,88,38]];
-const bCol=[];
+// ── NEBULA BLOBS (background) ─────────────────
+const NEBULAE = Array.from({length: 7}, () => {
+  const rnd = Math.random();
+  let col;
+  if (rnd < 0.35) col = [29, 106, 59];
+  else if (rnd < 0.65) col = [200, 54, 42];
+  else col = [232, 177, 58];
+  return {
+    x: Math.random(), y: Math.random(),
+    vx: (Math.random() - 0.5) * 0.00018,
+    vy: (Math.random() - 0.5) * 0.00014,
+    r: 0.2 + Math.random() * 0.22,
+    col,
+  };
+});
 
-for(let i=0;i<BN;i++){
-  let x,y;
-  do{x=(Math.random()-.5)*1.7;y=(Math.random()-.5)*1.7;}
-  while(x*x+y*y>0.64);
-  bOX[i]=bBX[i]=bCX[i]=bTX[i]=x;
-  bOY[i]=bBY[i]=bCY[i]=bTY[i]=y;
-  bR[i]=0.22+Math.random()*0.32;    // large blobs: 22-54% of sphere r
-  bPh[i]=Math.random()*Math.PI*2;
-  bPh2[i]=Math.random()*Math.PI*2;
-  bSpd[i]=0.12+Math.random()*0.35;
-  bCol.push(BCOLS[i%BCOLS.length]);
+// ── SMOKE BLOBS (inside sphere) ───────────────
+const BN = 64; // number of smoke blobs
+// Original positions (normalized -1..1 inside unit circle)
+const bOX = new Float32Array(BN), bOY = new Float32Array(BN);
+// Current base positions (rotated)
+const bBX = new Float32Array(BN), bBY = new Float32Array(BN);
+// Current draw positions (oscillating)
+const bCX = new Float32Array(BN), bCY = new Float32Array(BN);
+// Target positions (for text reveal)
+const bTX = new Float32Array(BN), bTY = new Float32Array(BN);
+// Blob sizes (fraction of sphere radius)
+const bR  = new Float32Array(BN);
+// Phase offsets for organic motion
+const bPh = new Float32Array(BN), bPh2 = new Float32Array(BN);
+const bSpd = new Float32Array(BN);
+
+// Rasta smoke color palette (deep, saturated)
+const SMOKE_COLS = [
+  [180, 22, 22],  // deep red
+  [210, 140, 10], // gold
+  [18, 110, 45],  // green
+  [140, 28, 14],  // dark red
+  [165, 100, 8],  // dark gold
+  [12, 80, 34],   // dark green
+  [155, 55, 10],  // burnt orange
+  [88, 14, 14],   // very dark red
+  [8, 92, 40],    // bright green
+];
+const bCol = [];
+
+for (let i = 0; i < BN; i++) {
+  let x, y;
+  // Distribute within unit circle
+  do {
+    x = (Math.random() - 0.5) * 1.8;
+    y = (Math.random() - 0.5) * 1.8;
+  } while (x * x + y * y > 0.7);
+
+  bOX[i] = bBX[i] = bCX[i] = bTX[i] = x;
+  bOY[i] = bBY[i] = bCY[i] = bTY[i] = y;
+  bR[i] = 0.24 + Math.random() * 0.34; // 24–58% of sphere radius
+  bPh[i] = Math.random() * Math.PI * 2;
+  bPh2[i] = Math.random() * Math.PI * 2;
+  bSpd[i] = 0.1 + Math.random() * 0.38;
+  bCol.push(SMOKE_COLS[i % SMOKE_COLS.length]);
 }
 
 // ── TEXT SAMPLING FOR ANSWER ──────────────────
-const tCvs=document.createElement('canvas');tCvs.width=200;tCvs.height=90;
-const tCtx=tCvs.getContext('2d');
-function buildBlobTargets(text){
-  tCtx.clearRect(0,0,200,90);tCtx.fillStyle='white';tCtx.textAlign='center';tCtx.textBaseline='middle';
-  const words=text.split(' ');const lines=[];let line='';
-  tCtx.font='bold 17px Georgia,serif';
-  for(const w of words){const t=line?line+' '+w:w;if(tCtx.measureText(t).width>188&&line){lines.push(line);line=w;}else line=t;}
+const tCvs = document.createElement('canvas');
+tCvs.width = 220; tCvs.height = 100;
+const tCtx = tCvs.getContext('2d');
+
+function buildTextTargets(text) {
+  tCtx.clearRect(0, 0, 220, 100);
+  tCtx.fillStyle = 'white';
+  tCtx.textAlign = 'center';
+  tCtx.textBaseline = 'middle';
+  tCtx.font = 'bold 16px Georgia, serif';
+
+  // Word-wrap into lines
+  const words = text.split(' ');
+  const lines = [];
+  let line = '';
+  for (const w of words) {
+    const candidate = line ? line + ' ' + w : w;
+    if (tCtx.measureText(candidate).width > 205 && line) {
+      lines.push(line);
+      line = w;
+    } else {
+      line = candidate;
+    }
+  }
   lines.push(line);
-  const lh=24,sy=45-(lines.length-1)*lh/2;
-  lines.forEach((l,i)=>tCtx.fillText(l,100,sy+i*lh));
-  const data=tCtx.getImageData(0,0,200,90).data;
-  const pts=[];
-  const stride=Math.max(2,Math.ceil(Math.sqrt((200*90)/(BN*4))));
-  for(let y=0;y<90;y+=stride)for(let x=0;x<200;x+=stride)
-    if(data[(y*200+x)*4+3]>100)pts.push((x/200-.5)*.78,(y/90-.5)*.38);
+
+  const lineH = 26;
+  const startY = 50 - ((lines.length - 1) * lineH) / 2;
+  lines.forEach((l, i) => tCtx.fillText(l, 110, startY + i * lineH));
+
+  const data = tCtx.getImageData(0, 0, 220, 100).data;
+  const pts = [];
+  const stride = Math.max(2, Math.ceil(Math.sqrt((220 * 100) / (BN * 3.5))));
+  for (let y = 0; y < 100; y += stride) {
+    for (let x = 0; x < 220; x += stride) {
+      if (data[(y * 220 + x) * 4 + 3] > 100) {
+        pts.push((x / 220 - 0.5) * 0.82, (y / 100 - 0.5) * 0.40);
+      }
+    }
+  }
   return pts;
 }
-function assignTargets(pts){
-  const has=Math.floor(pts.length/2);
-  for(let i=0;i<BN;i++){
-    if(i<has){bTX[i]=pts[i*2];bTY[i]=pts[i*2+1];}
-    else{const a=(i-has)/(BN-has)*Math.PI*2,r=.2+Math.random()*.38;bTX[i]=Math.cos(a)*r;bTY[i]=Math.sin(a)*r*.35;}
+
+function assignTargets(pts) {
+  const count = Math.floor(pts.length / 2);
+  for (let i = 0; i < BN; i++) {
+    if (i < count) {
+      bTX[i] = pts[i * 2];
+      bTY[i] = pts[i * 2 + 1];
+    } else {
+      // remaining blobs orbit outside text area
+      const angle = ((i - count) / (BN - count)) * Math.PI * 2;
+      const dist = 0.18 + Math.random() * 0.42;
+      bTX[i] = Math.cos(angle) * dist;
+      bTY[i] = Math.sin(angle) * dist * 0.38;
+    }
   }
 }
 
-// ── ROTATION / SWIRL ──────────────────────────
-let swirl=0,swirlV=0.003;
-let isDrag=false,prevMx=0;
-let mxNorm=0.5,myNorm=0.5;
+// ── ROTATION / MOUSE ──────────────────────────
+let swirl = 0, swirlV = 0.003;
+let isDrag = false, prevMx = 0;
+let mxNorm = 0.5, myNorm = 0.5;
 
-canvas.addEventListener('pointerdown',e=>{isDrag=true;prevMx=e.clientX;});
-window.addEventListener('pointerup',()=>isDrag=false);
-window.addEventListener('pointermove',e=>{
-  mxNorm=e.clientX/canvas.width;myNorm=e.clientY/canvas.height;
-  document.getElementById('cur').style.left=e.clientX+'px';
-  document.getElementById('cur').style.top=e.clientY+'px';
-  if(!isDrag)return;
-  swirlV+=(e.clientX-prevMx)*0.0005;
-  prevMx=e.clientX;
+canvas.addEventListener('pointerdown', e => { isDrag = true; prevMx = e.clientX; });
+window.addEventListener('pointerup', () => { isDrag = false; });
+window.addEventListener('pointermove', e => {
+  mxNorm = e.clientX / canvas.width;
+  myNorm = e.clientY / canvas.height;
+  const cur = document.getElementById('cur');
+  cur.style.left = e.clientX + 'px';
+  cur.style.top = e.clientY + 'px';
+  if (!isDrag) return;
+  swirlV += (e.clientX - prevMx) * 0.0006;
+  prevMx = e.clientX;
 });
 
-// ── STATE ─────────────────────────────────────
-let state='idle',stateT=0,shakeAmt=0,glowT=0;
-const revDone={v:false};
+// ── STATE MACHINE ─────────────────────────────
+// idle → asking → forming → showing → dispersing → idle
+let state = 'idle';
+let stateT = 0;
+let shakeAmt = 0;
+let glowT = 0;
+const revDone = { v: false };
 
-// ── DRAW BG ───────────────────────────────────
-function drawBg(t){
-  ctx.fillStyle=`rgba(2,5,8,${state==='idle'?.26:.18})`;ctx.fillRect(0,0,canvas.width,canvas.height);
-  const W=canvas.width,H=canvas.height;
-  for(const b of NBLOBS){
-    b.x=(b.x+b.vx+1)%1;b.y=(b.y+b.vy+1)%1;
-    const g=ctx.createRadialGradient(b.x*W,b.y*H,0,b.x*W,b.y*H,b.r*Math.min(W,H));
-    g.addColorStop(0,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},.26)`);
-    g.addColorStop(.6,`rgba(${b.c[0]},${b.c[1]},${b.c[2]},.05)`);
-    g.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.beginPath();ctx.arc(b.x*W,b.y*H,b.r*Math.min(W,H),0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+// ── DRAW BACKGROUND ───────────────────────────
+function drawBackground(t) {
+  // Trailing fade (slower = more trail)
+  const trailAlpha = state === 'idle' ? 0.22 : 0.16;
+  ctx.fillStyle = `rgba(5,8,16,${trailAlpha})`;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const W = canvas.width, H = canvas.height;
+
+  // Nebulae
+  for (const nb of NEBULAE) {
+    nb.x = (nb.x + nb.vx + 1) % 1;
+    nb.y = (nb.y + nb.vy + 1) % 1;
+    const nx = nb.x * W, ny = nb.y * H;
+    const nr = nb.r * Math.min(W, H);
+    const g = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr);
+    g.addColorStop(0,   `rgba(${nb.col[0]},${nb.col[1]},${nb.col[2]},0.22)`);
+    g.addColorStop(0.5, `rgba(${nb.col[0]},${nb.col[1]},${nb.col[2]},0.07)`);
+    g.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(nx, ny, nr, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
   }
-  for(const s of STARS){
-    const fl=0.35+0.65*Math.sin(t*s.spd+s.ph);
-    const r=s.r*(0.4+0.6*fl);
-    ctx.beginPath();ctx.arc(s.x*W,s.y*H,r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(${s.c[0]},${s.c[1]},${s.c[2]},${0.45+0.55*fl})`;ctx.fill();
+
+  // Stars
+  for (const s of STARS) {
+    const fl = 0.35 + 0.65 * Math.sin(t * s.spd + s.ph);
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r * (0.4 + 0.6 * fl), 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${s.col[0]},${s.col[1]},${s.col[2]},${0.4 + 0.6 * fl})`;
+    ctx.fill();
   }
 }
 
-// ── DRAW SPHERE (layered gradients) ──────────
-function drawSphere(cx,cy,r,t){
-  const SC=state==='showing'?'232,177,58':state==='asking'||state==='forming'?'200,54,42':'30,130,65';
-  const gp=0.5+0.5*Math.sin(glowT*(state==='showing'?4:state==='asking'?9:1.4));
-
-  // drop shadow
-  const shG=ctx.createRadialGradient(cx+r*.22,cy+r*1.25,0,cx+r*.22,cy+r*1.4,r*.9);
-  shG.addColorStop(0,'rgba(0,0,0,.55)');shG.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.beginPath();ctx.ellipse(cx+r*.1,cy+r*1.18,r*.78,r*.16,0,0,Math.PI*2);
-  ctx.fillStyle=shG;ctx.fill();
-
-  // outer aura
-  const aG=ctx.createRadialGradient(cx,cy,r*.55,cx,cy,r*2.3);
-  aG.addColorStop(0,`rgba(${SC},${.18+gp*.14})`);
-  aG.addColorStop(.5,`rgba(${SC},${.06+gp*.05})`);
-  aG.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.beginPath();ctx.arc(cx,cy,r*2.3,0,Math.PI*2);ctx.fillStyle=aG;ctx.fill();
-
-  // ── SPHERE INTERIOR ────────────────────────
-  ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();
-
-  // base dark sphere gradient (gives 3D sphere illusion)
-  const bG=ctx.createRadialGradient(cx-r*.36,cy-r*.4,r*.06,cx+r*.08,cy+r*.06,r*1.4);
-  bG.addColorStop(0,'#1f5535');   // lit top-left
-  bG.addColorStop(.15,'#0e2e1d');
-  bG.addColorStop(.38,'#05100a');
-  bG.addColorStop(.68,'#020706');
-  bG.addColorStop(1,'#010302');
-  ctx.fillStyle=bG;ctx.fillRect(cx-r,cy-r,r*2,r*2);
-
-  // inner state glow (bottom-center)
-  const iG=ctx.createRadialGradient(cx,cy+r*.2,0,cx,cy+r*.2,r*.85);
-  iG.addColorStop(0,`rgba(${SC},${.22+gp*.18})`);
-  iG.addColorStop(.55,`rgba(${SC},${.06+gp*.06})`);
-  iG.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=iG;ctx.fillRect(cx-r,cy-r,r*2,r*2);
-
-  // ── SMOKE INSIDE (screen blend on offscreen canvas) ──
-  smkCtx.clearRect(0,0,smkCvs.width,smkCvs.height);
-  smkCtx.globalCompositeOperation='screen';
-  const bAlpha=state==='showing'?.22:state==='forming'?.18:.13;
-  for(let i=0;i<BN;i++){
-    const bx=cx+bCX[i]*r,by=cy+bCY[i]*r,br=bR[i]*r;
-    const [cr,cg,cb]=bCol[i];
-    const g2=smkCtx.createRadialGradient(bx,by,0,bx,by,br);
-    g2.addColorStop(0,`rgba(${cr},${cg},${cb},${bAlpha})`);
-    g2.addColorStop(.45,`rgba(${cr},${cg},${cb},${bAlpha*.45})`);
-    g2.addColorStop(1,'rgba(0,0,0,0)');
-    smkCtx.beginPath();smkCtx.arc(bx,by,br,0,Math.PI*2);
-    smkCtx.fillStyle=g2;smkCtx.fill();
+// ── DRAW SPHERE ───────────────────────────────
+function drawSphere(cx, cy, r, t) {
+  // State-based tint color
+  let tintR, tintG, tintB;
+  if (state === 'showing') {
+    tintR = 232; tintG = 177; tintB = 58;  // gold
+  } else if (state === 'asking' || state === 'forming') {
+    tintR = 200; tintG = 54;  tintB = 42;  // red
+  } else {
+    tintR = 30;  tintG = 130; tintB = 65;  // green
   }
-  smkCtx.globalCompositeOperation='source-over';
-  // composite smoke into sphere clip (screen blend with main canvas)
-  ctx.globalCompositeOperation='screen';
-  ctx.drawImage(smkCvs,0,0);
-  ctx.globalCompositeOperation='source-over';
+  const gp = 0.5 + 0.5 * Math.sin(glowT * (state === 'showing' ? 3.5 : state === 'asking' ? 8 : 1.2));
 
-  // main specular (large, soft) — moves with mouse
-  const hx=cx-r*(.36-mxNorm*.16),hy=cy-r*(.42-myNorm*.14);
-  const sG=ctx.createRadialGradient(hx,hy,0,hx,hy,r*.62);
-  sG.addColorStop(0,'rgba(255,255,255,.36)');
-  sG.addColorStop(.3,'rgba(220,255,228,.1)');
-  sG.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=sG;ctx.fillRect(cx-r,cy-r,r*2,r*2);
+  // ── DROP SHADOW ──────────────────────────────
+  const shG = ctx.createRadialGradient(cx + r * 0.15, cy + r * 1.3, 0, cx + r * 0.15, cy + r * 1.45, r * 1.0);
+  shG.addColorStop(0, 'rgba(0,0,0,0.6)');
+  shG.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.ellipse(cx + r * 0.08, cy + r * 1.22, r * 0.82, r * 0.17, 0, 0, Math.PI * 2);
+  ctx.fillStyle = shG;
+  ctx.fill();
 
-  // small sharp glint
-  const gx=cx-r*(.3-mxNorm*.12),gy=cy-r*(.35-myNorm*.1);
-  const gG=ctx.createRadialGradient(gx,gy,0,gx,gy,r*.17);
-  gG.addColorStop(0,'rgba(255,255,255,.58)');
-  gG.addColorStop(.5,'rgba(255,255,255,.14)');
-  gG.addColorStop(1,'rgba(0,0,0,0)');
-  ctx.fillStyle=gG;ctx.fillRect(cx-r,cy-r,r*2,r*2);
+  // ── OUTER AURA ───────────────────────────────
+  const aG = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, r * 2.6);
+  aG.addColorStop(0,   `rgba(${tintR},${tintG},${tintB},${0.22 + gp * 0.16})`);
+  aG.addColorStop(0.4, `rgba(${tintR},${tintG},${tintB},${0.07 + gp * 0.06})`);
+  aG.addColorStop(0.8, `rgba(${tintR},${tintG},${tintB},${0.02})`);
+  aG.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 2.6, 0, Math.PI * 2);
+  ctx.fillStyle = aG;
+  ctx.fill();
+
+  // ── SPHERE INTERIOR (clipped) ─────────────────
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.clip();
+
+  // Base sphere gradient — lit from top-left for 3D illusion
+  const bG = ctx.createRadialGradient(
+    cx - r * 0.38, cy - r * 0.42, r * 0.04,
+    cx + r * 0.1,  cy + r * 0.1,  r * 1.45
+  );
+  bG.addColorStop(0,    '#23603c');  // bright lit area
+  bG.addColorStop(0.12, '#0e3020');
+  bG.addColorStop(0.32, '#060f0a');
+  bG.addColorStop(0.65, '#030706');
+  bG.addColorStop(1,    '#010302');
+  ctx.fillStyle = bG;
+  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+  // State color inner glow (bottom-center radiates upward)
+  const iG = ctx.createRadialGradient(cx, cy + r * 0.15, 0, cx, cy + r * 0.15, r * 0.9);
+  iG.addColorStop(0,   `rgba(${tintR},${tintG},${tintB},${0.28 + gp * 0.22})`);
+  iG.addColorStop(0.5, `rgba(${tintR},${tintG},${tintB},${0.08 + gp * 0.08})`);
+  iG.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = iG;
+  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+  // ── SMOKE BLOBS (screen blend on offscreen) ────
+  smkCtx.clearRect(0, 0, smkCvs.width, smkCvs.height);
+  smkCtx.globalCompositeOperation = 'screen';
+  const smokeAlpha = state === 'showing' ? 0.28 : state === 'forming' ? 0.22 : 0.16;
+  for (let i = 0; i < BN; i++) {
+    const bx = cx + bCX[i] * r;
+    const by = cy + bCY[i] * r;
+    const br = bR[i] * r;
+    const [cr, cg, cb] = bCol[i];
+    const g2 = smkCtx.createRadialGradient(bx, by, 0, bx, by, br);
+    g2.addColorStop(0,    `rgba(${cr},${cg},${cb},${smokeAlpha})`);
+    g2.addColorStop(0.38, `rgba(${cr},${cg},${cb},${smokeAlpha * 0.5})`);
+    g2.addColorStop(0.75, `rgba(${cr},${cg},${cb},${smokeAlpha * 0.15})`);
+    g2.addColorStop(1,    'rgba(0,0,0,0)');
+    smkCtx.beginPath();
+    smkCtx.arc(bx, by, br, 0, Math.PI * 2);
+    smkCtx.fillStyle = g2;
+    smkCtx.fill();
+  }
+  smkCtx.globalCompositeOperation = 'source-over';
+  // Composite smoke into clipped sphere using screen blend
+  ctx.globalCompositeOperation = 'screen';
+  ctx.drawImage(smkCvs, 0, 0);
+  ctx.globalCompositeOperation = 'source-over';
+
+  // ── SPECULAR HIGHLIGHT (mouse-tracking) ───────
+  // Large soft highlight
+  const hx = cx - r * (0.38 - mxNorm * 0.18);
+  const hy = cy - r * (0.44 - myNorm * 0.15);
+  const sG = ctx.createRadialGradient(hx, hy, 0, hx, hy, r * 0.65);
+  sG.addColorStop(0,   'rgba(255,255,255,0.4)');
+  sG.addColorStop(0.28, 'rgba(220,255,228,0.12)');
+  sG.addColorStop(0.65, 'rgba(180,255,210,0.03)');
+  sG.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = sG;
+  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+  // Small sharp glint
+  const gx = cx - r * (0.32 - mxNorm * 0.13);
+  const gy = cy - r * (0.38 - myNorm * 0.11);
+  const gG = ctx.createRadialGradient(gx, gy, 0, gx, gy, r * 0.18);
+  gG.addColorStop(0,   'rgba(255,255,255,0.65)');
+  gG.addColorStop(0.45, 'rgba(255,255,255,0.18)');
+  gG.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = gG;
+  ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
 
   ctx.restore();
 
-  // glass edge
+  // ── GLASS EDGE ────────────────────────────────
   ctx.save();
-  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.strokeStyle='rgba(120,210,150,.45)';ctx.lineWidth=1.8;ctx.stroke();
-  // gold rim backlight
-  const rimG2=ctx.createRadialGradient(cx,cy,r*.79,cx,cy,r*1.01);
-  rimG2.addColorStop(0,'rgba(0,0,0,0)');rimG2.addColorStop(.7,'rgba(0,0,0,0)');
-  rimG2.addColorStop(1,`rgba(${SC},${.6+gp*.22})`);
-  ctx.fillStyle=rimG2;ctx.fill();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  // Thin bright edge
+  ctx.strokeStyle = 'rgba(130,220,165,0.5)';
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+  // Rim backlight (color-tinted glow at sphere edge)
+  const rimG = ctx.createRadialGradient(cx, cy, r * 0.80, cx, cy, r * 1.02);
+  rimG.addColorStop(0,   'rgba(0,0,0,0)');
+  rimG.addColorStop(0.72, 'rgba(0,0,0,0)');
+  rimG.addColorStop(1,   `rgba(${tintR},${tintG},${tintB},${0.55 + gp * 0.25})`);
+  ctx.fillStyle = rimG;
+  ctx.fill();
   ctx.restore();
 }
 
 // ── DRAW RASTA RING ───────────────────────────
-function drawRing(cx,cy,r,t){
-  const rx=r*1.1, ry=r*0.098;
-  const rot=t*0.075;
-  // Three segments with glow
-  const segs=[
-    [rot,               rot+Math.PI*2/3, '#c8362a','200,54,42'],
-    [rot+Math.PI*2/3,   rot+Math.PI*4/3, '#e8b13a','232,177,58'],
-    [rot+Math.PI*4/3,   rot+Math.PI*2,   '#1d6a3b','29,106,59'],
+function drawRing(cx, cy, r, t) {
+  const rx = r * 1.12;
+  const ry = r * 0.1;
+  const rot = t * 0.07; // slow rotation
+  const SEGS = [
+    [rot,                    rot + Math.PI * 2 / 3, '#c8362a', '200,54,42'],
+    [rot + Math.PI * 2 / 3,  rot + Math.PI * 4 / 3, '#e8b13a', '232,177,58'],
+    [rot + Math.PI * 4 / 3,  rot + Math.PI * 2,     '#1d6a3b', '29,106,59'],
   ];
-  for(const [s,e,col,glowRGB] of segs){
+  for (const [start, end, col, glowRGB] of SEGS) {
     ctx.save();
-    ctx.shadowColor=`rgba(${glowRGB},.9)`;
-    ctx.shadowBlur=20;
-    ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,s,e);
-    ctx.strokeStyle=col;ctx.lineWidth=r*.052;ctx.stroke();
-    // second pass for intensity
-    ctx.shadowBlur=8;
-    ctx.lineWidth=r*.028;ctx.stroke();
+    // Outer glow pass
+    ctx.shadowColor = `rgba(${glowRGB},0.85)`;
+    ctx.shadowBlur = 22;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, start, end);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = r * 0.058;
+    ctx.stroke();
+    // Inner bright pass
+    ctx.shadowBlur = 8;
+    ctx.lineWidth = r * 0.028;
+    ctx.strokeStyle = `rgba(${glowRGB},0.9)`;
+    ctx.stroke();
     ctx.restore();
   }
 }
 
-// ── UPDATE BLOBS ──────────────────────────────
-function updateBlobs(t){
-  const lerp=(a,b,f)=>a+(b-a)*f;
-  if(state==='idle'){
-    swirl+=swirlV;swirlV=lerp(swirlV,.003,.015);
-    for(let i=0;i<BN;i++){
-      // rotate base position around origin
-      const spd=bSpd[i]*0.6;
-      const a=swirl*spd;
-      const ox=bOX[i],oy=bOY[i];
-      bBX[i]=ox*Math.cos(a)-oy*Math.sin(a);
-      bBY[i]=ox*Math.sin(a)+oy*Math.cos(a);
-      // add organic oscillation
-      bCX[i]=bBX[i]+Math.sin(t*bSpd[i]+bPh[i])*.068;
-      bCY[i]=bBY[i]+Math.cos(t*bSpd[i]*.8+bPh2[i])*.068;
+// ── UPDATE SMOKE BLOBS ────────────────────────
+function updateBlobs(t) {
+  const lerp = (a, b, f) => a + (b - a) * f;
+
+  if (state === 'idle') {
+    // Organic swirling motion
+    swirl += swirlV;
+    swirlV = lerp(swirlV, 0.003, 0.014);
+    for (let i = 0; i < BN; i++) {
+      const spd = bSpd[i] * 0.55;
+      const angle = swirl * spd;
+      const ox = bOX[i], oy = bOY[i];
+      bBX[i] = ox * Math.cos(angle) - oy * Math.sin(angle);
+      bBY[i] = ox * Math.sin(angle) + oy * Math.cos(angle);
+      bCX[i] = bBX[i] + Math.sin(t * bSpd[i] + bPh[i]) * 0.072;
+      bCY[i] = bBY[i] + Math.cos(t * bSpd[i] * 0.78 + bPh2[i]) * 0.072;
     }
-  } else if(state==='asking'){
-    const prog=Math.min(stateT/.6,1);
-    const ease=prog*prog;
-    for(let i=0;i<BN;i++){
-      bCX[i]=bBX[i]*(1-ease);
-      bCY[i]=bBY[i]*(1-ease);
+
+  } else if (state === 'asking') {
+    // Smoke contracts to center
+    const prog = Math.min(stateT / 0.6, 1);
+    const ease = prog * prog;
+    for (let i = 0; i < BN; i++) {
+      bCX[i] = bBX[i] * (1 - ease);
+      bCY[i] = bBY[i] * (1 - ease);
     }
-    if(stateT>.65){for(let i=0;i<BN;i++){bBX[i]=bCX[i];bBY[i]=bCY[i];}state='forming';stateT=0;}
-  } else if(state==='forming'){
-    const spd=Math.min(stateT*1.8,.15);
-    for(let i=0;i<BN;i++){
-      bBX[i]=lerp(bBX[i],bTX[i],spd);bBY[i]=lerp(bBY[i],bTY[i],spd);
-      bCX[i]=bBX[i];bCY[i]=bBY[i];
+    if (stateT > 0.65) {
+      for (let i = 0; i < BN; i++) { bBX[i] = bCX[i]; bBY[i] = bCY[i]; }
+      state = 'forming';
+      stateT = 0;
     }
-    if(stateT>1.3){if(!revDone.v){revDone.v=true;playReveal();}state='showing';stateT=0;}
-  } else if(state==='showing'){
-    for(let i=0;i<BN;i++){
-      bCX[i]=bBX[i]+Math.sin(t*1.1+i*.4)*.018;
-      bCY[i]=bBY[i]+Math.cos(t*.9+i*.5)*.018;
+
+  } else if (state === 'forming') {
+    // Smoke moves toward text positions
+    const spd = Math.min(stateT * 1.9, 0.16);
+    for (let i = 0; i < BN; i++) {
+      bBX[i] = lerp(bBX[i], bTX[i], spd);
+      bBY[i] = lerp(bBY[i], bTY[i], spd);
+      bCX[i] = bBX[i];
+      bCY[i] = bBY[i];
     }
-    if(stateT>4.2){for(let i=0;i<BN;i++){bBX[i]=bCX[i];bBY[i]=bCY[i];}state='dispersing';stateT=0;}
-  } else if(state==='dispersing'){
-    for(let i=0;i<BN;i++){
-      bBX[i]=lerp(bBX[i],bOX[i],.058);bBY[i]=lerp(bBY[i],bOY[i],.058);
-      bCX[i]=bBX[i];bCY[i]=bBY[i];
+    if (stateT > 1.35) {
+      if (!revDone.v) { revDone.v = true; playReveal(); }
+      state = 'showing';
+      stateT = 0;
     }
-    if(stateT>1.8){state='idle';stateT=0;document.getElementById('askBtn').disabled=false;}
+
+  } else if (state === 'showing') {
+    // Gentle shimmer while text is visible
+    for (let i = 0; i < BN; i++) {
+      bCX[i] = bBX[i] + Math.sin(t * 1.0 + i * 0.42) * 0.016;
+      bCY[i] = bBY[i] + Math.cos(t * 0.85 + i * 0.55) * 0.016;
+    }
+    if (stateT > 4.5) {
+      for (let i = 0; i < BN; i++) { bBX[i] = bCX[i]; bBY[i] = bCY[i]; }
+      state = 'dispersing';
+      stateT = 0;
+    }
+
+  } else if (state === 'dispersing') {
+    // Smoke returns to original positions
+    for (let i = 0; i < BN; i++) {
+      bBX[i] = lerp(bBX[i], bOX[i], 0.055);
+      bBY[i] = lerp(bBY[i], bOY[i], 0.055);
+      bCX[i] = bBX[i];
+      bCY[i] = bBY[i];
+    }
+    if (stateT > 1.9) {
+      state = 'idle';
+      stateT = 0;
+      document.getElementById('askBtn').disabled = false;
+    }
   }
 }
 
-// ── AUDIO ─────────────────────────────────────
-let audioCtx=null,bGain=null,muted=false;
-function initAudio(){
-  if(audioCtx)return;
-  audioCtx=new AudioContext();
-  const osc=audioCtx.createOscillator(),filt=audioCtx.createBiquadFilter(),g=audioCtx.createGain();
-  const lfo=audioCtx.createOscillator(),lG=audioCtx.createGain();
-  osc.type='sawtooth';osc.frequency.value=55;
-  filt.type='lowpass';filt.frequency.value=180;filt.Q.value=8;
-  g.gain.value=muted?0:.07;
-  lfo.frequency.value=0.38;lG.gain.value=5;
-  lfo.connect(lG);lG.connect(osc.frequency);
-  osc.connect(filt);filt.connect(g);g.connect(audioCtx.destination);
-  osc.start();lfo.start();bGain=g;
+// ── WEB AUDIO ─────────────────────────────────
+let audioCtx = null, bassGain = null, muted = false;
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new AudioContext();
+  // Bass drone
+  const osc = audioCtx.createOscillator();
+  const filt = audioCtx.createBiquadFilter();
+  const g = audioCtx.createGain();
+  const lfo = audioCtx.createOscillator();
+  const lfoG = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.value = 55;
+  filt.type = 'lowpass';
+  filt.frequency.value = 190;
+  filt.Q.value = 7;
+  g.gain.value = muted ? 0 : 0.07;
+  lfo.frequency.value = 0.35;
+  lfoG.gain.value = 5;
+  lfo.connect(lfoG);
+  lfoG.connect(osc.frequency);
+  osc.connect(filt);
+  filt.connect(g);
+  g.connect(audioCtx.destination);
+  osc.start();
+  lfo.start();
+  bassGain = g;
 }
-function playAsk(){
-  if(!audioCtx||muted)return;
-  const now=audioCtx.currentTime;
-  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-  o.type='sine';o.frequency.setValueAtTime(85,now);o.frequency.exponentialRampToValueAtTime(22,now+.45);
-  g.gain.setValueAtTime(.5,now);g.gain.exponentialRampToValueAtTime(.001,now+.75);
-  o.connect(g);g.connect(audioCtx.destination);o.start(now);o.stop(now+.8);
+
+function playAsk() {
+  if (!audioCtx || muted) return;
+  const now = audioCtx.currentTime;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(80, now);
+  o.frequency.exponentialRampToValueAtTime(20, now + 0.5);
+  g.gain.setValueAtTime(0.55, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+  o.connect(g);
+  g.connect(audioCtx.destination);
+  o.start(now);
+  o.stop(now + 0.8);
 }
-function playReveal(){
-  if(!audioCtx||muted)return;
-  [528,660,792].forEach((f,i)=>{
-    const now=audioCtx.currentTime+i*.14;
-    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-    o.type='sine';o.frequency.value=f;
-    g.gain.setValueAtTime(.13,now);g.gain.exponentialRampToValueAtTime(.001,now+2.8);
-    o.connect(g);g.connect(audioCtx.destination);o.start(now);o.stop(now+3);
+
+function playReveal() {
+  if (!audioCtx || muted) return;
+  [528, 660, 792].forEach((freq, i) => {
+    const now = audioCtx.currentTime + i * 0.15;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.14, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    o.start(now);
+    o.stop(now + 3.2);
   });
 }
-document.getElementById('muteBtn').addEventListener('click',()=>{
-  muted=!muted;
-  document.getElementById('muteBtn').textContent=muted?'🔇 ТИХО':'🔊 ЗВУК';
-  if(bGain)bGain.gain.value=muted?0:.07;
+
+document.getElementById('muteBtn').addEventListener('click', () => {
+  muted = !muted;
+  document.getElementById('muteBtn').textContent = muted ? '🔇 ТИХО' : '🔊 ЗВУК';
+  if (bassGain) bassGain.gain.value = muted ? 0 : 0.07;
 });
 
-// ── SPARKS ────────────────────────────────────
-function sparks(cx,cy,n){
-  const c=['#e8b13a','#c8362a','#1d6a3b','#f1e1bd'];
-  for(let i=0;i<n;i++){
-    const s=document.createElement('div');s.className='sp';
-    const a=(i/n)*Math.PI*2,d=60+Math.random()*130;
-    s.style.background=c[i%4];
-    s.style.setProperty('--dx',(Math.cos(a)*d)+'px');
-    s.style.setProperty('--dy',(Math.sin(a)*d)+'px');
-    s.style.left=cx+'px';s.style.top=cy+'px';
-    s.style.animationDelay=(Math.random()*.15)+'s';
-    document.body.appendChild(s);setTimeout(()=>s.remove(),950);
+// ── SPARK PARTICLES ───────────────────────────
+function spawnSparks(cx, cy, n) {
+  const colors = ['#e8b13a', '#c8362a', '#1d6a3b', '#f1e1bd', '#ff6a3a'];
+  for (let i = 0; i < n; i++) {
+    const el = document.createElement('div');
+    el.className = 'sp';
+    const angle = (i / n) * Math.PI * 2;
+    const dist = 55 + Math.random() * 145;
+    el.style.background = colors[i % colors.length];
+    el.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    el.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    el.style.left = cx + 'px';
+    el.style.top = cy + 'px';
+    el.style.animationDelay = (Math.random() * 0.15) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
   }
 }
 
 // ── HISTORY ───────────────────────────────────
-const hItems=[];
-function addHist(q,a){
-  hItems.unshift({q,a});if(hItems.length>4)hItems.pop();
-  const h=document.getElementById('hist');
-  h.innerHTML='<div class="hist-title">История вопросов</div>';
-  hItems.forEach(it=>{
-    const d=document.createElement('div');d.className='hi';
-    d.innerHTML=`<div class="hq">${it.q}</div><div class="ha">${it.a}</div>`;
-    h.appendChild(d);
+const histItems = [];
+
+function addHistory(question, answer) {
+  histItems.unshift({q: question, a: answer});
+  if (histItems.length > 4) histItems.pop();
+  const histEl = document.getElementById('hist');
+  histEl.innerHTML = '<div class="hist-title">История вопросов</div>';
+  histItems.forEach(item => {
+    const d = document.createElement('div');
+    d.className = 'hi';
+    d.innerHTML = `<div class="hq">${item.q}</div><div class="ha">${item.a}</div>`;
+    histEl.appendChild(d);
   });
 }
 
 // ── ASK ───────────────────────────────────────
-function ask(){
-  if(state!=='idle')return;initAudio();
-  const q=document.getElementById('askInput').value.trim()||'Без вопроса';
-  document.getElementById('askInput').value='';
-  document.getElementById('askBtn').disabled=true;
-  revDone.v=false;
-  const ans=ANSWERS[Math.floor(Math.random()*ANSWERS.length)];
-  assignTargets(buildBlobTargets(ans));
-  shakeAmt=.3;
-  sparks(canvas.width/2,canvas.height/2,30);
-  playAsk();addHist(q,ans);
-  state='asking';stateT=0;
+function ask() {
+  if (state !== 'idle') return;
+  initAudio();
+  const q = document.getElementById('askInput').value.trim() || 'Без вопроса';
+  document.getElementById('askInput').value = '';
+  document.getElementById('askBtn').disabled = true;
+
+  revDone.v = false;
+  const ans = ANSWERS[Math.floor(Math.random() * ANSWERS.length)];
+  assignTargets(buildTextTargets(ans));
+  shakeAmt = 0.32;
+  spawnSparks(canvas.width / 2, canvas.height * 0.46, 32);
+  playAsk();
+  addHistory(q, ans);
+  state = 'asking';
+  stateT = 0;
 }
-document.getElementById('askBtn').addEventListener('click',ask);
-document.getElementById('askInput').addEventListener('keydown',e=>{if(e.key==='Enter')ask();});
+
+document.getElementById('askBtn').addEventListener('click', ask);
+document.getElementById('askInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') ask();
+});
 
 // ── MAIN LOOP ─────────────────────────────────
-let tick=0,last=performance.now();
+let tick = 0, lastTime = performance.now();
+let bassBoost = 0; // реакция на бас из радио
 
-function loop(now){
+function loop(now) {
   requestAnimationFrame(loop);
-  const dt=Math.min((now-last)/1000,.05);last=now;
-  tick+=dt;stateT+=dt;glowT+=dt;
+  const dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+  tick += dt;
+  stateT += dt;
+  glowT += dt;
 
-  const W=canvas.width,H=canvas.height;
-  const r=Math.min(W,H)*0.29;
-  const shx=shakeAmt>0.002?(Math.random()-.5)*shakeAmt*W*.018:0;
-  const shy=shakeAmt>0.002?(Math.random()-.5)*shakeAmt*H*.012:0;
-  if(shakeAmt>0.002)shakeAmt*=.87;else shakeAmt=0;
-  const cx=W/2+shx, cy=H*0.46+shy;
+  // Реакция на бас из общего радио-плеера
+  const Engine = window.PotuzhnostEngine;
+  if (Engine && Engine.isReady && Engine.isReady()) {
+    const bass = Engine.getBassLevel ? Engine.getBassLevel() : 0;
+    bassBoost = bassBoost * 0.82 + bass * 0.18;
+    if (bass > 0.4) glowT += dt * bass * 4; // ускоряем свечение
+  } else {
+    bassBoost *= 0.9;
+  }
+
+  const W = canvas.width, H = canvas.height;
+  const sphereR = Math.min(W, H) * 0.285 * (1 + bassBoost * 0.04);
+
+  // Shake offset
+  const sx = shakeAmt > 0.002 ? (Math.random() - 0.5) * shakeAmt * W * 0.02  : 0;
+  const sy = shakeAmt > 0.002 ? (Math.random() - 0.5) * shakeAmt * H * 0.013 : 0;
+  if (shakeAmt > 0.002) shakeAmt *= 0.86; else shakeAmt = 0;
+
+  const cx = W / 2 + sx;
+  const cy = H * 0.455 + sy;
 
   updateBlobs(tick);
-  drawBg(tick);
-  drawRing(cx,cy,r,tick);
-  drawSphere(cx,cy,r,tick);
+  drawBackground(tick);
+  drawRing(cx, cy, sphereR, tick);
+  drawSphere(cx, cy, sphereR, tick);
 }
+
 requestAnimationFrame(loop);
 </script>
 </body>
