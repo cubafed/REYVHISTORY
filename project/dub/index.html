@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>ПОТУЖНОСТЬ РУ — Даб-станция</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070403;
+    --bg2:#120806;
+    --ink:#f8e9c5;
+    --red:#ff3b25;
+    --gold:#ffc043;
+    --green:#22d36b;
+    --green-deep:#0e6a3e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  body{
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(34,211,107,.15), transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(255,59,37,.18), transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,192,67,.08), transparent 60%),
+      var(--bg);
+  }
+
+  /* film grain */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:200;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='1'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/></svg>");
+    opacity:.18;mix-blend-mode:overlay;
+    animation:grain 1.4s steps(6) infinite;
+  }
+  @keyframes grain{
+    0%{transform:translate(0,0)} 20%{transform:translate(-3%,2%)}
+    40%{transform:translate(2%,-3%)} 60%{transform:translate(-2%,1%)}
+    80%{transform:translate(3%,-1%)} 100%{transform:translate(0,0)}
+  }
+
+  /* SMOKE LAYER */
+  .smoke{
+    position:fixed;inset:-20% -10%;pointer-events:none;z-index:1;
+    filter:blur(80px);opacity:.65;
+  }
+  .smoke b{position:absolute;border-radius:50%;mix-blend-mode:screen}
+  .smoke b.b1{width:600px;height:600px;background:rgba(34,211,107,.5);top:-10%;left:-10%;animation:drift 22s ease-in-out infinite}
+  .smoke b.b2{width:520px;height:520px;background:rgba(255,59,37,.45);top:20%;right:-10%;animation:drift 28s ease-in-out infinite -8s}
+  .smoke b.b3{width:680px;height:680px;background:rgba(255,192,67,.35);bottom:-20%;left:30%;animation:drift 35s ease-in-out infinite -14s}
+  .smoke b.b4{width:380px;height:380px;background:rgba(34,211,107,.4);top:50%;left:50%;animation:drift 18s ease-in-out infinite -6s}
+  @keyframes drift{
+    0%,100%{transform:translate(0,0) scale(1)}
+    25%{transform:translate(120px,-80px) scale(1.2)}
+    50%{transform:translate(-80px,120px) scale(.85)}
+    75%{transform:translate(60px,80px) scale(1.1)}
+  }
+
+  /* particles */
+  .particles{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+  .particles i{
+    position:absolute;width:3px;height:3px;border-radius:50%;
+    background:var(--gold);box-shadow:0 0 8px var(--gold), 0 0 18px var(--gold);
+    bottom:-10px;animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translate(0,0) scale(.4);opacity:0}
+    10%{opacity:1}
+    100%{transform:translate(var(--dx,40px),-110vh) scale(1);opacity:0}
+  }
+
+  /* NAV */
+  nav{
+    position:relative;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:24px 40px;
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(248,233,197,.08);
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-family:'Syne';font-weight:800;font-size:18px;letter-spacing:.06em}
+  .brand .orb{
+    width:18px;height:18px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, var(--red), #3a0500);
+    box-shadow:0 0 20px var(--red), 0 0 40px rgba(255,59,37,.4);
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 20px var(--red),0 0 40px rgba(255,59,37,.5)}50%{transform:scale(1.3);box-shadow:0 0 30px var(--red),0 0 60px rgba(255,59,37,.8)}}
+  nav ul{display:flex;gap:32px;list-style:none;font-family:'Major Mono Display';font-size:13px;letter-spacing:.18em;text-transform:lowercase}
+  nav a{color:var(--ink);text-decoration:none;opacity:.7;transition:opacity .2s}
+  nav a:hover{opacity:1;color:var(--gold)}
+  .live-pill{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid rgba(248,233,197,.3);padding:8px 14px;border-radius:999px;
+    font-family:'Major Mono Display';font-size:11px;letter-spacing:.22em;
+  }
+  .live-pill .d{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 12px var(--red);animation:pulse 1s infinite}
+
+  /* HERO STAGE */
+  .stage{
+    position:relative;z-index:10;
+    min-height:88vh;
+    display:grid;grid-template-columns: 1fr;place-items:center;
+    padding:60px 40px 40px;
+  }
+
+  /* BASS ORB — the залипалка */
+  .orb-wrap{
+    position:relative;width:min(680px, 80vw);aspect-ratio:1;
+    display:grid;place-items:center;
+  }
+  /* concentric pulsating rings */
+  .ring{
+    position:absolute;inset:0;border-radius:50%;
+    border:1px solid rgba(248,233,197,.15);
+    animation:ringPulse 4s ease-out infinite;
+  }
+  .ring:nth-child(1){animation-delay:0s}
+  .ring:nth-child(2){animation-delay:-1s}
+  .ring:nth-child(3){animation-delay:-2s}
+  .ring:nth-child(4){animation-delay:-3s}
+  @keyframes ringPulse{
+    0%{transform:scale(.3);opacity:0;border-color:rgba(34,211,107,.8)}
+    20%{opacity:1}
+    100%{transform:scale(1.6);opacity:0;border-color:rgba(255,59,37,.2)}
+  }
+
+  /* spinning halo - rotating rasta gradient */
+  .halo{
+    position:absolute;inset:8%;border-radius:50%;
+    background:conic-gradient(
+      from 0deg,
+      var(--green) 0deg, var(--green) 110deg,
+      var(--gold) 130deg, var(--gold) 230deg,
+      var(--red) 250deg, var(--red) 350deg,
+      var(--green) 360deg);
+    filter:blur(20px);opacity:.65;
+    animation:spin 16s linear infinite;
+  }
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+  /* the bass orb itself */
+  .bass{
+    position:relative;width:62%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #2a0d04 0%, #0a0302 60%, #000 100%);
+    box-shadow:
+      inset 0 0 80px rgba(255,59,37,.5),
+      inset 0 0 200px rgba(0,0,0,.9),
+      0 0 80px rgba(255,59,37,.4),
+      0 0 200px rgba(34,211,107,.25);
+    display:grid;place-items:center;
+    animation:bassPulse 1.2s ease-in-out infinite;
+    z-index:3;
+  }
+  @keyframes bassPulse{
+    0%,100%{transform:scale(1);box-shadow:inset 0 0 80px rgba(255,59,37,.5),inset 0 0 200px rgba(0,0,0,.9),0 0 80px rgba(255,59,37,.4),0 0 200px rgba(34,211,107,.25)}
+    50%{transform:scale(1.06);box-shadow:inset 0 0 120px rgba(255,192,67,.7),inset 0 0 220px rgba(0,0,0,.85),0 0 140px rgba(255,192,67,.6),0 0 260px rgba(34,211,107,.4)}
+  }
+
+  /* central eye */
+  .eye{
+    width:34%;aspect-ratio:1;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, var(--gold) 0%, var(--red) 40%, #1a0500 80%);
+    box-shadow:
+      0 0 60px var(--gold),
+      inset 0 0 40px rgba(0,0,0,.7);
+    display:grid;place-items:center;
+    position:relative;
+    animation:eyePulse 1.2s ease-in-out infinite;
+  }
+  @keyframes eyePulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(.92)}
+  }
+  .eye::before{
+    content:"";position:absolute;inset:25%;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #fff, #1a0500 30%, #000 70%);
+  }
+  .eye::after{
+    content:"";position:absolute;width:8%;height:8%;background:#fff;border-radius:50%;
+    top:32%;left:38%;
+  }
+
+  /* SVG wave around */
+  .wave-bg{
+    position:absolute;inset:-8%;pointer-events:none;
+  }
+  .wave-bg svg{width:100%;height:100%;animation:spin 60s linear infinite reverse}
+
+  /* hero title — minimal floating text */
+  .stage-title{
+    position:absolute;top:8%;left:0;right:0;
+    text-align:center;z-index:4;pointer-events:none;
+  }
+  .stage-title .kicker{
+    font-family:'Major Mono Display';font-size:13px;letter-spacing:.4em;
+    text-transform:lowercase;opacity:.6;margin-bottom:18px;
+  }
+  .stage-title h1{
+    font-family:'Syne';font-weight:800;font-size:clamp(40px, 6vw, 84px);
+    letter-spacing:-.02em;line-height:.95;
+    background:linear-gradient(180deg, var(--ink) 0%, var(--gold) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    text-shadow:0 0 80px rgba(255,192,67,.3);
+  }
+
+  .stage-bottom{
+    position:absolute;bottom:6%;left:0;right:0;text-align:center;z-index:4;pointer-events:none;
+    font-family:'Major Mono Display';font-size:12px;letter-spacing:.32em;opacity:.55;
+    text-transform:lowercase;
+  }
+  .stage-bottom .sep{margin:0 18px;color:var(--green)}
+
+  /* visualizer ring around orb */
+  .viz-ring{position:absolute;inset:-2%;pointer-events:none}
+  .viz-ring svg{width:100%;height:100%}
+
+  /* PLAYER PANEL — floating dock */
+  .dock-wrap{
+    position:relative;z-index:20;padding:40px;
+  }
+  .dock{
+    margin:0 auto;max-width:1280px;
+    display:grid;grid-template-columns: 1fr 380px;gap:32px;
+    backdrop-filter:blur(20px);
+    background:linear-gradient(180deg, rgba(248,233,197,.04), rgba(248,233,197,.02));
+    border:1px solid rgba(248,233,197,.1);
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(248,233,197,.1);
+  }
+  .dock-left{display:flex;flex-direction:column;gap:22px}
+  .now-row{display:flex;align-items:center;gap:20px}
+  .album{
+    width:104px;height:104px;border-radius:16px;
+    background:
+      conic-gradient(from 220deg, var(--green) 0deg, var(--gold) 120deg, var(--red) 240deg, var(--green) 360deg);
+    position:relative;overflow:hidden;flex-shrink:0;
+    box-shadow:0 12px 40px rgba(255,59,37,.4);
+  }
+  .album::after{
+    content:"";position:absolute;inset:8px;border-radius:10px;
+    background:radial-gradient(circle at 30% 30%, #1a0500, #000);
+    display:grid;place-items:center;
+  }
+  .album .lbl{
+    position:absolute;inset:0;display:grid;place-items:center;z-index:2;
+    font-family:'Syne';font-weight:800;font-size:11px;letter-spacing:.18em;color:var(--gold);
+    text-shadow:0 0 8px rgba(255,192,67,.6);
+  }
+  .meta{flex:1;min-width:0}
+  .meta .label{font-family:'Major Mono Display';font-size:11px;letter-spacing:.32em;opacity:.5;text-transform:lowercase}
+  .meta h3{font-family:'Syne';font-weight:700;font-size:30px;letter-spacing:-.01em;margin-top:6px;line-height:1.05}
+  .meta .artist{margin-top:4px;font-size:14px;opacity:.7}
+
+  /* waveform */
+  .waveform{
+    display:flex;align-items:center;gap:3px;height:64px;
+  }
+  .waveform .w{
+    width:4px;flex:1;background:var(--ink);border-radius:2px;opacity:.4;
+    animation:wf 1s ease-in-out infinite;
+  }
+  .waveform .w.played{background:var(--gold);opacity:1;box-shadow:0 0 8px var(--gold)}
+  @keyframes wf{
+    0%,100%{transform:scaleY(.3)}
+    50%{transform:scaleY(1)}
+  }
+
+  .time-row{display:flex;justify-content:space-between;font-family:'Major Mono Display';font-size:12px;letter-spacing:.16em;opacity:.6}
+
+  .controls-row{
+    display:flex;align-items:center;gap:18px;
+  }
+  .ctrl-btn{
+    width:48px;height:48px;border-radius:50%;border:1px solid rgba(248,233,197,.25);
+    background:transparent;color:var(--ink);cursor:pointer;
+    display:grid;place-items:center;transition:all .2s;
+  }
+  .ctrl-btn:hover{background:rgba(248,233,197,.08);border-color:var(--gold);color:var(--gold);box-shadow:0 0 20px rgba(255,192,67,.3)}
+  .ctrl-btn.big{
+    width:64px;height:64px;
+    background:linear-gradient(135deg, var(--gold), var(--red));
+    border-color:transparent;color:#000;
+    box-shadow:0 8px 30px rgba(255,59,37,.5);
+  }
+  .ctrl-btn.big:hover{transform:scale(1.05);color:#000}
+  .ctrl-tiny{margin-left:auto;display:flex;gap:14px;font-family:'Major Mono Display';font-size:11px;letter-spacing:.18em;opacity:.5;align-items:center}
+
+  /* right rail — queue */
+  .queue{
+    background:rgba(7,4,3,.6);border-radius:18px;padding:18px;
+    border:1px solid rgba(248,233,197,.08);
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .queue h4{font-family:'Major Mono Display';font-size:11px;letter-spacing:.32em;opacity:.6;text-transform:lowercase;margin-bottom:8px}
+  .q-item{
+    display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;
+    padding:10px;border-radius:10px;cursor:pointer;transition:all .2s;
+  }
+  .q-item:hover{background:rgba(248,233,197,.06)}
+  .q-item.active{background:linear-gradient(90deg, rgba(34,211,107,.15), transparent);box-shadow:inset 2px 0 0 var(--green)}
+  .q-item .qn{font-family:'Major Mono Display';font-size:12px;opacity:.5}
+  .q-item .qt{font-family:'Syne';font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .q-item .qa{font-size:11px;opacity:.6;margin-top:2px}
+  .q-item .qd{font-family:'Major Mono Display';font-size:11px;opacity:.5}
+
+  /* zone — second залипалка section */
+  .zone{
+    position:relative;z-index:10;padding:120px 40px 80px;text-align:center;
+  }
+  .zone .kicker{font-family:'Major Mono Display';font-size:12px;letter-spacing:.4em;opacity:.5;text-transform:lowercase}
+  .zone h2{
+    font-family:'Syne';font-weight:800;font-size:clamp(40px, 6vw, 80px);
+    margin-top:16px;letter-spacing:-.02em;line-height:.95;
+  }
+  .zone h2 em{
+    font-style:normal;
+    background:linear-gradient(135deg, var(--green), var(--gold), var(--red));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .zone-grid{
+    margin-top:60px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1280px;margin-left:auto;margin-right:auto;
+  }
+  .zone-card{
+    aspect-ratio:1;border-radius:24px;position:relative;overflow:hidden;
+    border:1px solid rgba(248,233,197,.1);
+    background:rgba(7,4,3,.6);
+    backdrop-filter:blur(10px);
+    display:grid;place-items:center;cursor:pointer;
+    transition:transform .4s, box-shadow .4s;
+  }
+  .zone-card:hover{transform:translateY(-6px);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .zone-card .vis{position:absolute;inset:0;display:grid;place-items:center}
+  .zone-card .ttl{
+    position:absolute;bottom:24px;left:24px;right:24px;text-align:left;z-index:5;
+  }
+  .zone-card .ttl .t{font-family:'Syne';font-weight:700;font-size:22px}
+  .zone-card .ttl .s{font-family:'Major Mono Display';font-size:11px;letter-spacing:.2em;opacity:.6;margin-top:4px;text-transform:lowercase}
+
+  /* zone 1 — slow rotating mandala */
+  .mandala{width:80%;aspect-ratio:1;animation:spin 30s linear infinite}
+  /* zone 2 — pulsing concentric */
+  .conc{position:absolute;inset:0;display:grid;place-items:center}
+  .conc i{position:absolute;border:1px solid var(--green);border-radius:50%;animation:concPulse 3s ease-out infinite}
+  @keyframes concPulse{
+    0%{width:10%;height:10%;opacity:1;border-color:var(--gold)}
+    100%{width:100%;height:100%;opacity:0;border-color:var(--red)}
+  }
+  /* zone 3 — floating blobs */
+  .blobs{position:absolute;inset:0;filter:blur(30px)}
+  .blobs i{position:absolute;width:50%;height:50%;border-radius:50%;mix-blend-mode:screen}
+
+  /* upload section */
+  .upload-band{
+    position:relative;z-index:10;padding:80px 40px;
+  }
+  .upload-band .u-card{
+    max-width:1100px;margin:0 auto;
+    border:2px dashed rgba(248,233,197,.25);
+    border-radius:28px;padding:48px;
+    display:flex;justify-content:space-between;align-items:center;gap:32px;
+    background:rgba(7,4,3,.5);backdrop-filter:blur(20px);
+    transition:border-color .25s, background .25s;
+    cursor:pointer;
+  }
+  .upload-band .u-card:hover{border-color:var(--gold);background:rgba(255,192,67,.05)}
+  .upload-band h3{font-family:'Syne';font-weight:800;font-size:42px;letter-spacing:-.01em;line-height:1}
+  .upload-band p{margin-top:10px;opacity:.65;max-width:520px;line-height:1.5}
+  .upload-band .u-icon{
+    width:120px;height:120px;border-radius:50%;
+    background:linear-gradient(135deg, var(--green), var(--gold));
+    display:grid;place-items:center;flex-shrink:0;
+    box-shadow:0 20px 60px rgba(34,211,107,.4);
+    animation:float 4s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+  /* MARQUEE */
+  .marquee{
+    position:relative;z-index:10;
+    padding:30px 0;overflow:hidden;
+    border-top:1px solid rgba(248,233,197,.08);
+    border-bottom:1px solid rgba(248,233,197,.08);
+    background:linear-gradient(90deg, transparent, rgba(255,59,37,.08), transparent);
+  }
+  .marquee-track{display:flex;gap:48px;white-space:nowrap;animation:marq 24s linear infinite}
+  .marquee-track span{font-family:'Syne';font-weight:800;font-size:54px;letter-spacing:-.02em;
+    background:linear-gradient(180deg, var(--ink), transparent 130%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    -webkit-text-stroke:1px rgba(248,233,197,.5);
+  }
+  .marquee-track .fill{
+    -webkit-text-fill-color:var(--gold);
+    -webkit-text-stroke:0;
+    text-shadow:0 0 20px rgba(255,192,67,.5);
+  }
+  @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  footer{
+    position:relative;z-index:10;padding:40px;text-align:center;
+    font-family:'Major Mono Display';font-size:11px;letter-spacing:.3em;opacity:.4;text-transform:lowercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="smoke">
+  <b class="b1"></b><b class="b2"></b><b class="b3"></b><b class="b4"></b>
+</div>
+<div class="particles" id="particles"></div>
+
+<nav>
+  <div class="brand"><span class="orb"></span> ПОТУЖНОСТЬ РУ <span style="font-family:'Major Mono Display';font-size:11px;letter-spacing:.22em;opacity:.5;margin-left:6px">// dub channel</span></div>
+  <ul>
+    <li><a href="#">эфир</a></li>
+    <li><a href="#">залипай</a></li>
+    <li><a href="#">архив</a></li>
+    <li><a href="#">кидай трек</a></li>
+  </ul>
+  <div class="live-pill"><span class="d"></span> ON AIR · 142 listeners</div>
+</nav>
+
+<!-- HERO STAGE — the залипалка orb -->
+<section class="stage">
+  <div class="stage-title">
+    <div class="kicker">// channel 01 // toronto basement</div>
+    <h1>залипай<br>и&nbsp;слушай</h1>
+  </div>
+
+  <div class="orb-wrap">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+
+    <div class="wave-bg" aria-hidden="true">
+      <svg viewBox="-100 -100 200 200">
+        <g fill="none" stroke="rgba(248,233,197,.1)" stroke-width=".3">
+          <circle cx="0" cy="0" r="92"/>
+          <circle cx="0" cy="0" r="80"/>
+          <circle cx="0" cy="0" r="68"/>
+        </g>
+        <g fill="none" stroke="rgba(255,192,67,.4)" stroke-width=".5">
+          <path d="M -90 0 Q -45 -20 0 0 T 90 0" />
+        </g>
+        <!-- tick marks -->
+        <g stroke="rgba(248,233,197,.4)" stroke-width=".4" fill="none">
+          <g id="ticks">
+            <line x1="0" y1="-92" x2="0" y2="-86"/>
+          </g>
+          <use href="#ticks" transform="rotate(15)"/>
+          <use href="#ticks" transform="rotate(30)"/>
+          <use href="#ticks" transform="rotate(45)"/>
+          <use href="#ticks" transform="rotate(60)"/>
+          <use href="#ticks" transform="rotate(75)"/>
+          <use href="#ticks" transform="rotate(90)"/>
+          <use href="#ticks" transform="rotate(105)"/>
+          <use href="#ticks" transform="rotate(120)"/>
+          <use href="#ticks" transform="rotate(135)"/>
+          <use href="#ticks" transform="rotate(150)"/>
+          <use href="#ticks" transform="rotate(165)"/>
+          <use href="#ticks" transform="rotate(180)"/>
+          <use href="#ticks" transform="rotate(195)"/>
+          <use href="#ticks" transform="rotate(210)"/>
+          <use href="#ticks" transform="rotate(225)"/>
+          <use href="#ticks" transform="rotate(240)"/>
+          <use href="#ticks" transform="rotate(255)"/>
+          <use href="#ticks" transform="rotate(270)"/>
+          <use href="#ticks" transform="rotate(285)"/>
+          <use href="#ticks" transform="rotate(300)"/>
+          <use href="#ticks" transform="rotate(315)"/>
+          <use href="#ticks" transform="rotate(330)"/>
+          <use href="#ticks" transform="rotate(345)"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="halo"></div>
+    <div class="bass">
+      <div class="eye"></div>
+    </div>
+
+    <div class="viz-ring" id="vizRing"></div>
+  </div>
+
+  <div class="stage-bottom">
+    дым над онтарио <span class="sep">●</span> lion of toronto <span class="sep">●</span> dub mix <span class="sep">●</span> 02:47 / 06:12
+  </div>
+</section>
+
+<!-- PLAYER DOCK -->
+<section class="dock-wrap">
+  <div class="dock">
+    <div class="dock-left">
+      <div class="now-row">
+        <div class="album"><div class="lbl">DUB 01</div></div>
+        <div class="meta">
+          <div class="label">// now playing</div>
+          <h3>Дым над Онтарио</h3>
+          <div class="artist">Lion Of Toronto — Channel One Riddim</div>
+        </div>
+      </div>
+
+      <div class="waveform" id="wf"></div>
+      <div class="time-row"><span>02:47</span><span>06:12</span></div>
+
+      <div class="controls-row">
+        <button class="ctrl-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><polygon points="14,3 6,9 14,15"/><rect x="3" y="3" width="2" height="12"/></svg></button>
+        <button class="ctrl-btn big" id="play"><svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><polygon points="6,3 18,11 6,19"/></svg></button>
+        <button class="ctrl-btn"><svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><polygon points="4,3 12,9 4,15"/><rect x="13" y="3" width="2" height="12"/></svg></button>
+        <div class="ctrl-tiny">
+          <span>320kbps</span>
+          <span>·</span>
+          <span>loop</span>
+          <span>·</span>
+          <span>shuffle</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="queue">
+      <h4>// очередь</h4>
+      <div class="q-item active">
+        <span class="qn">01</span>
+        <div><div class="qt">Дым над Онтарио</div><div class="qa">Lion Of Toronto</div></div>
+        <span class="qd">6:12</span>
+      </div>
+      <div class="q-item">
+        <span class="qn">02</span>
+        <div><div class="qt">Бас в подвале</div><div class="qa">Подвал Sound System</div></div>
+        <span class="qd">4:48</span>
+      </div>
+      <div class="q-item">
+        <span class="qn">03</span>
+        <div><div class="qt">Чай и хапка</div><div class="qa">Иван-Заскок</div></div>
+        <span class="qd">7:30</span>
+      </div>
+      <div class="q-item">
+        <span class="qn">04</span>
+        <div><div class="qt">Снег на пальмах</div><div class="qa">Northern Riddim</div></div>
+        <span class="qd">5:11</span>
+      </div>
+      <div class="q-item">
+        <span class="qn">05</span>
+        <div><div class="qt">Канадский корень</div><div class="qa">Toronto Junglist</div></div>
+        <span class="qd">8:02</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>залипай <span class="fill">бесконечно</span></span>
+    <span>★</span>
+    <span>выставляй <span class="fill">бас</span></span>
+    <span>★</span>
+    <span>дыши <span class="fill">медленно</span></span>
+    <span>★</span>
+    <span>залипай <span class="fill">бесконечно</span></span>
+    <span>★</span>
+    <span>выставляй <span class="fill">бас</span></span>
+    <span>★</span>
+    <span>дыши <span class="fill">медленно</span></span>
+    <span>★</span>
+  </div>
+</div>
+
+<!-- ZONE GRID — secondary залипалки -->
+<section class="zone">
+  <div class="kicker">// 03 — visual chambers</div>
+  <h2>выбирай во что<br><em>залипать сегодня</em></h2>
+
+  <div class="zone-grid">
+    <div class="zone-card">
+      <div class="vis">
+        <svg class="mandala" viewBox="-100 -100 200 200">
+          <defs>
+            <g id="petal">
+              <path d="M 0,0 Q 30,-30 0,-80 Q -30,-30 0,0 Z" fill="rgba(34,211,107,.5)" stroke="rgba(255,192,67,.6)" stroke-width=".5"/>
+            </g>
+          </defs>
+          <g>
+            <use href="#petal"/>
+            <use href="#petal" transform="rotate(30)"/>
+            <use href="#petal" transform="rotate(60)"/>
+            <use href="#petal" transform="rotate(90)"/>
+            <use href="#petal" transform="rotate(120)"/>
+            <use href="#petal" transform="rotate(150)"/>
+            <use href="#petal" transform="rotate(180)"/>
+            <use href="#petal" transform="rotate(210)"/>
+            <use href="#petal" transform="rotate(240)"/>
+            <use href="#petal" transform="rotate(270)"/>
+            <use href="#petal" transform="rotate(300)"/>
+            <use href="#petal" transform="rotate(330)"/>
+          </g>
+          <circle r="20" fill="rgba(255,59,37,.7)"/>
+          <circle r="8" fill="var(--gold)"/>
+        </svg>
+      </div>
+      <div class="ttl"><div class="t">Мандала</div><div class="s">// medium dub · 47 min</div></div>
+    </div>
+
+    <div class="zone-card">
+      <div class="conc">
+        <i style="animation-delay:-0s"></i>
+        <i style="animation-delay:-.5s"></i>
+        <i style="animation-delay:-1s"></i>
+        <i style="animation-delay:-1.5s"></i>
+        <i style="animation-delay:-2s"></i>
+        <i style="animation-delay:-2.5s"></i>
+      </div>
+      <div class="ttl"><div class="t">Волны баса</div><div class="s">// steppers · 1 ч 12 мин</div></div>
+    </div>
+
+    <div class="zone-card">
+      <div class="blobs">
+        <i style="background:var(--green);top:10%;left:10%;animation:drift 12s ease-in-out infinite"></i>
+        <i style="background:var(--red);bottom:5%;right:5%;animation:drift 14s ease-in-out infinite -4s"></i>
+        <i style="background:var(--gold);top:40%;left:35%;animation:drift 18s ease-in-out infinite -8s"></i>
+      </div>
+      <div class="ttl"><div class="t">Лава</div><div class="s">// roots · 38 min</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD -->
+<section class="upload-band">
+  <div class="u-card">
+    <div>
+      <h3>Грузи свою кассету<br>прямо в эфир</h3>
+      <p>Перетаскивай MP3, WAV или FLAC сюда. Трек попадает в общую ленту, бас крутится, ты идёшь заваривать чай.</p>
+    </div>
+    <div class="u-icon">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round">
+        <path d="M 24 32 L 24 8 M 14 18 L 24 8 L 34 18"/>
+        <path d="M 8 36 L 8 40 L 40 40 L 40 36"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<footer>
+  потужность ру · toronto · MMXXVI · jah bless the north
+</footer>
+
+<script>
+  // particles
+  const pc = document.getElementById('particles');
+  for(let i=0;i<60;i++){
+    const p = document.createElement('i');
+    p.style.left = Math.random()*100 + '%';
+    p.style.setProperty('--dx', (Math.random()*200-100) + 'px');
+    p.style.animationDuration = (8 + Math.random()*16) + 's';
+    p.style.animationDelay = (-Math.random()*16) + 's';
+    p.style.width = p.style.height = (2 + Math.random()*4) + 'px';
+    const colors = ['#ffc043','#ff3b25','#22d36b','#f8e9c5'];
+    const c = colors[Math.floor(Math.random()*colors.length)];
+    p.style.background = c;
+    p.style.boxShadow = `0 0 8px ${c}, 0 0 18px ${c}`;
+    pc.appendChild(p);
+  }
+
+  // waveform
+  const wf = document.getElementById('wf');
+  const bars = 64;
+  for(let i=0;i<bars;i++){
+    const b = document.createElement('div');
+    b.className = 'w' + (i/bars < 0.42 ? ' played' : '');
+    b.style.animationDelay = (-Math.random()*1) + 's';
+    b.style.animationDuration = (0.6 + Math.random()*0.8) + 's';
+    // realistic-ish waveform shape
+    const h = 0.25 + Math.abs(Math.sin(i*0.4)*0.5) + Math.random()*0.25;
+    b.style.height = (h*64) + 'px';
+    wf.appendChild(b);
+  }
+
+  // viz ring around orb — radial bars
+  const vr = document.getElementById('vizRing');
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', '-100 -100 200 200');
+  svg.style.width = '100%'; svg.style.height = '100%';
+  const N = 80;
+  for(let i=0;i<N;i++){
+    const a = (i/N)*Math.PI*2;
+    const len = 4 + Math.random()*8;
+    const x1 = Math.cos(a)*96, y1 = Math.sin(a)*96;
+    const x2 = Math.cos(a)*(96+len), y2 = Math.sin(a)*(96+len);
+    const l = document.createElementNS(svgNS, 'line');
+    l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+    l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+    l.setAttribute('stroke', '#ffc043');
+    l.setAttribute('stroke-width', '.8');
+    l.setAttribute('opacity', '.7');
+    l.style.transformOrigin = `${x1}px ${y1}px`;
+    l.style.animation = `vbar ${0.4 + Math.random()*0.6}s ease-in-out infinite alternate`;
+    l.style.animationDelay = (-Math.random()*0.8) + 's';
+    svg.appendChild(l);
+  }
+  vr.appendChild(svg);
+  const style = document.createElement('style');
+  style.textContent = `@keyframes vbar{from{transform:scale(.6)}to{transform:scale(1.8)}}`;
+  document.head.appendChild(style);
+
+  // parallax
+  const orbWrap = document.querySelector('.orb-wrap');
+  const stageTitle = document.querySelector('.stage-title');
+  const stageBottom = document.querySelector('.stage-bottom');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5);
+    const y = (e.clientY / window.innerHeight - 0.5);
+    orbWrap.style.transform = `translate(${x*30}px, ${y*20}px)`;
+    if(stageTitle) stageTitle.style.transform = `translate(${x*-15}px, ${y*-10}px)`;
+    if(stageBottom) stageBottom.style.transform = `translate(${x*-10}px, ${y*-6}px)`;
+  });
+
+  // scroll parallax for smoke
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    document.querySelectorAll('.smoke b').forEach((b,i) => {
+      b.style.transform = `translateY(${y*0.2*(i+1)*0.15}px)`;
+    });
+  });
+
+  // play toggle
+  let playing = true;
+  const playBtn = document.getElementById('play');
+  playBtn.addEventListener('click', () => {
+    playing = !playing;
+    document.body.style.animationPlayState = playing ? 'running' : 'paused';
+    document.querySelectorAll('.bass, .eye, .ring, .halo, .ctrl-btn, .album, .waveform .w, .smoke b').forEach(el => {
+      el.style.animationPlayState = playing ? 'running' : 'paused';
+    });
+    playBtn.innerHTML = playing
+      ? '<svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><polygon points="6,3 18,11 6,19"/></svg>'
+      : '<svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><rect x="5" y="3" width="4" height="16"/><rect x="13" y="3" width="4" height="16"/></svg>';
+  });
+
+  // queue clicks
+  document.querySelectorAll('.q-item').forEach(it => {
+    it.addEventListener('click', () => {
+      document.querySelectorAll('.q-item').forEach(x => x.classList.remove('active'));
+      it.classList.add('active');
+      const t = it.querySelector('.qt').textContent;
+      const a = it.querySelector('.qa').textContent;
+      document.querySelector('.meta h3').textContent = t;
+      document.querySelector('.meta .artist').textContent = a;
+      document.querySelector('.stage-bottom').innerHTML =
+        t.toLowerCase() + ' <span class="sep">●</span> ' + a.toLowerCase() + ' <span class="sep">●</span> dub mix <span class="sep">●</span> 00:00';
+    });
+  });
+</script>
+
+</body>
+</html>

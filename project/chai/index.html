@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/><title>ПОТУЖНОСТЬ РУ — Гайд по чаю</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Special+Elite&family=Yeseva+One&display=swap" rel="stylesheet">
+<style>
+:root{--red:#c8362a;--gold:#e8b13a;--green:#1d6a3b;--dk:#0f3d22;--paper:#f1e1bd;--pdark:#dcc28a;--ink:#1a1208}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%}
+body{font-family:'Oswald',sans-serif;color:var(--ink);background:var(--paper)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1 0 0 0 0 .07 0 0 0 0 .04 0 0 0 .6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/></svg>");
+  mix-blend-mode:multiply;opacity:.5}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 36px;border-bottom:2px solid var(--ink);background:rgba(241,225,189,.95);backdrop-filter:blur(8px)}
+.brand{font-family:'Alfa Slab One';font-size:17px;letter-spacing:.04em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px}
+.brand .d{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 2px var(--ink);animation:pd 1.6s infinite}
+@keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+nav ul{display:flex;gap:4px;list-style:none}
+nav ul a{font-family:'Special Elite';font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);text-decoration:none;padding:6px 10px;border:1px solid transparent;transition:all .2s}
+nav ul a:hover,nav ul a.on{border-color:var(--ink);background:var(--ink);color:var(--gold)}
+
+/* BG SUN */
+.chai-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.chai-sun{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:900px;height:900px;animation:chspin 100s linear infinite;opacity:.1}
+@keyframes chspin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.chai-smoke{position:absolute;border-radius:50%;filter:blur(50px);opacity:.3;animation:chdrift 20s ease-in-out infinite}
+.chai-smoke.a{width:400px;height:400px;background:rgba(232,177,58,.5);top:-80px;left:-80px;animation-delay:0s}
+.chai-smoke.b{width:320px;height:320px;background:rgba(200,54,42,.4);bottom:-60px;right:-60px;animation-delay:-7s}
+.chai-smoke.c{width:280px;height:280px;background:rgba(29,106,59,.4);top:40%;right:10%;animation-delay:-13s}
+@keyframes chdrift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.15)}}
+
+/* STEP */
+section{scroll-snap-align:start;min-height:100vh;padding:100px 80px 80px;
+  display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;z-index:1}
+section:nth-child(odd){background:rgba(241,225,189,.88)}
+section:nth-child(even){background:rgba(220,194,138,.88)}
+
+.step-num{font-family:'Special Elite';font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.step-num::after{content:"";flex:1;max-width:60px;height:2px;background:var(--green)}
+.step-h{font-family:'Alfa Slab One';font-size:clamp(50px,7vw,100px);line-height:.9;text-transform:uppercase;
+  text-shadow:4px 4px 0 var(--red),6px 6px 0 var(--ink);margin-bottom:28px}
+.step-h .gold{color:var(--gold);text-shadow:4px 4px 0 var(--dk),6px 6px 0 var(--ink)}
+.step-h .green{color:var(--green);text-shadow:4px 4px 0 var(--gold),6px 6px 0 var(--ink)}
+.step-p{font-family:'Yeseva One';font-size:20px;max-width:540px;line-height:1.5;font-style:italic}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.one-col{max-width:640px}
+
+/* TEA PICKER (section 1) */
+.tea-cards{display:flex;gap:16px;flex-wrap:wrap;margin-top:32px}
+.tea-card{border:3px solid var(--ink);padding:16px 20px;cursor:pointer;
+  background:var(--paper);box-shadow:4px 4px 0 var(--ink);
+  transition:all .2s;font-family:'Alfa Slab One';font-size:18px;letter-spacing:.04em}
+.tea-card .icon{font-size:36px;display:block;margin-bottom:8px}
+.tea-card .temp{font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-top:6px}
+.tea-card .time{font-family:'Special Elite';font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);margin-top:2px}
+.tea-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.tea-card.sel{background:var(--green);color:var(--paper);border-color:var(--gold)}
+.tea-card.sel .temp,.tea-card.sel .time{color:var(--gold)}
+
+/* THERMOMETER (section 2) */
+.thermo{position:relative;width:60px;height:280px;margin:0 auto}
+.thermo-tube{position:absolute;left:50%;transform:translateX(-50%);
+  bottom:40px;width:28px;height:220px;border:4px solid var(--ink);border-radius:14px 14px 0 0;
+  overflow:hidden;background:rgba(255,255,255,.3)}
+.thermo-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(0deg,var(--red),var(--gold));
+  transition:height 1.5s cubic-bezier(.4,0,.2,1);height:0%}
+.thermo-bulb{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:44px;height:44px;border-radius:50%;background:var(--red);border:4px solid var(--ink);
+  z-index:2;box-shadow:0 0 0 4px rgba(200,54,42,.3)}
+.thermo-scale{position:absolute;right:-48px;bottom:40px;height:220px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  font-family:'Special Elite';font-size:10px;letter-spacing:.1em}
+.thermo-scale span{display:flex;align-items:center;gap:6px}
+.thermo-scale span::before{content:"";display:block;width:12px;height:2px;background:var(--ink)}
+.temp-label{text-align:center;margin-top:12px;font-family:'Alfa Slab One';font-size:36px;
+  color:var(--red);transition:color .5s}
+
+/* WATER TIPS */
+.tips{margin-top:24px;display:flex;flex-direction:column;gap:10px}
+.tip{display:flex;align-items:center;gap:12px;font-family:'Special Elite';font-size:13px;letter-spacing:.16em;text-transform:uppercase}
+.tip::before{content:"✦";color:var(--gold)}
+
+/* AMOUNT SLIDER (section 3) */
+.slider-wrap{margin-top:28px}
+.slider-wrap input[type=range]{
+  width:100%;height:8px;-webkit-appearance:none;appearance:none;
+  background:var(--pdark);border:2px solid var(--ink);border-radius:0;outline:none;cursor:pointer}
+.slider-wrap input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:28px;height:28px;border-radius:50%;
+  background:var(--red);border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);cursor:pointer}
+.amount-display{font-family:'Alfa Slab One';font-size:80px;line-height:1;
+  text-shadow:4px 4px 0 var(--gold),6px 6px 0 var(--ink);margin-top:16px}
+.amount-label{font-family:'Special Elite';font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--green)}
+
+/* TIMER (section 4) */
+.timer-display{display:flex;align-items:center;gap:20px;margin-top:24px}
+.time-digits{font-family:'Alfa Slab One';font-size:96px;line-height:1;
+  text-shadow:5px 5px 0 var(--gold),7px 7px 0 var(--ink);letter-spacing:-.02em;
+  transition:transform .1s}
+.time-digits.tick{animation:tock .15s ease-out}
+@keyframes tock{0%{transform:scale(1.08)}100%{transform:scale(1)}}
+.timer-btns{display:flex;flex-direction:column;gap:10px}
+.tbtn{font-family:'Special Elite';font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  background:var(--paper);color:var(--ink);border:2px solid var(--ink);padding:10px 16px;
+  box-shadow:3px 3px 0 var(--ink);cursor:pointer;transition:all .15s}
+.tbtn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.tbtn.red{background:var(--red);color:var(--paper)}
+.tbtn.green{background:var(--green);color:var(--paper)}
+.timer-arc{width:140px;height:140px;flex-shrink:0}
+.timer-label{font-family:'Yeseva One';font-size:18px;font-style:italic;margin-top:16px;color:var(--dk)}
+
+/* STEAM */
+.steam{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.steam i{width:4px;border-radius:2px;background:rgba(232,177,58,.5);
+  animation:steam 3s ease-in-out infinite;filter:blur(1px)}
+@keyframes steam{0%,100%{transform:translateY(0) scaleX(1);opacity:0}
+  20%{opacity:.8}80%{opacity:.4}100%{transform:translateY(-60px) scaleX(2);opacity:0}}
+
+/* SERVING (section 5) */
+.serve-grid{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
+.serve-card{border:3px solid var(--ink);padding:18px;min-width:140px;
+  background:var(--paper);box-shadow:4px 4px 0 var(--ink);cursor:pointer;
+  transform:rotate(var(--r,-2deg));transition:all .2s;text-align:center}
+.serve-card:hover{transform:rotate(0deg) translateY(-4px);box-shadow:8px 8px 0 var(--red)}
+.serve-card .si{font-size:38px;display:block}
+.serve-card .sn{font-family:'Alfa Slab One';font-size:16px;margin-top:8px}
+.serve-card .sd{font-family:'Special Elite';font-size:10px;letter-spacing:.16em;text-transform:uppercase;margin-top:4px;opacity:.7}
+
+/* RITUAL (section 6) */
+.ritual-big{font-family:'Alfa Slab One';font-size:clamp(40px,6vw,88px);line-height:.92;text-transform:uppercase;
+  text-shadow:4px 4px 0 var(--gold),6px 6px 0 var(--ink);margin-bottom:28px}
+.ritual-big .rb{display:block;color:var(--dk);text-shadow:4px 4px 0 var(--gold),6px 6px 0 var(--ink)}
+.radio-link{display:inline-block;margin-top:28px;font-family:'Alfa Slab One';font-size:18px;text-transform:uppercase;
+  background:var(--dk);color:var(--gold);border:3px solid var(--gold);padding:16px 36px;
+  box-shadow:6px 6px 0 var(--ink);text-decoration:none;letter-spacing:.06em;
+  transition:all .15s}
+.radio-link:hover{transform:translate(-2px,-2px);box-shadow:9px 9px 0 var(--ink)}
+
+/* SCROLL DOTS */
+.dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:10px}
+.dot-btn{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);
+  background:transparent;cursor:pointer;transition:all .2s;padding:0}
+.dot-btn.on{background:var(--red);border-color:var(--red);transform:scale(1.3)}
+
+/* BIG TICKER in ritual */
+.ticker{overflow:hidden;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
+  padding:12px 0;margin-top:36px;background:var(--ink)}
+.ticker-t{display:flex;gap:40px;white-space:nowrap;animation:tk 28s linear infinite;
+  font-family:'Alfa Slab One';font-size:24px;color:var(--paper);letter-spacing:.04em;text-transform:uppercase}
+.ticker-t .g{color:var(--gold)}
+@keyframes tk{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+
+<div class="chai-bg">
+  <div class="chai-smoke a"></div>
+  <div class="chai-smoke b"></div>
+  <div class="chai-smoke c"></div>
+  <div class="chai-sun">
+    <svg viewBox="0 0 900 900">
+      <defs><g id="cr"><polygon points="450,0 440,450 460,450" fill="#e8b13a" opacity=".6"/></g></defs>
+      <use href="#cr"/><use href="#cr" transform="rotate(15 450 450)"/><use href="#cr" transform="rotate(30 450 450)"/>
+      <use href="#cr" transform="rotate(45 450 450)"/><use href="#cr" transform="rotate(60 450 450)"/>
+      <use href="#cr" transform="rotate(75 450 450)"/><use href="#cr" transform="rotate(90 450 450)"/>
+      <use href="#cr" transform="rotate(105 450 450)"/><use href="#cr" transform="rotate(120 450 450)"/>
+      <use href="#cr" transform="rotate(135 450 450)"/><use href="#cr" transform="rotate(150 450 450)"/>
+      <use href="#cr" transform="rotate(165 450 450)"/><use href="#cr" transform="rotate(180 450 450)"/>
+      <use href="#cr" transform="rotate(195 450 450)"/><use href="#cr" transform="rotate(210 450 450)"/>
+      <use href="#cr" transform="rotate(225 450 450)"/><use href="#cr" transform="rotate(240 450 450)"/>
+      <use href="#cr" transform="rotate(255 450 450)"/><use href="#cr" transform="rotate(270 450 450)"/>
+      <use href="#cr" transform="rotate(285 450 450)"/><use href="#cr" transform="rotate(300 450 450)"/>
+      <use href="#cr" transform="rotate(315 450 450)"/><use href="#cr" transform="rotate(330 450 450)"/>
+      <use href="#cr" transform="rotate(345 450 450)"/>
+      <circle cx="450" cy="450" r="100" fill="#e8b13a" opacity=".4"/>
+    </svg>
+  </div>
+</div>
+
+<nav>
+  <a href="../vintage/index.html" class="brand"><span class="d"></span>ПОТУЖНОСТЬ&nbsp;РУ</a>
+  <ul>
+    <li><a href="../vintage/index.html">Эфир</a></li>
+    <li><a href="../zalipay/index.html">Залипай</a></li>
+    <li><a href="../taro/index.html">Таро</a></li>
+    <li><a href="../chai/index.html" class="on">Чай</a></li>
+    <li><a href="../shar/index.html">Шар</a></li>
+  </ul>
+</nav>
+
+<!-- S1 — Выбери чай -->
+<section id="s1" data-screen-label="01 Выбери чай">
+  <div class="step-num">✦ Шаг 1 из 6</div>
+  <h2 class="step-h">Выбери <span class="gold">чай</span></h2>
+  <p class="step-p">Всё начинается с выбора. Каждый чай — своё настроение, своя температура, своё время.</p>
+  <div class="tea-cards" id="teaCards">
+    <div class="tea-card" data-temp="80" data-sec="120" data-name="Зелёный">
+      <span class="icon">🍃</span>Зелёный<div class="temp">80°С</div><div class="time">2 мин</div></div>
+    <div class="tea-card" data-temp="95" data-sec="240" data-name="Чёрный">
+      <span class="icon">🫖</span>Чёрный<div class="temp">95°С</div><div class="time">4 мин</div></div>
+    <div class="tea-card" data-temp="100" data-sec="300" data-name="Каркаде">
+      <span class="icon">🌺</span>Каркаде<div class="temp">100°С</div><div class="time">5 мин</div></div>
+    <div class="tea-card" data-temp="90" data-sec="300" data-name="Иван-чай">
+      <span class="icon">🌿</span>Иван-чай<div class="temp">90°С</div><div class="time">5 мин</div></div>
+    <div class="tea-card" data-temp="70" data-sec="180" data-name="Мате">
+      <span class="icon">🧉</span>Мате<div class="temp">70°С</div><div class="time">3 мин</div></div>
+  </div>
+</section>
+
+<!-- S2 — Вода -->
+<section id="s2" data-screen-label="02 Вода">
+  <div class="two-col">
+    <div>
+      <div class="step-num">✦ Шаг 2 из 6</div>
+      <h2 class="step-h">Темпе-<br><span class="green">ратура</span></h2>
+      <p class="step-p">Кипяток убивает аромат зелёного. Каждый чай требует своей температуры — относись к этому серьёзно.</p>
+      <div class="tips">
+        <div class="tip">Для зелёного и мате — 70-80°С</div>
+        <div class="tip">Для иван-чая — 85-90°С</div>
+        <div class="tip">Для чёрного и каркаде — 95-100°С</div>
+        <div class="tip">Отстоявшаяся вода лучше свежей</div>
+      </div>
+    </div>
+    <div>
+      <div class="thermo">
+        <div class="thermo-tube"><div class="thermo-fill" id="thermoFill"></div></div>
+        <div class="thermo-bulb"></div>
+        <div class="thermo-scale">
+          <span>100°</span><span>80°</span><span>60°</span><span>40°</span><span>20°</span>
+        </div>
+      </div>
+      <div class="temp-label" id="tempLabel">—°С</div>
+    </div>
+  </div>
+</section>
+
+<!-- S3 — Количество -->
+<section id="s3" data-screen-label="03 Количество">
+  <div class="step-num">✦ Шаг 3 из 6</div>
+  <h2 class="step-h">Ско-<br><span class="gold">лько?</span></h2>
+  <p class="step-p">Правило: 1 чайная ложка на чашку + одна «для чайника». Но это лишь отправная точка.</p>
+  <div class="slider-wrap">
+    <input type="range" id="amountSlider" min="1" max="5" value="2" step="1">
+    <div class="amount-display" id="amountDisp">2</div>
+    <div class="amount-label">чайные ложки на 200 мл воды</div>
+  </div>
+</section>
+
+<!-- S4 — Время -->
+<section id="s4" data-screen-label="04 Таймер">
+  <div class="two-col">
+    <div>
+      <div class="step-num">✦ Шаг 4 из 6</div>
+      <h2 class="step-h">Вре-<br><span class="green">мя</span></h2>
+      <p class="step-p">Передержишь — горько. Недодержишь — слабо. Таймер не торопит — он помогает.</p>
+      <div class="timer-display">
+        <svg class="timer-arc" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="60" fill="none" stroke="rgba(26,18,8,.1)" stroke-width="12"/>
+          <circle id="arcCircle" cx="70" cy="70" r="60" fill="none" stroke="var(--red)" stroke-width="12"
+            stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="0"
+            transform="rotate(-90 70 70)" style="transition:stroke-dashoffset 1s linear"/>
+        </svg>
+        <div>
+          <div class="time-digits" id="timeDisp">00:00</div>
+          <div class="timer-btns">
+            <button class="tbtn green" id="tStart">▶ СТАРТ</button>
+            <button class="tbtn" id="tReset">■ СБРОС</button>
+          </div>
+        </div>
+      </div>
+      <div class="timer-label" id="timerLabel">Выбери чай на шаге 1, чтобы установить время</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:120px;animation:float 3s ease-in-out infinite">🫖</div>
+      <div class="steam">
+        <i style="height:50px;animation-delay:-.2s"></i>
+        <i style="height:70px;animation-delay:-.8s"></i>
+        <i style="height:55px;animation-delay:-1.4s"></i>
+        <i style="height:65px;animation-delay:-.5s"></i>
+        <i style="height:45px;animation-delay:-1.1s"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S5 — Подача -->
+<section id="s5" data-screen-label="05 Подача">
+  <div class="step-num">✦ Шаг 5 из 6</div>
+  <h2 class="step-h">С чем<br><span class="gold">пить?</span></h2>
+  <p class="step-p">Чай — это ритуал, а не просто напиток. Выбери своё сопровождение.</p>
+  <div class="serve-grid">
+    <div class="serve-card" style="--r:-3deg"><span class="si">🍯</span><div class="sn">Мёд</div><div class="sd">Сладко и тепло</div></div>
+    <div class="serve-card" style="--r:2deg"><span class="si">🍋</span><div class="sn">Лимон</div><div class="sd">Кислинка и бодрость</div></div>
+    <div class="serve-card" style="--r:-1deg"><span class="si">🥛</span><div class="sn">Молоко</div><div class="sd">Мягкость и сытость</div></div>
+    <div class="serve-card" style="--r:3deg"><span class="si">🌿</span><div class="sn">Мята</div><div class="sd">Свежесть</div></div>
+    <div class="serve-card" style="--r:-2deg"><span class="si">☕</span><div class="sn">Просто так</div><div class="sd">Честно и чисто</div></div>
+  </div>
+</section>
+
+<!-- S6 — Ритуал -->
+<section id="s6" data-screen-label="06 Ритуал">
+  <div class="ritual-big">Налей.<br><span class="rb">Сядь.</span>Включи<br>музыку.</div>
+  <p class="step-p">Чай не терпит спешки. Найди тихое место, выруби телефон и просто сиди с кружкой. Это и есть раста-ритуал.</p>
+  <a href="../vintage/index.html" class="radio-link">★ ВКЛЮЧИТЬ РАДИО ★</a>
+  <div class="ticker" style="margin-top:40px">
+    <div class="ticker-t">
+      <span>ЧАЙ ГОТОВ <span class="g">✦</span></span>
+      <span>БАС ВКЛЮЧЁН <span class="g">✦</span></span>
+      <span>САДИСЬ ПОГЛУБЖЕ <span class="g">✦</span></span>
+      <span>JAH BLESS <span class="g">✦</span></span>
+      <span>ЧАЙ ГОТОВ <span class="g">✦</span></span>
+      <span>БАС ВКЛЮЧЁН <span class="g">✦</span></span>
+      <span>САДИСЬ ПОГЛУБЖЕ <span class="g">✦</span></span>
+      <span>JAH BLESS <span class="g">✦</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- SCROLL DOTS -->
+<div class="dots" id="dots">
+  <button class="dot-btn on" data-s="s1"></button>
+  <button class="dot-btn" data-s="s2"></button>
+  <button class="dot-btn" data-s="s3"></button>
+  <button class="dot-btn" data-s="s4"></button>
+  <button class="dot-btn" data-s="s5"></button>
+  <button class="dot-btn" data-s="s6"></button>
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────
+let selTea={temp:80,sec:120,name:'Зелёный'};
+let timerSec=120, timerRunning=false, timerInterval=null;
+
+// ── TEA PICKER ────────────────────────────────
+document.querySelectorAll('.tea-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('.tea-card').forEach(x=>x.classList.remove('sel'));
+    c.classList.add('sel');
+    selTea={temp:parseInt(c.dataset.temp),sec:parseInt(c.dataset.sec),name:c.dataset.name};
+    updateThermo(selTea.temp);
+    resetTimer(selTea.sec);
+    document.getElementById('timerLabel').textContent=
+      `${selTea.name} — заваривать ${Math.floor(selTea.sec/60)}:${(selTea.sec%60).toString().padStart(2,'0')} мин`;
+  });
+});
+// select first by default
+document.querySelector('.tea-card').click();
+
+// ── THERMOMETER ───────────────────────────────
+function updateThermo(temp){
+  const pct=((temp-20)/80)*100;
+  document.getElementById('thermoFill').style.height=pct+'%';
+  document.getElementById('tempLabel').textContent=temp+'°С';
+  const lbl=document.getElementById('tempLabel');
+  if(temp<85)lbl.style.color='var(--green)';
+  else if(temp<95)lbl.style.color='var(--gold)';
+  else lbl.style.color='var(--red)';
+}
+
+// ── AMOUNT SLIDER ─────────────────────────────
+const sl=document.getElementById('amountSlider');
+const ad=document.getElementById('amountDisp');
+sl.addEventListener('input',()=>{ad.textContent=sl.value});
+
+// ── TIMER ─────────────────────────────────────
+function fmtT(s){return`${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`}
+function updateTimerUI(){
+  document.getElementById('timeDisp').textContent=fmtT(timerSec);
+  const total=selTea.sec;
+  const frac=timerSec/total;
+  const circ=377;
+  document.getElementById('arcCircle').setAttribute('stroke-dashoffset',(circ*frac).toFixed(1));
+  const el=document.getElementById('timeDisp');
+  el.classList.remove('tick');void el.offsetWidth;el.classList.add('tick');
+}
+function resetTimer(sec){
+  clearInterval(timerInterval);timerRunning=false;
+  timerSec=sec;updateTimerUI();
+  document.getElementById('tStart').textContent='▶ СТАРТ';
+}
+document.getElementById('tStart').addEventListener('click',()=>{
+  if(timerRunning){
+    clearInterval(timerInterval);timerRunning=false;
+    document.getElementById('tStart').textContent='▶ ПРОДОЛЖИТЬ';
+  } else {
+    timerRunning=true;
+    document.getElementById('tStart').textContent='❚❚ ПАУЗА';
+    timerInterval=setInterval(()=>{
+      if(timerSec>0){timerSec--;updateTimerUI();}
+      else{
+        clearInterval(timerInterval);timerRunning=false;
+        document.getElementById('tStart').textContent='✓ ГОТОВО!';
+        document.getElementById('timerLabel').textContent='🍵 Чай готов! Можно пить.';
+        // flash
+        document.getElementById('arcCircle').setAttribute('stroke','var(--green)');
+      }
+    },1000);
+  }
+});
+document.getElementById('tReset').addEventListener('click',()=>resetTimer(selTea.sec));
+updateTimerUI();
+
+// ── SCROLL DOTS ───────────────────────────────
+const sections=document.querySelectorAll('section');
+const dots=document.querySelectorAll('.dot-btn');
+dots.forEach(d=>d.addEventListener('click',()=>{
+  document.getElementById(d.dataset.s).scrollIntoView({behavior:'smooth'});
+}));
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      dots.forEach(d=>d.classList.toggle('on',d.dataset.s===e.target.id));
+      // trigger thermo on s2
+      if(e.target.id==='s2') updateThermo(selTea.temp);
+    }
+  });
+},{threshold:.5});
+sections.forEach(s=>obs.observe(s));
+
+// float animation
+const styleEl=document.createElement('style');
+styleEl.textContent='@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}';
+document.head.appendChild(styleEl);
+</script>
+</body></html>

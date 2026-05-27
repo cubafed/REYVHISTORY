@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<title>ПОТУЖНОСТЬ РУ — Винтаж</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Bowlby+One+SC&family=Oswald:wght@400;500;700&family=Special+Elite&family=Yeseva+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f1e1bd;
+    --paper-dark:#dcc28a;
+    --ink:#1a1208;
+    --red:#c8362a;
+    --gold:#e8b13a;
+    --green:#1d6a3b;
+    --green-dark:#0f3d22;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:'Oswald',sans-serif;overflow-x:hidden}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(232,177,58,.35), transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(200,54,42,.18), transparent 55%),
+      var(--paper);
+  }
+  /* paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1  0 0 0 0 .07  0 0 0 0 .04  0 0 0 .6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/></svg>");
+    mix-blend-mode:multiply;opacity:.5;
+  }
+  /* vignette + halftone */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:98;
+    background:
+      radial-gradient(ellipse at center, transparent 55%, rgba(40,20,5,.45) 100%),
+      radial-gradient(circle at 1px 1px, rgba(26,18,8,.18) 1px, transparent 1.6px) 0 0/9px 9px;
+    mix-blend-mode:multiply;
+  }
+
+  nav{
+    position:relative;z-index:10;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 48px;
+    border-bottom:2px solid var(--ink);
+    background:linear-gradient(180deg, rgba(255,255,255,.2), transparent);
+  }
+  nav .brand{
+    font-family:'Alfa Slab One';font-size:22px;letter-spacing:.04em;
+    display:flex;align-items:center;gap:10px;
+  }
+  nav .brand .dot{width:14px;height:14px;background:var(--red);border-radius:50%;display:inline-block;box-shadow:0 0 0 3px var(--ink);animation:pulse 1.6s infinite}
+  nav ul{display:flex;gap:34px;list-style:none;font-weight:500;letter-spacing:.18em;font-size:13px;text-transform:uppercase}
+  nav a{color:var(--ink);text-decoration:none;position:relative;padding-bottom:4px}
+  nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--red);transition:width .25s}
+  nav a:hover::after{width:100%}
+  .nav-pill{
+    border:2px solid var(--ink);padding:8px 14px;border-radius:999px;
+    font-family:'Special Elite';font-size:12px;letter-spacing:.16em;
+    background:var(--gold);color:var(--ink);
+    box-shadow:3px 3px 0 var(--ink);
+    cursor:pointer;
+  }
+
+  /* HERO */
+  .hero{
+    position:relative;padding:60px 48px 100px;
+    text-align:center;overflow:hidden;
+  }
+  .sun{
+    position:absolute;left:50%;top:140px;transform:translateX(-50%);
+    width:1100px;height:1100px;pointer-events:none;z-index:0;
+    animation:spin 80s linear infinite;
+  }
+  .sun svg{width:100%;height:100%}
+  .stamp{
+    position:absolute;font-family:'Special Elite';
+    border:2px solid currentColor;padding:8px 14px;
+    text-transform:uppercase;letter-spacing:.2em;font-size:11px;
+    transform:rotate(-12deg);opacity:.85;
+  }
+  .stamp.s1{top:90px;left:60px;color:var(--red);transform:rotate(-12deg)}
+  .stamp.s2{top:130px;right:80px;color:var(--green);transform:rotate(8deg)}
+  .stamp.s3{bottom:30px;left:120px;color:var(--ink);transform:rotate(-4deg)}
+
+  h1.title{
+    position:relative;z-index:2;
+    font-family:'Alfa Slab One';
+    font-size:clamp(80px, 13vw, 220px);
+    line-height:.85;
+    letter-spacing:-.01em;
+    text-transform:uppercase;
+    color:var(--ink);
+    text-shadow:
+      6px 6px 0 var(--red),
+      8px 8px 0 var(--ink);
+    margin-top:30px;
+  }
+  h1.title .gr{color:var(--green-dark);text-shadow:6px 6px 0 var(--gold),8px 8px 0 var(--ink)}
+  h1.title .ru{
+    display:inline-block;
+    background:var(--red);color:var(--paper);
+    padding:0 22px;
+    transform:rotate(-3deg);
+    text-shadow:6px 6px 0 var(--ink);
+    margin-left:8px;
+  }
+  .sub{
+    font-family:'Yeseva One';font-size:26px;font-weight:400;letter-spacing:.05em;
+    margin-top:36px;position:relative;z-index:2;
+  }
+  .sub em{font-style:italic;color:var(--red)}
+  .meta-row{
+    display:flex;gap:36px;justify-content:center;align-items:center;
+    margin-top:28px;font-family:'Special Elite';font-size:13px;letter-spacing:.22em;
+    text-transform:uppercase;position:relative;z-index:2;
+  }
+  .meta-row span{display:flex;align-items:center;gap:8px}
+  .meta-row .bar{width:36px;height:1px;background:currentColor;display:inline-block}
+
+  /* LION */
+  .lion-wrap{
+    position:relative;margin:60px auto 0;width:min(640px, 80vw);height:280px;z-index:2;
+  }
+  .lion{width:100%;height:100%;filter:drop-shadow(8px 8px 0 var(--red))}
+  .ray{
+    position:absolute;left:50%;bottom:0;width:6px;height:280px;
+    background:linear-gradient(180deg, transparent, var(--gold));
+    transform-origin:bottom center;opacity:.6;mix-blend-mode:multiply;
+  }
+
+  /* FLAG */
+  .flag-strip{
+    position:relative;margin:0;padding:0;height:84px;overflow:hidden;
+    border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);
+    background:#000;
+  }
+  .flag-strip svg{position:absolute;inset:0;width:100%;height:100%}
+
+  /* PLAYER */
+  .player-section{
+    position:relative;padding:90px 48px;background:linear-gradient(180deg, transparent, rgba(0,0,0,.06));
+    border-top:2px solid var(--ink);
+  }
+  .player-section .eyebrow{
+    text-align:center;font-family:'Special Elite';letter-spacing:.32em;font-size:13px;
+    text-transform:uppercase;margin-bottom:14px;color:var(--green-dark);
+  }
+  .player-section h2{
+    text-align:center;font-family:'Alfa Slab One';
+    font-size:clamp(48px, 7vw, 96px);text-transform:uppercase;
+    line-height:.9;margin-bottom:60px;
+  }
+  .player-section h2 .red{color:var(--red);font-style:italic;display:inline-block;transform:rotate(-2deg)}
+
+  .player{
+    display:grid;grid-template-columns: 380px 1fr;gap:48px;
+    max-width:1180px;margin:0 auto;align-items:start;
+  }
+
+  /* turntable */
+  .turntable{
+    position:relative;width:380px;height:380px;
+    background:radial-gradient(circle at 30% 30%, #2a1a08, #0a0603 70%);
+    border-radius:50%;
+    border:6px solid var(--ink);
+    box-shadow: 12px 12px 0 var(--red), 12px 12px 0 4px var(--ink);
+  }
+  .vinyl{position:absolute;inset:14px;border-radius:50%;
+    background:
+      repeating-radial-gradient(circle at center, #1a1208 0 2px, #050200 2px 4px),
+      #0a0603;
+    animation:spin 4s linear infinite;
+  }
+  .vinyl .label{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:140px;height:140px;border-radius:50%;
+    background:var(--red);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;
+    color:var(--paper);font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;
+    text-align:center;border:4px solid var(--ink);
+    text-transform:uppercase;
+  }
+  .vinyl .label::before{content:"";position:absolute;width:14px;height:14px;background:var(--ink);border-radius:50%}
+  .vinyl .label .small{font-family:'Special Elite';font-size:9px;letter-spacing:.22em;margin-top:6px;opacity:.85}
+  .arm{
+    position:absolute;top:-10px;right:-10px;width:220px;height:24px;
+    background:var(--ink);border-radius:12px;
+    transform-origin:right center;transform:rotate(28deg);
+    box-shadow:0 4px 0 rgba(0,0,0,.4);
+  }
+  .arm::after{content:"";position:absolute;left:-10px;top:50%;width:30px;height:30px;background:var(--gold);border:3px solid var(--ink);border-radius:6px;transform:translateY(-50%)}
+
+  /* tracklist */
+  .deck{position:relative}
+  .deck .now-playing{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:30px;
+    border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:10px;
+  }
+  .deck .now-playing h3{
+    font-family:'Alfa Slab One';font-size:42px;line-height:.95;letter-spacing:.01em;
+  }
+  .deck .now-playing .artist{
+    font-family:'Special Elite';font-size:13px;letter-spacing:.24em;text-transform:uppercase;
+    margin-top:8px;color:var(--green-dark);
+  }
+  .deck .now-playing .time{font-family:'Alfa Slab One';font-size:28px}
+
+  /* visualizer */
+  .viz{
+    display:flex;align-items:flex-end;gap:4px;height:80px;margin:14px 0 18px;
+    border-bottom:2px solid var(--ink);padding-bottom:8px;
+  }
+  .viz .b{width:8px;background:var(--ink);animation:viz 1.2s ease-in-out infinite;border-top:3px solid var(--red)}
+
+  .controls{
+    display:flex;align-items:center;gap:20px;padding:18px 0;
+    border-bottom:2px solid var(--ink);
+  }
+  .controls button{
+    border:2px solid var(--ink);background:var(--paper);color:var(--ink);
+    width:54px;height:54px;border-radius:50%;cursor:pointer;
+    display:grid;place-items:center;
+    box-shadow:3px 3px 0 var(--ink);
+    transition:transform .12s, box-shadow .12s;
+  }
+  .controls button:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+  .controls button:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .controls .play{width:74px;height:74px;background:var(--red);color:var(--paper)}
+  .progress{flex:1;height:12px;background:var(--paper-dark);border:2px solid var(--ink);position:relative;overflow:hidden}
+  .progress::after{content:"";position:absolute;inset:0;width:42%;background:
+    repeating-linear-gradient(45deg, var(--ink) 0 4px, var(--gold) 4px 8px);}
+  .ctrl-meta{font-family:'Special Elite';letter-spacing:.2em;font-size:12px;text-transform:uppercase}
+
+  .tracks{margin-top:18px}
+  .track{
+    display:grid;grid-template-columns: 30px 1fr auto auto;gap:18px;align-items:center;
+    padding:14px 8px;border-bottom:1px dashed rgba(26,18,8,.3);
+    cursor:pointer;transition:background .2s, transform .2s;
+  }
+  .track:hover{background:rgba(232,177,58,.35);transform:translateX(4px)}
+  .track .n{font-family:'Alfa Slab One';font-size:24px;color:var(--red)}
+  .track .n.active{color:var(--green-dark)}
+  .track .t-name{font-family:'Yeseva One';font-size:20px}
+  .track .t-name .sub2{display:block;font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#5a3a1a;margin-top:2px}
+  .track .t-dur{font-family:'Special Elite';font-size:13px;letter-spacing:.18em}
+  .track .t-tag{
+    border:2px solid var(--ink);padding:4px 8px;font-family:'Special Elite';
+    font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  }
+  .track .t-tag.r{background:var(--red);color:var(--paper)}
+  .track .t-tag.g{background:var(--green-dark);color:var(--paper)}
+  .track .t-tag.y{background:var(--gold)}
+
+  .upload-card{
+    margin-top:30px;border:3px dashed var(--ink);padding:26px;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;
+    background:rgba(255,255,255,.3);
+    cursor:pointer;transition:background .2s;
+  }
+  .upload-card:hover{background:rgba(232,177,58,.5)}
+  .upload-card h4{font-family:'Alfa Slab One';font-size:26px;text-transform:uppercase}
+  .upload-card p{font-family:'Special Elite';font-size:13px;letter-spacing:.16em;margin-top:6px}
+  .upload-card .plus{
+    width:64px;height:64px;border:3px solid var(--ink);border-radius:50%;
+    display:grid;place-items:center;font-size:36px;font-family:'Alfa Slab One';
+    background:var(--gold);
+  }
+
+  /* TICKER */
+  .ticker{
+    background:var(--ink);color:var(--paper);
+    border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);
+    overflow:hidden;padding:18px 0;
+  }
+  .ticker-track{display:flex;gap:60px;white-space:nowrap;animation:ticker 38s linear infinite;
+    font-family:'Alfa Slab One';font-size:32px;letter-spacing:.04em;text-transform:uppercase}
+  .ticker-track span{display:flex;align-items:center;gap:60px}
+  .ticker-track .star{color:var(--gold);font-size:22px}
+
+  /* footer */
+  footer{
+    position:relative;padding:60px 48px 40px;text-align:center;
+    border-top:3px solid var(--ink);
+  }
+  footer .big{font-family:'Alfa Slab One';font-size:72px;line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+  footer .small{font-family:'Special Elite';letter-spacing:.24em;font-size:12px;text-transform:uppercase;margin-top:24px;opacity:.7}
+
+  /* animations */
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}}
+  @keyframes viz{
+    0%,100%{height:14%}
+    50%{height:100%}
+  }
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes wave{
+    0%{transform:translateX(0) skewY(-2deg)}
+    50%{transform:translateX(-2%) skewY(2deg)}
+    100%{transform:translateX(0) skewY(-2deg)}
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0) rotate(var(--r,0deg))}
+    50%{transform:translateY(-10px) rotate(var(--r,0deg))}
+  }
+
+  /* smoke */
+  .smoke{position:absolute;border-radius:50%;filter:blur(40px);mix-blend-mode:multiply;pointer-events:none;opacity:.5;animation:drift 24s ease-in-out infinite}
+  .smoke.s1{width:340px;height:340px;background:rgba(29,106,59,.6);top:240px;left:-80px;animation-delay:0s}
+  .smoke.s2{width:280px;height:280px;background:rgba(232,177,58,.6);bottom:-60px;right:60px;animation-delay:-8s}
+  .smoke.s3{width:220px;height:220px;background:rgba(200,54,42,.5);top:60%;left:40%;animation-delay:-14s}
+  @keyframes drift{
+    0%,100%{transform:translate(0,0) scale(1)}
+    33%{transform:translate(60px,-40px) scale(1.15)}
+    66%{transform:translate(-30px,30px) scale(.9)}
+  }
+
+  /* sparks */
+  .sparks{position:absolute;inset:0;pointer-events:none;z-index:1}
+  .sparks i{
+    position:absolute;width:6px;height:6px;background:var(--gold);
+    border-radius:50%;box-shadow:0 0 12px var(--gold);
+    animation:rise 8s linear infinite;opacity:0;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) scale(.4);opacity:0}
+    10%{opacity:1}
+    90%{opacity:1}
+    100%{transform:translateY(-600px) scale(1.2);opacity:0}
+  }
+
+  .stamps-row{display:flex;gap:14px;justify-content:center;margin-top:42px;flex-wrap:wrap;position:relative;z-index:2}
+  .badge{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    padding:10px 18px;border:2px solid var(--ink);background:var(--paper);
+    transform:rotate(var(--r,-2deg));
+    animation:float 4s ease-in-out infinite;
+    cursor:pointer;transition:filter .1s;
+    user-select:none;
+  }
+  .badge:hover{filter:brightness(1.1)}
+  .badge.r{background:var(--red);color:var(--paper);--r:3deg}
+  .badge.g{background:var(--green-dark);color:var(--paper);--r:-4deg}
+  .badge.y{background:var(--gold);--r:2deg}
+
+  /* JAH PHRASE */
+  .jah-phrase{
+    position:relative;z-index:3;
+    margin-top:28px;
+    font-family:'Yeseva One';font-size:clamp(22px, 3.5vw, 48px);
+    font-style:italic;letter-spacing:.04em;
+    color:var(--green-dark);
+    text-shadow:3px 3px 0 var(--gold), 4px 4px 0 var(--ink);
+    cursor:default;
+    display:inline-block;
+    transition:text-shadow .3s;
+    animation:jahPulse 6s ease-in-out infinite;
+  }
+  @keyframes jahPulse{
+    0%,100%{text-shadow:3px 3px 0 var(--gold),4px 4px 0 var(--ink)}
+    50%{text-shadow:3px 3px 0 var(--red),4px 4px 0 var(--ink),0 0 40px rgba(232,177,58,.6)}
+  }
+  .jah-phrase::before,.jah-phrase::after{
+    content:"✦";font-style:normal;font-family:'Special Elite';
+    color:var(--gold);margin:0 14px;font-size:.7em;
+    animation:spin 8s linear infinite;display:inline-block;
+  }
+  .jah-phrase::after{animation-direction:reverse}
+
+  /* INVOKE JAH BUTTON */
+  .invoke-btn{
+    position:relative;z-index:3;
+    display:block;margin:36px auto 0;
+    font-family:'Alfa Slab One';font-size:18px;letter-spacing:.08em;text-transform:uppercase;
+    background:var(--green-dark);color:var(--gold);
+    border:3px solid var(--ink);padding:16px 40px;
+    box-shadow:6px 6px 0 var(--red), 6px 6px 0 4px var(--ink);
+    cursor:pointer;
+    transition:transform .12s, box-shadow .12s;
+    overflow:hidden;
+  }
+  .invoke-btn::before{
+    content:"";position:absolute;inset:-10px;
+    background:radial-gradient(circle at center, rgba(232,177,58,.5), transparent 70%);
+    opacity:0;transition:opacity .4s;
+    pointer-events:none;
+  }
+  .invoke-btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--red), 8px 8px 0 4px var(--ink)}
+  .invoke-btn:hover::before{opacity:1}
+  .invoke-btn:active{transform:translate(6px,6px);box-shadow:0 0 0 var(--red),0 0 0 4px var(--ink)}
+
+  /* JAH FLASH OVERLAY */
+  .jah-overlay{
+    position:fixed;inset:0;z-index:9000;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at center, rgba(232,177,58,.98) 0%, rgba(200,54,42,.9) 60%, rgba(29,106,59,.95) 100%);
+    opacity:0;pointer-events:none;
+    transition:opacity .3s;
+  }
+  .jah-overlay.active{opacity:1;pointer-events:all}
+  .jah-overlay .jah-big{
+    font-family:'Alfa Slab One';font-size:clamp(48px, 8vw, 120px);
+    text-transform:uppercase;line-height:.9;
+    color:var(--ink);
+    text-shadow:6px 6px 0 rgba(255,255,255,.3);
+    text-align:center;
+    animation:jahAppear 0.5s ease-out both;
+  }
+  @keyframes jahAppear{
+    0%{transform:scale(.4) rotate(-8deg);opacity:0}
+    70%{transform:scale(1.05) rotate(1deg)}
+    100%{transform:scale(1) rotate(0deg);opacity:1}
+  }
+  .jah-overlay .jah-sub{
+    font-family:'Special Elite';font-size:20px;letter-spacing:.28em;text-transform:uppercase;
+    margin-top:24px;color:var(--ink);opacity:.8;
+    animation:jahAppear 0.5s ease-out .2s both;
+  }
+  .jah-overlay .jah-close{
+    margin-top:48px;
+    font-family:'Special Elite';font-size:13px;letter-spacing:.3em;text-transform:uppercase;
+    border:2px solid var(--ink);padding:10px 22px;background:transparent;color:var(--ink);
+    cursor:pointer;
+    animation:jahAppear 0.5s ease-out .4s both;
+  }
+
+  /* CURSOR TRAIL */
+  .cursor-spark{
+    position:fixed;width:10px;height:10px;border-radius:50%;
+    background:var(--gold);pointer-events:none;z-index:8999;
+    transform:translate(-50%,-50%);
+    animation:sparkFade .6s ease-out forwards;
+  }
+  @keyframes sparkFade{
+    0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+    100%{transform:translate(calc(-50% + var(--dx,0px)), calc(-50% + var(--dy,-30px))) scale(0.2);opacity:0}
+  }
+
+  /* LION CLICK BURST */
+  .lion-wrap{cursor:pointer}
+  .lion-wrap.roar .lion{
+    filter:drop-shadow(0 0 40px var(--gold)) drop-shadow(8px 8px 0 var(--red));
+    animation:lionRoar .4s ease-out;
+  }
+  @keyframes lionRoar{
+    0%{transform:scale(1)}
+    25%{transform:scale(1.12) rotate(-2deg)}
+    50%{transform:scale(1.18) rotate(2deg)}
+    75%{transform:scale(1.1) rotate(-1deg)}
+    100%{transform:scale(1)}
+  }
+  .roar-burst{
+    position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:10;
+  }
+  .roar-burst i{
+    position:absolute;width:8px;height:8px;border-radius:50%;
+    background:var(--gold);
+    transform-origin:center;
+    animation:burstOut .6s ease-out forwards;
+  }
+  @keyframes burstOut{
+    0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+    100%{transform:translate(calc(-50% + var(--bx,0px)), calc(-50% + var(--by,0px))) scale(.2);opacity:0}
+  }
+
+  /* LION ROAR TEXT */
+  .roar-text{
+    position:absolute;left:50%;top:-30px;transform:translateX(-50%);
+    font-family:'Alfa Slab One';font-size:28px;color:var(--red);
+    text-shadow:2px 2px 0 var(--ink);pointer-events:none;
+    white-space:nowrap;z-index:10;
+    animation:roarText .8s ease-out forwards;
+    opacity:0;
+  }
+  @keyframes roarText{
+    0%{opacity:0;transform:translateX(-50%) translateY(0) scale(.5)}
+    30%{opacity:1;transform:translateX(-50%) translateY(-20px) scale(1.2)}
+    80%{opacity:1;transform:translateX(-50%) translateY(-40px) scale(1)}
+    100%{opacity:0;transform:translateX(-50%) translateY(-60px) scale(.8)}
+  }
+
+  /* PROGRESS interactive */
+  .progress{cursor:pointer}
+  .progress-fill{position:absolute;inset:0;height:100%;background:repeating-linear-gradient(45deg,var(--ink) 0 4px,var(--gold) 4px 8px);pointer-events:none;transition:width .1s}
+  .progress-thumb{position:absolute;top:50%;width:18px;height:18px;background:var(--red);border:2px solid var(--ink);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:2px 2px 0 var(--ink)}
+
+  /* LISTENER COUNT live */
+  .listener-count{
+    display:inline-block;position:relative;
+    font-family:'Alfa Slab One';font-size:28px;
+    color:var(--red);
+    transition:transform .15s;
+  }
+  .listener-count.bump{transform:scale(1.3)}
+
+  /* VOLUME KNOB */
+  .vol-knob-wrap{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  }
+  .vol-knob{
+    width:44px;height:44px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #3a2208, var(--ink));
+    border:3px solid var(--ink);cursor:grab;position:relative;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .vol-knob::after{
+    content:"";position:absolute;top:5px;left:50%;width:3px;height:14px;
+    background:var(--gold);border-radius:2px;transform:translateX(-50%);
+    transform-origin:bottom center;
+  }
+  .vol-knob:active{cursor:grabbing}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><span class="dot"></span>ПОТУЖНОСТЬ&nbsp;РУ <span style="font-family:'Special Elite';font-size:11px;letter-spacing:.2em;margin-left:10px;opacity:.6">EST. MMXXVI</span></div>
+  <ul>
+    <li><a href="../vintage/index.html">Эфир</a></li>
+    <li><a href="../zalipay/index.html">Залипай</a></li>
+    <li><a href="../taro/index.html">Таро</a></li>
+    <li><a href="../chai/index.html">Чай</a></li>
+    <li><a href="../shar/index.html">Шар</a></li>
+  </ul>
+  <button class="nav-pill">В эфире · LIVE</button>
+</nav>
+
+<section class="hero">
+  <div class="smoke s1"></div>
+  <div class="smoke s2"></div>
+
+  <div class="sun" aria-hidden="true">
+    <svg viewBox="0 0 1100 1100">
+      <defs>
+        <g id="ray"><polygon points="550,0 540,540 560,540" fill="#e8b13a" opacity=".4"/></g>
+      </defs>
+      <g style="transform-origin:550px 550px">
+        <use href="#ray"/>
+        <use href="#ray" transform="rotate(15 550 550)"/>
+        <use href="#ray" transform="rotate(30 550 550)"/>
+        <use href="#ray" transform="rotate(45 550 550)"/>
+        <use href="#ray" transform="rotate(60 550 550)"/>
+        <use href="#ray" transform="rotate(75 550 550)"/>
+        <use href="#ray" transform="rotate(90 550 550)"/>
+        <use href="#ray" transform="rotate(105 550 550)"/>
+        <use href="#ray" transform="rotate(120 550 550)"/>
+        <use href="#ray" transform="rotate(135 550 550)"/>
+        <use href="#ray" transform="rotate(150 550 550)"/>
+        <use href="#ray" transform="rotate(165 550 550)"/>
+        <use href="#ray" transform="rotate(180 550 550)"/>
+        <use href="#ray" transform="rotate(195 550 550)"/>
+        <use href="#ray" transform="rotate(210 550 550)"/>
+        <use href="#ray" transform="rotate(225 550 550)"/>
+        <use href="#ray" transform="rotate(240 550 550)"/>
+        <use href="#ray" transform="rotate(255 550 550)"/>
+        <use href="#ray" transform="rotate(270 550 550)"/>
+        <use href="#ray" transform="rotate(285 550 550)"/>
+        <use href="#ray" transform="rotate(300 550 550)"/>
+        <use href="#ray" transform="rotate(315 550 550)"/>
+        <use href="#ray" transform="rotate(330 550 550)"/>
+        <use href="#ray" transform="rotate(345 550 550)"/>
+      </g>
+      <circle cx="550" cy="550" r="180" fill="#e8b13a" opacity=".55"/>
+      <circle cx="550" cy="550" r="120" fill="#c8362a" opacity=".4"/>
+    </svg>
+  </div>
+
+  <div class="stamp s1">★ Московский эфир ★</div>
+  <div class="stamp s2">№ 042 · Daily Dub</div>
+  <div class="stamp s3">RIDDIM ✕ ROOTS</div>
+
+  <h1 class="title" style="font-size:123px">ПОТУЖНОСТЬ&nbsp;<span class="ru">РУ</span><br><span class="gr" style="font-weight: 700; font-size: 140px">СОЛНЕЧНЫЙ ДЖА</span></h1>
+
+  <p class="jah-phrase">озаряет планету</p>
+
+  <p class="sub">Подпольное интернет-радио из подвала в&nbsp;<em>Москве</em>. Грузи свои треки, наливай чай, садись поглубже.</p>
+
+  <div class="meta-row">
+    <span><span class="bar"></span> 24/7 ВЕЩАНИЕ <span class="bar"></span></span>
+    <span>•</span>
+    <span>СЕЙЧАС В ЭФИРЕ: <span class="listener-count" id="listenerCount">142</span> ЧЕЛОВЕКА</span>
+    <span>•</span>
+    <span>БИТРЕЙТ 320 КБИТ/С</span>
+  </div>
+
+  <button class="invoke-btn" id="invokeJah">★ ПРИЗВАТЬ ДЖАХА ★</button>
+
+  <div class="stamps-row">
+    <div class="badge r">DUB</div>
+    <div class="badge g">ROOTS REGGAE</div>
+    <div class="badge y">SKA</div>
+    <div class="badge">RUB-A-DUB</div>
+    <div class="badge g">LOVERS ROCK</div>
+    <div class="badge r">STEPPERS</div>
+  </div>
+
+  <div class="lion-wrap">
+    <svg class="lion" viewBox="0 0 600 280" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <pattern id="dots" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="1.2" fill="#1a1208"/>
+        </pattern>
+      </defs>
+      <!-- mane (animated) -->
+      <g style="transform-origin:300px 160px">
+        <g>
+          <path d="M 300 30 C 200 30 130 80 110 160 C 100 200 110 230 150 250 C 100 240 60 200 70 150 C 50 120 60 80 100 60 C 80 40 110 20 150 30 C 170 0 230 0 260 20 Z"
+                fill="#c8362a"/>
+          <path d="M 300 30 C 400 30 470 80 490 160 C 500 200 490 230 450 250 C 500 240 540 200 530 150 C 550 120 540 80 500 60 C 520 40 490 20 450 30 C 430 0 370 0 340 20 Z"
+                fill="#e8b13a"/>
+          <animateTransform attributeName="transform" type="rotate" values="-2 300 160;2 300 160;-2 300 160" dur="6s" repeatCount="indefinite"/>
+        </g>
+      </g>
+      <!-- face -->
+      <ellipse cx="300" cy="170" rx="120" ry="100" fill="#1a1208"/>
+      <ellipse cx="300" cy="160" rx="100" ry="80" fill="#e8b13a"/>
+      <!-- eyes -->
+      <ellipse cx="265" cy="150" rx="10" ry="14" fill="#1a1208"/>
+      <ellipse cx="335" cy="150" rx="10" ry="14" fill="#1a1208"/>
+      <circle cx="267" cy="146" r="3" fill="#f1e1bd"/>
+      <circle cx="337" cy="146" r="3" fill="#f1e1bd"/>
+      <!-- nose -->
+      <path d="M 290 180 L 310 180 L 305 198 L 295 198 Z" fill="#1a1208"/>
+      <path d="M 295 198 Q 290 215 280 210 M 305 198 Q 310 215 320 210" stroke="#1a1208" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- mouth -->
+      <path d="M 270 220 Q 300 240 330 220" stroke="#1a1208" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- whiskers -->
+      <line x1="240" y1="195" x2="200" y2="190" stroke="#1a1208" stroke-width="1.5"/>
+      <line x1="240" y1="200" x2="200" y2="205" stroke="#1a1208" stroke-width="1.5"/>
+      <line x1="360" y1="195" x2="400" y2="190" stroke="#1a1208" stroke-width="1.5"/>
+      <line x1="360" y1="200" x2="400" y2="205" stroke="#1a1208" stroke-width="1.5"/>
+      <!-- crown -->
+      <path d="M 230 80 L 250 50 L 270 80 L 300 40 L 330 80 L 350 50 L 370 80 Z" fill="#1d6a3b" stroke="#1a1208" stroke-width="3"/>
+      <circle cx="300" cy="60" r="5" fill="#c8362a"/>
+      <!-- halftone overlay on face -->
+      <ellipse cx="300" cy="160" rx="100" ry="80" fill="url(#dots)" opacity=".25"/>
+    </svg>
+  </div>
+
+  <div class="smoke s3"></div>
+</section>
+
+<!-- FLAG STRIP -->
+<div class="flag-strip">
+  <svg viewBox="0 0 1200 84" preserveAspectRatio="none">
+    <defs>
+      <pattern id="flagWave" x="0" y="0" width="1200" height="84" patternUnits="userSpaceOnUse">
+        <rect width="1200" height="28" fill="#1d6a3b"/>
+        <rect y="28" width="1200" height="28" fill="#e8b13a"/>
+        <rect y="56" width="1200" height="28" fill="#c8362a"/>
+      </pattern>
+    </defs>
+    <path fill="url(#flagWave)">
+      <animate attributeName="d"
+        dur="6s" repeatCount="indefinite"
+        values="
+          M 0,10 Q 300,40 600,10 T 1200,10 L 1200,84 L 0,84 Z;
+          M 0,30 Q 300,0 600,30 T 1200,30 L 1200,84 L 0,84 Z;
+          M 0,10 Q 300,40 600,10 T 1200,10 L 1200,84 L 0,84 Z" />
+    </path>
+  </svg>
+</div>
+
+<!-- PLAYER -->
+<section class="player-section">
+  <div class="sparks">
+    <i style="left:5%;animation-delay:-1s"></i>
+    <i style="left:18%;animation-delay:-3s"></i>
+    <i style="left:30%;animation-delay:-5s"></i>
+    <i style="left:48%;animation-delay:-2s"></i>
+    <i style="left:62%;animation-delay:-7s"></i>
+    <i style="left:76%;animation-delay:-4s"></i>
+    <i style="left:88%;animation-delay:-6s"></i>
+  </div>
+
+  <p class="eyebrow">★ ★ ★   В Э Ф И Р Е   С Е Й Ч А С   ★ ★ ★</p>
+  <h2>Прямо <span class="red">сейчас</span> крутится</h2>
+
+  <div class="player">
+    <div class="turntable">
+      <div class="vinyl">
+        <div class="label">
+          ПОТУЖНОСТЬ<br>FM
+          <div class="small">CHANNEL ONE</div>
+        </div>
+      </div>
+      <div class="arm"></div>
+    </div>
+
+    <div class="deck">
+      <div class="now-playing">
+        <div>
+          <h3>Дым над Онтарио</h3>
+          <div class="artist">Lion Of Toronto · Dub Mix</div>
+        </div>
+        <div class="time">02:47<span style="opacity:.4"> / 06:12</span></div>
+      </div>
+
+      <div class="viz" id="viz"></div>
+
+      <div class="controls">
+        <button title="Назад"><svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><polygon points="18,3 8,11 18,19"/><rect x="4" y="3" width="3" height="16"/></svg></button>
+        <button class="play" title="Воспроизвести"><svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor"><polygon points="7,4 23,14 7,24"/></svg></button>
+        <button title="Вперёд"><svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor"><polygon points="4,3 14,11 4,19"/><rect x="15" y="3" width="3" height="16"/></svg></button>
+        <div class="progress" id="progressBar" style="position:relative">
+          <div class="progress-fill" id="progressFill" style="width:42%"></div>
+          <div class="progress-thumb" id="progressThumb" style="left:42%"></div>
+        </div>
+        <div class="vol-knob-wrap">
+          <div class="vol-knob" id="volKnob" title="Громкость"></div>
+          <span>VOL</span>
+        </div>
+        <span class="ctrl-meta">320 KBPS</span>
+      </div>
+
+      <div class="tracks">
+        <div class="track">
+          <span class="n">01</span>
+          <div class="t-name">Дым над Онтарио<span class="sub2">Lion Of Toronto · 6:12</span></div>
+          <span class="t-tag g">DUB</span>
+          <span class="t-dur">▶</span>
+        </div>
+        <div class="track">
+          <span class="n active">02</span>
+          <div class="t-name">Бас в подвале<span class="sub2">Подвал Sound System · 4:48</span></div>
+          <span class="t-tag r">STEPPERS</span>
+          <span class="t-dur">04:48</span>
+        </div>
+        <div class="track">
+          <span class="n active">03</span>
+          <div class="t-name">Чай и хапка<span class="sub2">Иван-Заскок · 7:30</span></div>
+          <span class="t-tag y">ROOTS</span>
+          <span class="t-dur">07:30</span>
+        </div>
+        <div class="track">
+          <span class="n active">04</span>
+          <div class="t-name">Снег на пальмах<span class="sub2">Northern Riddim · 5:11</span></div>
+          <span class="t-tag g">LOVERS</span>
+          <span class="t-dur">05:11</span>
+        </div>
+        <div class="track">
+          <span class="n active">05</span>
+          <div class="t-name">Канадский корень<span class="sub2">Toronto Junglist · 8:02</span></div>
+          <span class="t-tag r">JUNGLE</span>
+          <span class="t-dur">08:02</span>
+        </div>
+      </div>
+
+      <div class="upload-card">
+        <div>
+          <h4>Кидай свою кассету</h4>
+          <p>MP3, WAV, FLAC — до 200 МБ. Сразу в эфир.</p>
+        </div>
+        <div class="plus">+</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>★ ВЫСТАВЛЯЙ БАС <span class="star">✦</span> САДИСЬ ПОГЛУБЖЕ <span class="star">✦</span> 24/7 БЕЗ РЕКЛАМЫ <span class="star">✦</span> ВЕЩАЕМ ИЗ МОСКВЫ <span class="star">✦</span> JAH BLESS THE NORTH <span class="star">✦</span></span>
+    <span>★ ВЫСТАВЛЯЙ БАС <span class="star">✦</span> САДИСЬ ПОГЛУБЖЕ <span class="star">✦</span> 24/7 БЕЗ РЕКЛАМЫ <span class="star">✦</span> ВЕЩАЕМ ИЗ МОСКВЫ <span class="star">✦</span> JAH BLESS THE NORTH <span class="star">✦</span></span>
+  </div>
+</div>
+
+<!-- JAH OVERLAY -->
+<div class="jah-overlay" id="jahOverlay">
+  <div class="jah-big">СОЛНЕЧНЫЙ<br>ДЖА<br>ОЗАРЯЕТ<br>ПЛАНЕТУ</div>
+  <div class="jah-sub">✦ JAH BLESS THE NORTH ✦</div>
+  <button class="jah-close" id="jahClose">ЗАКРЫТЬ ★ CLOSE</button>
+</div>
+
+<footer>
+  <div class="big">ОДНА ЛЮБОВЬ.<br>ОДИН БАС.</div>
+  <div class="small">ПОТУЖНОСТЬ РУ · МОСКВА · MMXXVI · ALL RIDDIMS RESERVED</div>
+</footer>
+
+<script>
+  // ── VISUALIZER BARS ──────────────────────────────────────
+  const viz = document.getElementById('viz');
+  for (let i = 0; i < 48; i++) {
+    const b = document.createElement('div');
+    b.className = 'b';
+    b.style.animationDelay = (-Math.random() * 1.2) + 's';
+    b.style.animationDuration = (0.6 + Math.random() * 0.8) + 's';
+    viz.appendChild(b);
+  }
+
+  // ── PARALLAX MOUSE ────────────────────────────────────────
+  const sun = document.querySelector('.sun');
+  const lionWrap = document.querySelector('.lion-wrap');
+  const stamps = document.querySelectorAll('.stamp');
+  const jahPhrase = document.querySelector('.jah-phrase');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5);
+    const y = (e.clientY / window.innerHeight - 0.5);
+    if (sun) sun.style.transform = `translateX(calc(-50% + ${x * 40}px)) translateY(${y * 25}px)`;
+    if (lionWrap) lionWrap.style.transform = `translate(${x * -25}px, ${y * -12}px)`;
+    if (jahPhrase) jahPhrase.style.transform = `translate(${x * 12}px, ${y * 8}px)`;
+    stamps.forEach((s, i) => {
+      const dir = i % 2 === 0 ? 1 : -1;
+      s.style.transform = s.style.transform.replace(/translate\([^)]+\)/, '') +
+        ` translate(${x * 18 * dir}px, ${y * 10}px)`;
+    });
+    // cursor gold trail
+    spawnSpark(e.clientX, e.clientY);
+  });
+
+  // ── CURSOR TRAIL ──────────────────────────────────────────
+  let sparkThrottle = 0;
+  function spawnSpark(cx, cy) {
+    const now = Date.now();
+    if (now - sparkThrottle < 40) return;
+    sparkThrottle = now;
+    const s = document.createElement('div');
+    s.className = 'cursor-spark';
+    const dx = (Math.random() * 40 - 20) + 'px';
+    const dy = (Math.random() * -40 - 10) + 'px';
+    s.style.setProperty('--dx', dx);
+    s.style.setProperty('--dy', dy);
+    s.style.left = cx + 'px';
+    s.style.top  = cy + 'px';
+    // random rasta colour
+    const colours = ['#e8b13a','#c8362a','#1d6a3b','#f1e1bd'];
+    s.style.background = colours[Math.floor(Math.random() * colours.length)];
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 700);
+  }
+
+  // ── LION CLICK ────────────────────────────────────────────
+  const roarTexts = ['JAH RASTAFARI!','ONE LOVE!','ROOTS!','ИРИЙ!','RIDDIM!','БЛЕССИНГ!','СОЛНЕЧНЫЙ ДЖА!'];
+  if (lionWrap) {
+    lionWrap.addEventListener('click', (e) => {
+      // roar animation
+      lionWrap.classList.remove('roar');
+      void lionWrap.offsetWidth;
+      lionWrap.classList.add('roar');
+      setTimeout(() => lionWrap.classList.remove('roar'), 600);
+
+      // floating text
+      const txt = document.createElement('div');
+      txt.className = 'roar-text';
+      txt.textContent = roarTexts[Math.floor(Math.random() * roarTexts.length)];
+      lionWrap.appendChild(txt);
+      setTimeout(() => txt.remove(), 900);
+
+      // burst particles
+      const burst = document.createElement('div');
+      burst.className = 'roar-burst';
+      lionWrap.appendChild(burst);
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('i');
+        const angle = (i / 18) * Math.PI * 2;
+        const dist = 60 + Math.random() * 80;
+        p.style.setProperty('--bx', (Math.cos(angle) * dist) + 'px');
+        p.style.setProperty('--by', (Math.sin(angle) * dist) + 'px');
+        const colours = ['#e8b13a','#c8362a','#1d6a3b'];
+        p.style.background = colours[i % 3];
+        p.style.animationDelay = (Math.random() * 0.1) + 's';
+        burst.appendChild(p);
+      }
+      setTimeout(() => burst.remove(), 800);
+
+      // bump listener count
+      const lc = document.getElementById('listenerCount');
+      if (lc) {
+        lc.textContent = parseInt(lc.textContent) + Math.floor(Math.random() * 3 + 1);
+        lc.classList.add('bump');
+        setTimeout(() => lc.classList.remove('bump'), 300);
+      }
+    });
+  }
+
+  // ── JAH OVERLAY BUTTON ───────────────────────────────────
+  const invokeBtn = document.getElementById('invokeJah');
+  const jahOverlay = document.getElementById('jahOverlay');
+  const jahClose   = document.getElementById('jahClose');
+
+  if (invokeBtn && jahOverlay) {
+    invokeBtn.addEventListener('click', () => {
+      jahOverlay.classList.add('active');
+      // spawn explosion of sparks
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          spawnSpark(
+            window.innerWidth / 2 + (Math.random() * 300 - 150),
+            window.innerHeight / 2 + (Math.random() * 200 - 100)
+          );
+        }, i * 30);
+      }
+    });
+    jahClose.addEventListener('click', () => jahOverlay.classList.remove('active'));
+    jahOverlay.addEventListener('click', e => {
+      if (e.target === jahOverlay) jahOverlay.classList.remove('active');
+    });
+  }
+
+  // ── LIVE LISTENER COUNT ──────────────────────────────────
+  const lc = document.getElementById('listenerCount');
+  if (lc) {
+    setInterval(() => {
+      const delta = Math.floor(Math.random() * 5) - 2;
+      let count = parseInt(lc.textContent) + delta;
+      if (count < 100) count = 100;
+      if (count > 999) count = 999;
+      lc.textContent = count;
+      if (delta > 0) {
+        lc.classList.add('bump');
+        setTimeout(() => lc.classList.remove('bump'), 300);
+      }
+    }, 3800);
+  }
+
+  // ── INTERACTIVE PROGRESS BAR ─────────────────────────────
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  const progressThumb = document.getElementById('progressThumb');
+  let isDragging = false;
+  let progressPct = 42;
+
+  function setProgress(pct) {
+    progressPct = Math.max(0, Math.min(100, pct));
+    if (progressFill) progressFill.style.width = progressPct + '%';
+    if (progressThumb) progressThumb.style.left = progressPct + '%';
+    // update displayed time (fake 6:12 total)
+    const total = 372;
+    const current = Math.round(total * progressPct / 100);
+    const m = Math.floor(current / 60);
+    const s = current % 60;
+    const timeEl = document.querySelector('.now-playing .time');
+    if (timeEl) timeEl.innerHTML = `${m}:${s.toString().padStart(2,'0')}<span style="opacity:.4"> / 06:12</span>`;
+  }
+
+  if (progressBar) {
+    progressBar.addEventListener('mousedown', e => {
+      isDragging = true;
+      const rect = progressBar.getBoundingClientRect();
+      setProgress((e.clientX - rect.left) / rect.width * 100);
+    });
+    document.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      const rect = progressBar.getBoundingClientRect();
+      setProgress((e.clientX - rect.left) / rect.width * 100);
+    });
+    document.addEventListener('mouseup', () => { isDragging = false; });
+
+    // auto-advance when playing
+    setInterval(() => {
+      if (playing && !isDragging) {
+        setProgress(progressPct + (100 / 372));
+        if (progressPct >= 100) setProgress(0);
+      }
+    }, 1000);
+  }
+
+  // ── VOLUME KNOB ───────────────────────────────────────────
+  const volKnob = document.getElementById('volKnob');
+  if (volKnob) {
+    let volAngle = -30; // degrees, range -135 to +135
+    let volDragging = false;
+    let volStartY = 0;
+    let volStartAngle = -30;
+
+    function updateKnob(angle) {
+      volAngle = Math.max(-135, Math.min(135, angle));
+      const needle = volKnob.querySelector('::after');
+      volKnob.style.setProperty('--knob-rot', volAngle + 'deg');
+      // rotate the pseudo-element via direct style on knob
+      volKnob.style.transform = `rotate(${volAngle}deg)`;
+    }
+
+    volKnob.addEventListener('mousedown', e => {
+      volDragging = true;
+      volStartY = e.clientY;
+      volStartAngle = volAngle;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => {
+      if (!volDragging) return;
+      const dy = volStartY - e.clientY;
+      updateKnob(volStartAngle + dy * 1.5);
+    });
+    document.addEventListener('mouseup', () => { volDragging = false; });
+    volKnob.addEventListener('wheel', e => {
+      e.preventDefault();
+      updateKnob(volAngle - e.deltaY * 0.3);
+    }, { passive: false });
+  }
+
+  // ── TRACK CLICK ───────────────────────────────────────────
+  document.querySelectorAll('.track').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.track .n').forEach(n => n.classList.add('active'));
+      const n = t.querySelector('.n');
+      n.classList.remove('active');
+      const dur = t.querySelector('.t-dur');
+      document.querySelectorAll('.track .t-dur').forEach(d => {
+        if (d.textContent === '▶') d.textContent = d.closest('.track').dataset.dur || '04:48';
+      });
+      t.dataset.dur = dur.textContent;
+      dur.textContent = '▶';
+      const name = t.querySelector('.t-name').childNodes[0].textContent;
+      const sub  = t.querySelector('.sub2').textContent;
+      document.querySelector('.now-playing h3').textContent = name;
+      document.querySelector('.now-playing .artist').textContent = sub;
+      // reset progress
+      setProgress(0);
+    });
+  });
+
+  // ── PLAY BUTTON ───────────────────────────────────────────
+  const playBtn = document.querySelector('.controls .play');
+  let playing = true;
+  playBtn.addEventListener('click', () => {
+    playing = !playing;
+    document.querySelector('.vinyl').style.animationPlayState = playing ? 'running' : 'paused';
+    document.querySelectorAll('.viz .b').forEach(b => b.style.animationPlayState = playing ? 'running' : 'paused');
+    playBtn.innerHTML = playing
+      ? '<svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor"><polygon points="7,4 23,14 7,24"/></svg>'
+      : '<svg width="28" height="28" viewBox="0 0 28 28" fill="currentColor"><rect x="6" y="4" width="6" height="20"/><rect x="16" y="4" width="6" height="20"/></svg>';
+  });
+
+  // ── BADGE CLICK ───────────────────────────────────────────
+  document.querySelectorAll('.badge').forEach(badge => {
+    badge.addEventListener('click', e => {
+      // stamp effect — wobble
+      badge.style.transform = `rotate(${(Math.random()*20-10)}deg) scale(1.25)`;
+      badge.style.zIndex = '10';
+      setTimeout(() => {
+        badge.style.transform = '';
+        badge.style.zIndex = '';
+      }, 300);
+      // spawn sparks from badge position
+      const r = badge.getBoundingClientRect();
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => spawnSpark(
+          r.left + r.width/2 + (Math.random()*r.width - r.width/2),
+          r.top  + r.height/2
+        ), i * 20);
+      }
+    });
+  });
+
+  // ── NAV PILL PULSE ────────────────────────────────────────
+  const navPill = document.querySelector('.nav-pill');
+  if (navPill) {
+    setInterval(() => {
+      navPill.style.transform = 'scale(1.04)';
+      setTimeout(() => navPill.style.transform = '', 200);
+    }, 4000);
+  }
+
+  // ── SCROLL PARALLAX ───────────────────────────────────────
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const smoke = document.querySelectorAll('.smoke');
+    smoke.forEach((s, i) => {
+      s.style.transform = `translateY(${y * 0.12 * (i % 2 ? 1 : -1)}px)`;
+    });
+  });
+</script>
+
+</body>
+</html>

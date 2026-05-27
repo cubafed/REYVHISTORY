@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<title>ПОТУЖНОСТЬ РУ — Залипай</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Special+Elite&family=Yeseva+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#c8362a;--gold:#e8b13a;--green:#1d6a3b;--green-dark:#0f3d22;
+    --paper:#f1e1bd;--ink:#1a1208;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Oswald',sans-serif}
+
+  /* ── CANVAS ── */
+  #canvas{position:fixed;inset:0;display:block;z-index:1}
+
+  /* ── NAV BAR ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 40px;
+    background:linear-gradient(180deg,rgba(10,6,3,.85),transparent);
+    backdrop-filter:blur(4px);
+  }
+  nav .brand{
+    font-family:'Alfa Slab One';font-size:20px;color:var(--gold);
+    letter-spacing:.06em;text-decoration:none;
+    text-shadow:2px 2px 0 var(--ink);
+    display:flex;align-items:center;gap:10px;
+  }
+  nav .brand .dot{
+    width:12px;height:12px;border-radius:50%;background:var(--red);
+    box-shadow:0 0 10px var(--red),0 0 20px rgba(200,54,42,.5);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+  nav .modes{display:flex;gap:8px}
+  nav .mode-btn{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    padding:8px 16px;border:2px solid rgba(241,225,189,.3);color:var(--paper);
+    background:transparent;cursor:pointer;transition:all .2s;border-radius:2px;
+  }
+  nav .mode-btn:hover{border-color:var(--gold);color:var(--gold)}
+  nav .mode-btn.active{background:var(--red);border-color:var(--red);color:var(--paper)}
+  nav .back{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--paper);text-decoration:none;opacity:.6;transition:opacity .2s;
+  }
+  nav .back:hover{opacity:1;color:var(--gold)}
+
+  /* ── TRACK INFO DOCK ── */
+  .dock{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:50;
+    display:flex;align-items:center;gap:20px;
+    background:rgba(26,18,8,.75);backdrop-filter:blur(20px);
+    border:2px solid rgba(232,177,58,.3);border-radius:999px;
+    padding:14px 28px;
+    box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 0 1px rgba(232,177,58,.1);
+    transition:opacity .4s;
+  }
+  .dock.hidden{opacity:0;pointer-events:none}
+  .dock .play{
+    width:44px;height:44px;border-radius:50%;
+    background:linear-gradient(135deg,var(--red),var(--gold));
+    border:none;cursor:pointer;color:#fff;
+    display:grid;place-items:center;flex-shrink:0;
+    box-shadow:0 4px 16px rgba(200,54,42,.5);
+    transition:transform .15s,box-shadow .15s;
+  }
+  .dock .play:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(200,54,42,.7)}
+  .dock .track-info{display:flex;flex-direction:column;gap:2px;min-width:200px}
+  .dock .track-name{font-family:'Alfa Slab One';font-size:16px;color:var(--gold);letter-spacing:.02em}
+  .dock .track-artist{font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);opacity:.65}
+  .dock .prog-wrap{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Special Elite';font-size:11px;letter-spacing:.15em;color:rgba(241,225,189,.6);
+  }
+  .dock .prog{
+    width:160px;height:4px;background:rgba(241,225,189,.2);border-radius:2px;
+    position:relative;cursor:pointer;
+  }
+  .dock .prog-fill{
+    position:absolute;left:0;top:0;height:100%;border-radius:2px;
+    background:linear-gradient(90deg,var(--green),var(--gold),var(--red));
+    transition:width .8s linear;
+  }
+  .dock .prog-thumb{
+    position:absolute;top:50%;width:12px;height:12px;background:var(--gold);border-radius:50%;
+    transform:translate(-50%,-50%);border:2px solid var(--ink);
+    box-shadow:0 0 8px rgba(232,177,58,.7);
+    transition:left .8s linear;
+  }
+  .dock .skip{
+    background:transparent;border:none;cursor:pointer;color:rgba(241,225,189,.6);
+    font-size:16px;padding:4px;transition:color .2s;flex-shrink:0;
+  }
+  .dock .skip:hover{color:var(--gold)}
+
+  /* ── JAH TEXT floating ── */
+  #jahText{
+    position:fixed;inset:0;z-index:40;pointer-events:none;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;transition:opacity 1s;
+  }
+  #jahText.show{opacity:1}
+  #jahText span{
+    font-family:'Alfa Slab One';font-size:clamp(40px,8vw,120px);
+    text-transform:uppercase;line-height:.9;text-align:center;
+    background:linear-gradient(180deg,var(--gold) 0%,var(--red) 50%,var(--green-dark) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 30px rgba(232,177,58,.8));
+    animation:jahFloat 4s ease-in-out infinite;
+  }
+  @keyframes jahFloat{
+    0%,100%{transform:scale(1) rotate(-.5deg)}
+    50%{transform:scale(1.04) rotate(.5deg)}
+  }
+
+  /* ── OVERLAY CONTROLS HINT ── */
+  .hint{
+    position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+    font-family:'Special Elite';font-size:14px;letter-spacing:.26em;
+    text-transform:uppercase;color:rgba(241,225,189,.35);
+    text-align:center;z-index:30;pointer-events:none;
+    animation:hintFade 3s ease-out 2s forwards;
+  }
+  @keyframes hintFade{0%{opacity:1}100%{opacity:0}}
+
+  /* ── CURSOR ── */
+  body{cursor:none}
+  #cursor{
+    position:fixed;width:24px;height:24px;z-index:9999;pointer-events:none;
+    border:2px solid var(--gold);border-radius:50%;
+    transform:translate(-50%,-50%);
+    transition:width .15s,height .15s,background .15s;
+    mix-blend-mode:exclusion;
+  }
+  #cursor.clicking{width:10px;height:10px;background:var(--gold)}
+
+  /* paper grain on top */
+  .grain{
+    position:fixed;inset:0;z-index:45;pointer-events:none;opacity:.06;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='1' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode:overlay;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="grain"></div>
+
+<!-- custom cursor -->
+<div id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="../vintage/index.html" class="brand"><span class="dot"></span> ПОТУЖНОСТЬ РУ</a>
+  <div class="nav-links" style="display:flex;gap:4px">
+    <a href="../vintage/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">эфир</a>
+    <a href="../taro/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">таро</a>
+    <a href="../fire/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">огонь</a>
+    <a href="../chai/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">чай</a>
+    <a href="../shar/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">шар</a>
+  </div>
+  <div class="modes">
+    <button class="mode-btn active" data-mode="mandala">Мандала</button>
+    <button class="mode-btn" data-mode="waves">Волны</button>
+    <button class="mode-btn" data-mode="stars">Звёзды</button>
+    <button class="mode-btn" data-mode="lava">Лава</button>
+  </div>
+  <a href="../vintage/index.html" class="back">← назад в эфир</a>
+</nav>
+
+<!-- JAH FLOATING TEXT -->
+<div id="jahText"><span>Солнечный Джа<br>озаряет планету</span></div>
+
+<!-- HINT -->
+<div class="hint">Двигай мышь · Кликай · Нажимай M</div>
+
+<!-- PLAYER DOCK -->
+<div class="dock" id="dock">
+  <button class="skip" id="prevBtn">◄◄</button>
+  <button class="play" id="playBtn">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><polygon points="5,2 15,9 5,16"/></svg>
+  </button>
+  <button class="skip" id="nextBtn">►►</button>
+  <div class="track-info">
+    <div class="track-name" id="trackName">Дым над Онтарио</div>
+    <div class="track-artist" id="trackArtist">Lion Of Moscow · Dub Mix</div>
+  </div>
+  <div class="prog-wrap">
+    <span id="timeEl">00:00</span>
+    <div class="prog" id="prog">
+      <div class="prog-fill" id="progFill" style="width:0%"></div>
+      <div class="prog-thumb" id="progThumb" style="left:0%"></div>
+    </div>
+    <span id="durEl">06:12</span>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+const tracks = [
+  {name:'Дым над Онтарио',  artist:'Lion Of Moscow · Dub Mix',    dur:372},
+  {name:'Бас в подвале',    artist:'Подвал Sound System',          dur:288},
+  {name:'Чай и хапка',      artist:'Иван-Заскок · Roots',         dur:450},
+  {name:'Снег на пальмах',  artist:'Northern Riddim',              dur:311},
+  {name:'Московский корень',artist:'DJ JAH-Москва · Steppers',    dur:482},
+];
+let trackIdx = 0;
+let playing = true;
+let elapsed = 0;
+let mode = 'mandala';
+let mx = 0, my = 0;       // mouse position 0-1
+let tick = 0;
+let lastTime = performance.now();
+let dockHideTimer;
+
+// ─────────────────────────────────────────────
+//  CANVAS SETUP
+// ─────────────────────────────────────────────
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─────────────────────────────────────────────
+//  COLOUR HELPERS
+// ─────────────────────────────────────────────
+const C = {
+  red:  [200, 54,  42],
+  gold: [232, 177, 58],
+  green:[29,  106, 59],
+  paper:[241, 225, 189],
+};
+function rgb(r,g,b,a=1){ return `rgba(${r},${g},${b},${a})`; }
+function lerpC(a,b,t){ return a.map((v,i)=>v+(b[i]-v)*t); }
+function rastaColor(t, a=1){
+  // cycle red → gold → green → red
+  const p = ((t%1)+1)%1;
+  if(p<.33) return lerpC(C.red,C.gold,p/.33);
+  if(p<.66) return lerpC(C.gold,C.green,(p-.33)/.33);
+  return lerpC(C.green,C.red,(p-.66)/.34);
+}
+function rastaRGB(t,a=1){ const c=rastaColor(t); return rgb(c[0],c[1],c[2],a); }
+
+// ─────────────────────────────────────────────
+//  DRAW MODES
+// ─────────────────────────────────────────────
+
+// ── MANDALA ──────────────────────────────────
+function drawMandala(t){
+  const W=canvas.width, H=canvas.height;
+  const cx=W/2, cy=H/2;
+  const bass = 0.5 + 0.5*Math.sin(t*2.1);
+  const R = Math.min(W,H)*0.38 * (0.85 + 0.15*bass);
+  const arms = 12;
+  const layers = 7;
+
+  ctx.fillStyle=`rgba(3,1,0,${0.12+0.04*Math.sin(t*.7)})`;
+  ctx.fillRect(0,0,W,H);
+
+  // mouse-driven rotation offset
+  const rotOff = mx * Math.PI * 2;
+
+  for(let layer=0;layer<layers;layer++){
+    const lr = R*(layer+1)/layers;
+    const petals = arms*(layer+1);
+    const langle = (2*Math.PI)/petals;
+    const lt = t*(0.4+layer*0.08) + rotOff;
+    for(let p=0;p<petals;p++){
+      const a = langle*p + lt;
+      const x1=cx+Math.cos(a)*lr*0.3, y1=cy+Math.sin(a)*lr*0.3;
+      const x2=cx+Math.cos(a)*lr,     y2=cy+Math.sin(a)*lr;
+      const cx1=cx+Math.cos(a-langle*.5)*lr*.7;
+      const cy1=cy+Math.sin(a-langle*.5)*lr*.7;
+
+      const hue = (layer/layers + p/petals + t*0.07)%1;
+      const col = rastaColor(hue);
+      const alpha = 0.25 + 0.25*Math.sin(t*1.1+layer+p);
+
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.quadraticCurveTo(cx1,cy1,x2,y2);
+      ctx.strokeStyle = rgb(col[0],col[1],col[2], alpha);
+      ctx.lineWidth = 1.5 - layer*0.15;
+      ctx.stroke();
+
+      // dots at petal tips
+      if(layer===layers-1){
+        ctx.beginPath();
+        ctx.arc(x2,y2,3+2*bass,0,Math.PI*2);
+        ctx.fillStyle=rgb(col[0],col[1],col[2],0.9);
+        ctx.fill();
+      }
+    }
+  }
+
+  // central eye
+  const eyeR = R*0.08*(1+0.2*bass);
+  const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,eyeR);
+  grad.addColorStop(0, rgb(232,177,58,1));
+  grad.addColorStop(.4, rgb(200,54,42,.9));
+  grad.addColorStop(1, rgb(0,0,0,0));
+  ctx.beginPath();ctx.arc(cx,cy,eyeR,0,Math.PI*2);
+  ctx.fillStyle=grad;ctx.fill();
+
+  // pupil
+  ctx.beginPath();ctx.arc(cx,cy,eyeR*0.3,0,Math.PI*2);
+  ctx.fillStyle='#000';ctx.fill();
+}
+
+// ── WAVES ─────────────────────────────────────
+function drawWaves(t){
+  const W=canvas.width, H=canvas.height;
+  ctx.fillStyle=`rgba(2,4,2,0.18)`;
+  ctx.fillRect(0,0,W,H);
+
+  const rows = 40;
+  const cols = 120;
+  const amp = H*0.06*(0.7+0.3*Math.sin(t*1.3));
+  const mouseAmp = my * H * 0.12;
+
+  for(let r=0;r<rows;r++){
+    const y0 = (r/rows)*H;
+    const hue = (r/rows + t*0.06)%1;
+    const col = rastaColor(hue);
+    const alpha = 0.18 + 0.22*(r/rows);
+    ctx.beginPath();
+    for(let c=0;c<=cols;c++){
+      const x = (c/cols)*W;
+      const wave1 = Math.sin(c/cols*Math.PI*4 - t*2 + r*0.3) * amp;
+      const wave2 = Math.sin(c/cols*Math.PI*6 - t*1.4 + r*0.5) * amp*0.5;
+      const mouseWave = Math.sin(c/cols*Math.PI*2 - mx*Math.PI*2) * mouseAmp * (1-r/rows);
+      const y = y0 + wave1 + wave2 + mouseWave;
+      c===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=rgb(col[0],col[1],col[2],alpha);
+    ctx.lineWidth=0.8+r*0.04;
+    ctx.stroke();
+  }
+
+  // bass pulse rings
+  const bass=0.5+0.5*Math.sin(t*2.4);
+  for(let i=0;i<6;i++){
+    const phase=(t*0.5+i/6)%1;
+    const ring_r=Math.min(W,H)*0.5*phase;
+    const col=rastaColor(i/6+t*0.04);
+    ctx.beginPath();ctx.arc(W/2,H/2,ring_r,0,Math.PI*2);
+    ctx.strokeStyle=rgb(col[0],col[1],col[2],(1-phase)*0.35*bass);
+    ctx.lineWidth=2*(1-phase);
+    ctx.stroke();
+  }
+}
+
+// ── STARS ─────────────────────────────────────
+const STARS=Array.from({length:280},()=>({
+  x:Math.random(),y:Math.random(),
+  r:Math.random()*2.5+.5,
+  speed:Math.random()*0.0006+0.0001,
+  hue:Math.random(),phase:Math.random()*Math.PI*2
+}));
+function drawStars(t){
+  const W=canvas.width,H=canvas.height;
+  ctx.fillStyle='rgba(1,2,1,0.25)';
+  ctx.fillRect(0,0,W,H);
+
+  for(const s of STARS){
+    s.x=(s.x+s.speed)%1;
+    const sx=s.x*W, sy=s.y*H;
+    const flicker=0.5+0.5*Math.sin(t*3+s.phase);
+    const col=rastaColor(s.hue+t*0.02);
+    const r=s.r*(0.6+0.4*flicker);
+
+    // trail
+    ctx.beginPath();
+    ctx.moveTo(sx,sy);
+    ctx.lineTo(sx-s.speed*W*12,sy);
+    ctx.strokeStyle=rgb(col[0],col[1],col[2],flicker*0.4);
+    ctx.lineWidth=r*0.8;
+    ctx.stroke();
+
+    // star
+    ctx.beginPath();ctx.arc(sx,sy,r,0,Math.PI*2);
+    ctx.fillStyle=rgb(col[0],col[1],col[2],0.7+0.3*flicker);
+    ctx.fill();
+    // glow
+    const g=ctx.createRadialGradient(sx,sy,0,sx,sy,r*4);
+    g.addColorStop(0,rgb(col[0],col[1],col[2],0.3*flicker));
+    g.addColorStop(1,rgb(col[0],col[1],col[2],0));
+    ctx.beginPath();ctx.arc(sx,sy,r*4,0,Math.PI*2);
+    ctx.fillStyle=g;ctx.fill();
+  }
+
+  // mouse constellation
+  const mqx=mx*W, mqy=my*H;
+  STARS.slice(0,40).forEach(s=>{
+    const sx=s.x*W,sy=s.y*H;
+    const d=Math.hypot(sx-mqx,sy-mqy);
+    if(d<180){
+      ctx.beginPath();ctx.moveTo(mqx,mqy);ctx.lineTo(sx,sy);
+      ctx.strokeStyle=rgb(232,177,58,(1-d/180)*0.5);
+      ctx.lineWidth=.5;ctx.stroke();
+    }
+  });
+}
+
+// ── LAVA ──────────────────────────────────────
+function drawLava(t){
+  const W=canvas.width,H=canvas.height;
+  ctx.fillStyle='rgba(5,1,0,0.15)';
+  ctx.fillRect(0,0,W,H);
+
+  const N=12;
+  for(let i=0;i<N;i++){
+    const bx=0.5+0.45*Math.sin(t*0.3+i*1.7+mx*2);
+    const by=0.5+0.45*Math.cos(t*0.25+i*2.1+my*2);
+    const br=0.22+0.1*Math.sin(t*0.4+i);
+    const hue=(i/N+t*0.04)%1;
+    const col=rastaColor(hue);
+
+    const g=ctx.createRadialGradient(bx*W,by*H,0,bx*W,by*H,br*Math.min(W,H));
+    g.addColorStop(0,rgb(col[0],col[1],col[2],0.55));
+    g.addColorStop(.5,rgb(col[0],col[1],col[2],0.2));
+    g.addColorStop(1,rgb(col[0],col[1],col[2],0));
+    ctx.beginPath();
+    ctx.arc(bx*W,by*H,br*Math.min(W,H),0,Math.PI*2);
+    ctx.fillStyle=g;ctx.fill();
+  }
+
+  // scan lines
+  for(let y=0;y<H;y+=4){
+    ctx.fillStyle=`rgba(0,0,0,${0.12+0.04*Math.sin(y*0.1+t)})`;
+    ctx.fillRect(0,y,W,1.5);
+  }
+
+  // hot centre
+  const cx=W*(0.5+mx*0.1),cy=H*(0.5+my*0.1);
+  const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,Math.min(W,H)*0.15);
+  cg.addColorStop(0,rgb(255,220,100,0.7));
+  cg.addColorStop(1,rgb(200,54,42,0));
+  ctx.beginPath();ctx.arc(cx,cy,Math.min(W,H)*0.15,0,Math.PI*2);
+  ctx.fillStyle=cg;ctx.fill();
+}
+
+// ── MATRIX ────────────────────────────────────
+const COLS_M=Math.floor(window.innerWidth/18);
+const drops=Array.from({length:COLS_M},()=>Math.random()*-50);
+const CHARS='ДЖА JAH ONE LOVE ROOTS RIDDIM ✦ ★ ☆ ✤ ✸';
+function drawMatrix(t){
+  const W=canvas.width,H=canvas.height;
+  ctx.fillStyle='rgba(0,4,0,0.18)';
+  ctx.fillRect(0,0,W,H);
+  const colW=Math.floor(W/COLS_M);
+  ctx.font=`16px 'Special Elite', monospace`;
+
+  for(let i=0;i<drops.length;i++){
+    const ch=CHARS[Math.floor(Math.random()*CHARS.length)];
+    const x=i*colW;
+    const y=drops[i]*20;
+    const hue=(i/COLS_M+t*0.04)%1;
+    const col=rastaColor(hue);
+    // head character — bright
+    ctx.fillStyle=rgb(col[0],col[1],col[2],0.9+0.1*Math.sin(t*5+i));
+    ctx.fillText(ch,x,y);
+    // tail fade
+    ctx.fillStyle=rgb(col[0],col[1],col[2],0.3);
+    ctx.fillText(CHARS[Math.floor(Math.random()*CHARS.length)],x,y-20);
+
+    if(y>H && Math.random()>0.97) drops[i]=0;
+    drops[i]+=0.6+my*1.5;
+  }
+
+  // mouse highlight column
+  const hCol=Math.floor(mx*COLS_M);
+  ctx.fillStyle=rgb(232,177,58,0.08);
+  ctx.fillRect(hCol*colW,0,colW,H);
+}
+
+// ─────────────────────────────────────────────
+//  MAIN LOOP
+// ─────────────────────────────────────────────
+function loop(now){
+  requestAnimationFrame(loop);
+  const dt=(now-lastTime)/1000;
+  lastTime=now;
+  if(playing) elapsed+=dt;
+  tick=elapsed;
+
+  switch(mode){
+    case 'mandala': drawMandala(tick);break;
+    case 'waves':   drawWaves(tick);break;
+    case 'stars':   drawStars(tick);break;
+    case 'lava':    drawLava(tick);break;
+  }
+}
+requestAnimationFrame(loop);
+
+// ─────────────────────────────────────────────
+//  PLAYER LOGIC
+// ─────────────────────────────────────────────
+let trackElapsed=0;
+let trackPlaying=true;
+
+function loadTrack(idx){
+  trackIdx=((idx%tracks.length)+tracks.length)%tracks.length;
+  const tr=tracks[trackIdx];
+  document.getElementById('trackName').textContent=tr.name;
+  document.getElementById('trackArtist').textContent=tr.artist;
+  document.getElementById('durEl').textContent=fmtTime(tr.dur);
+  trackElapsed=0;
+  updateProg();
+}
+function fmtTime(s){
+  return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+}
+function updateProg(){
+  const tr=tracks[trackIdx];
+  const pct=Math.min(trackElapsed/tr.dur*100,100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progThumb').style.left=pct+'%';
+  document.getElementById('timeEl').textContent=fmtTime(Math.floor(trackElapsed));
+}
+setInterval(()=>{
+  if(trackPlaying){
+    trackElapsed+=0.5;
+    if(trackElapsed>=tracks[trackIdx].dur){loadTrack(trackIdx+1);}
+    else updateProg();
+  }
+},500);
+
+document.getElementById('playBtn').addEventListener('click',()=>{
+  trackPlaying=!trackPlaying;
+  playing=trackPlaying;
+  document.getElementById('playBtn').innerHTML=trackPlaying
+    ?'<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><polygon points="5,2 15,9 5,16"/></svg>'
+    :'<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="4" y="2" width="4" height="14"/><rect x="10" y="2" width="4" height="14"/></svg>';
+});
+document.getElementById('prevBtn').addEventListener('click',()=>loadTrack(trackIdx-1));
+document.getElementById('nextBtn').addEventListener('click',()=>loadTrack(trackIdx+1));
+document.getElementById('prog').addEventListener('click',e=>{
+  const r=e.currentTarget.getBoundingClientRect();
+  trackElapsed=((e.clientX-r.left)/r.width)*tracks[trackIdx].dur;
+  updateProg();
+});
+loadTrack(0);
+
+// ─────────────────────────────────────────────
+//  MODE BUTTONS
+// ─────────────────────────────────────────────
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    mode=btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // clear canvas
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+  });
+});
+
+// ─────────────────────────────────────────────
+//  MOUSE
+// ─────────────────────────────────────────────
+const cursor=document.getElementById('cursor');
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX/window.innerWidth;
+  my=e.clientY/window.innerHeight;
+  cursor.style.left=e.clientX+'px';
+  cursor.style.top=e.clientY+'px';
+  // show dock on mouse move
+  clearTimeout(dockHideTimer);
+  document.getElementById('dock').classList.remove('hidden');
+  dockHideTimer=setTimeout(()=>document.getElementById('dock').classList.add('hidden'),3000);
+});
+document.addEventListener('mousedown',()=>cursor.classList.add('clicking'));
+document.addEventListener('mouseup',()=>cursor.classList.remove('clicking'));
+
+// click → burst + JAH text
+document.addEventListener('click',e=>{
+  // skip if clicking UI
+  if(e.target.closest('nav,.dock')) return;
+  // spawn burst
+  spawnBurst(e.clientX,e.clientY);
+  // occasionally show jah text
+  if(Math.random()<0.35){
+    const jt=document.getElementById('jahText');
+    jt.classList.add('show');
+    setTimeout(()=>jt.classList.remove('show'),3000);
+  }
+});
+
+function spawnBurst(cx,cy){
+  for(let i=0;i<24;i++){
+    const s=document.createElement('div');
+    const a=(i/24)*Math.PI*2;
+    const d=40+Math.random()*100;
+    s.style.cssText=`
+      position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:9000;
+      left:${cx}px;top:${cy}px;
+      background:${['#e8b13a','#c8362a','#1d6a3b','#f1e1bd'][i%4]};
+      box-shadow:0 0 10px currentColor;
+      transform:translate(-50%,-50%);
+      animation:burstOut .7s ease-out forwards;
+      --bx:${Math.cos(a)*d}px;--by:${Math.sin(a)*d}px;
+    `;
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),750);
+  }
+}
+const burstStyle=document.createElement('style');
+burstStyle.textContent=`@keyframes burstOut{
+  0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(calc(-50% + var(--bx)), calc(-50% + var(--by))) scale(0);opacity:0}
+}`;
+document.head.appendChild(burstStyle);
+
+// keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='m'||e.key==='M'){
+    const modes=['mandala','waves','stars','lava'];
+    const idx=modes.indexOf(mode);
+    mode=modes[(idx+1)%modes.length];
+    document.querySelectorAll('.mode-btn').forEach(b=>{
+      b.classList.toggle('active',b.dataset.mode===mode);
+    });
+  }
+  if(e.key===' '){
+    e.preventDefault();
+    document.getElementById('playBtn').click();
+  }
+  if(e.key==='ArrowRight') document.getElementById('nextBtn').click();
+  if(e.key==='ArrowLeft')  document.getElementById('prevBtn').click();
+});
+
+// auto-hide dock after 3s
+dockHideTimer=setTimeout(()=>document.getElementById('dock').classList.add('hidden'),3000);
+</script>
+</body>
+</html>

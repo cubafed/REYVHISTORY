@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/><title>ПОТУЖНОСТЬ РУ — Зажигалка</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{--red:#c8362a;--gold:#e8b13a;--green:#1d6a3b;--dk:#0f3d22;--paper:#f1e1bd;--ink:#1a1208}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Oswald',sans-serif;cursor:none}
+canvas{position:fixed;inset:0;display:block;z-index:1}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 36px;background:linear-gradient(180deg,rgba(10,6,3,.9),transparent);backdrop-filter:blur(6px)}
+.brand{font-family:'Alfa Slab One';font-size:17px;color:var(--gold);letter-spacing:.04em;text-decoration:none;display:flex;align-items:center;gap:8px;text-shadow:1px 1px 0 var(--ink)}
+.brand .d{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 10px var(--red);animation:pd 1.6s infinite}
+@keyframes pd{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+nav ul{display:flex;gap:4px;list-style:none}
+nav ul a{font-family:'Special Elite';font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);text-decoration:none;padding:6px 10px;border:1px solid transparent;transition:all .2s;opacity:.7}
+nav ul a:hover,nav ul a.on{opacity:1;border-color:var(--gold);color:var(--gold)}
+
+/* COUNTER */
+.counter{position:fixed;top:22px;right:36px;z-index:50;text-align:right}
+.counter .n{font-family:'Alfa Slab One';font-size:48px;color:var(--gold);text-shadow:0 0 20px rgba(232,177,58,.7),3px 3px 0 var(--ink);line-height:1;transition:transform .15s}
+.counter .n.bump{transform:scale(1.3)}
+.counter .l{font-family:'Special Elite';font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(241,225,189,.6);margin-top:2px}
+
+/* LIGHTER STAGE */
+.lighter-stage{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;
+  display:flex;flex-direction:column;align-items:center;gap:0}
+
+/* LIGHTER — CSS-only */
+.lighter{position:relative;width:100px;perspective:600px;user-select:none}
+
+/* LID */
+.lid{
+  width:100px;height:58px;position:relative;
+  transform-origin:bottom center;
+  transition:transform .5s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;
+}
+.lid.open{transform:rotateX(-148deg)}
+.lid-face{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg, #c8362a 0%, #a02020 100%);
+  border:3px solid var(--ink);border-radius:10px 10px 0 0;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 2px 2px 6px rgba(255,255,255,.15), inset -2px -2px 6px rgba(0,0,0,.4);
+}
+.lid-face::after{content:"";position:absolute;top:6px;left:8px;right:8px;height:2px;background:var(--gold);opacity:.5;border-radius:1px}
+.lid-hinge{
+  position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+  width:70%;height:8px;background:var(--ink);border-radius:4px;z-index:2;
+}
+
+/* BODY */
+.body{
+  width:100px;height:130px;position:relative;
+  background:linear-gradient(180deg,var(--dk) 0%,var(--green) 40%,var(--dk) 100%);
+  border:3px solid var(--ink);border-radius:0 0 8px 8px;
+  box-shadow:6px 6px 0 rgba(0,0,0,.5), inset 2px 0 8px rgba(255,255,255,.06);
+  cursor:default;
+}
+/* rasta stripe */
+.body::before{content:"";position:absolute;bottom:0;left:0;right:0;height:28px;
+  background:linear-gradient(90deg,var(--red) 33.3%,var(--gold) 33.3% 66.6%,var(--green) 66.6%);
+  border-radius:0 0 5px 5px;}
+/* chrome strip */
+.body::after{content:"";position:absolute;left:6px;top:16px;width:4px;bottom:32px;
+  background:linear-gradient(180deg,rgba(255,255,255,.4),rgba(255,255,255,.1));border-radius:2px;}
+
+/* WHEEL */
+.wheel{
+  position:absolute;right:-22px;top:30px;
+  width:28px;height:28px;border-radius:50%;
+  background:conic-gradient(var(--gold) 0 45deg,var(--ink) 45deg 90deg,var(--gold) 90deg 135deg,
+    var(--ink) 135deg 180deg,var(--gold) 180deg 225deg,var(--ink) 225deg 270deg,
+    var(--gold) 270deg 315deg,var(--ink) 315deg 360deg);
+  border:3px solid var(--ink);cursor:pointer;
+  transition:transform .1s;
+  box-shadow:2px 2px 0 rgba(0,0,0,.4);
+}
+.wheel:hover{transform:rotate(20deg)}
+.wheel:active{transform:rotate(40deg)}
+.wheel-axle{position:absolute;top:50%;left:-4px;right:-4px;height:4px;background:var(--ink);border-radius:2px;transform:translateY(-50%)}
+
+/* WICK */
+.wick-area{position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  width:8px;height:20px;z-index:5;}
+.wick{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:4px;height:12px;background:radial-gradient(ellipse, #8b6914, #3a2208);border-radius:2px}
+
+/* FLAME — CSS layered glow */
+.flame{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  width:60px;display:flex;flex-direction:column;align-items:center;
+  pointer-events:none;z-index:10;
+  opacity:0;transition:opacity .3s;}
+.flame.on{opacity:1}
+.flame-svg{animation:flicker 0.12s ease-in-out infinite alternate}
+@keyframes flicker{
+  0%{transform:scaleX(1) scaleY(1) translateX(-1px)}
+  25%{transform:scaleX(.92) scaleY(1.06) translateX(1px)}
+  50%{transform:scaleX(1.05) scaleY(.96) translateX(-1px)}
+  75%{transform:scaleX(.96) scaleY(1.04) translateX(1px)}
+  100%{transform:scaleX(1.02) scaleY(1) translateX(0)}
+}
+
+/* SPARKS */
+.spark{position:fixed;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:30;
+  animation:spOut .6s ease-out forwards}
+@keyframes spOut{0%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.2);opacity:0}}
+
+/* HINT */
+.hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:40;text-align:center;
+  font-family:'Special Elite';font-size:13px;letter-spacing:.26em;text-transform:uppercase;
+  color:rgba(241,225,189,.5);pointer-events:none;animation:hf 3s ease-out 1.5s forwards}
+@keyframes hf{0%{opacity:1}100%{opacity:0}}
+
+/* PROKURIT */
+.pk-btn{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:40;
+  font-family:'Alfa Slab One';font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--dk);color:var(--gold);border:2px solid var(--gold);padding:12px 28px;
+  box-shadow:4px 4px 0 var(--gold),4px 4px 0 2px var(--ink);cursor:pointer;
+  transition:all .15s;opacity:0;pointer-events:none}
+.pk-btn.show{opacity:1;pointer-events:all;animation:pbIn .4s ease-out}
+@keyframes pbIn{from{transform:translateX(-50%) translateY(10px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+.pk-btn:hover{transform:translateX(-50%) translate(-2px,-2px);box-shadow:6px 6px 0 var(--gold),6px 6px 0 2px var(--ink)}
+.pk-btn:active{transform:translateX(-50%) translate(4px,4px);box-shadow:0 0}
+
+/* CUSTOM CURSOR */
+#cur{position:fixed;width:20px;height:20px;border-radius:50%;border:2px solid var(--gold);
+  pointer-events:none;z-index:999;transform:translate(-50%,-50%);
+  transition:border-color .2s;mix-blend-mode:exclusion}
+#cur.fire-cur{border-color:var(--red);box-shadow:0 0 12px var(--red)}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div id="cur"></div>
+
+<nav>
+  <a href="../vintage/index.html" class="brand"><span class="d"></span>ПОТУЖНОСТЬ&nbsp;РУ</a>
+  <ul>
+    <li><a href="../vintage/index.html">Эфир</a></li>
+    <li><a href="../zalipay/index.html">Залипай</a></li>
+    <li><a href="../taro/index.html">Таро</a></li>
+    <li><a href="../fire/index.html" class="on">Зажигалка</a></li>
+    <li><a href="../chai/index.html">Чай</a></li>
+    <li><a href="../shar/index.html">Шар</a></li>
+  </ul>
+</nav>
+
+<div class="counter">
+  <div class="n" id="cntN">0</div>
+  <div class="l">🔥 прикурено</div>
+</div>
+
+<div class="lighter-stage">
+  <div class="lighter">
+    <div class="lid" id="lid">
+      <div class="lid-face"></div>
+      <div class="lid-hinge"></div>
+    </div>
+    <div class="body">
+      <div class="wheel" id="wheel">
+        <div class="wheel-axle"></div>
+      </div>
+      <div class="wick-area">
+        <div class="wick"></div>
+        <div class="flame" id="flame">
+          <svg class="flame-svg" width="48" height="80" viewBox="0 0 48 80" fill="none">
+            <path d="M24 78 C8 68 2 52 6 36 C8 26 14 18 18 10 C20 6 22 2 24 0 C24 0 23 8 26 14 C28 20 32 22 34 28 C38 36 38 46 34 56 C30 64 28 72 24 78Z" fill="url(#fg1)"/>
+            <path d="M24 78 C14 66 12 54 16 42 C18 34 22 28 24 22 C26 30 28 38 26 48 C24 58 22 68 24 78Z" fill="url(#fg2)" opacity=".8"/>
+            <path d="M24 68 C20 60 20 50 22 42 C23 36 24 30 24 26 C25 32 26 40 24 50 C23 58 22 64 24 68Z" fill="white" opacity=".4"/>
+            <defs>
+              <linearGradient id="fg1" x1="24" y1="0" x2="24" y2="78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#f1e1bd"/>
+                <stop offset="30%" stop-color="#e8b13a"/>
+                <stop offset="60%" stop-color="#c8362a"/>
+                <stop offset="100%" stop-color="#1d6a3b" stop-opacity=".3"/>
+              </linearGradient>
+              <linearGradient id="fg2" x1="24" y1="22" x2="24" y2="78" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="white" stop-opacity=".8"/>
+                <stop offset="100%" stop-color="#e8b13a" stop-opacity=".2"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="hint">Открой крышку → крути колёсико → прикури</div>
+<button class="pk-btn" id="pkBtn">★ ПРИКУРИТЬ ★</button>
+
+<script>
+// ── CANVAS FIRE ──────────────────────────────
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H, gW, gH, grid, imgData;
+const SCALE = 5;
+let burning = false;
+let mx = 0.5, my = 0.5;
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  W = canvas.width; H = canvas.height;
+  gW = Math.ceil(W/SCALE); gH = Math.ceil(H/SCALE);
+  grid = new Float32Array(gW*gH);
+  imgData = ctx.createImageData(W, H);
+}
+resize(); window.addEventListener('resize', resize);
+
+function heatRGB(v){
+  v = Math.max(0, Math.min(255, v));
+  if(v<55){const t=v/55;return[Math.floor(t*15),Math.floor(t*61),Math.floor(t*34)]}
+  if(v<130){const t=(v-55)/75;return[Math.floor(15+t*(232-15)),Math.floor(61+t*(177-61)),Math.floor(34+t*(58-34))]}
+  if(v<200){const t=(v-130)/70;return[Math.floor(232+t*(200-232)),Math.floor(177+t*(54-177)),Math.floor(58+t*(42-58))]}
+  const t=(v-200)/55;return[Math.floor(200+t*41),Math.floor(54+t*171),Math.floor(42+t*147)];
+}
+
+function updateFire(){
+  if(burning){
+    const focus = mx*gW;
+    for(let x=0;x<gW;x++){
+      const dist=Math.abs(x-focus);
+      const intensity=Math.max(0,1-dist/(gW*0.25));
+      const heat=intensity*(200+Math.random()*55);
+      grid[(gH-1)*gW+x]=heat;
+      if(gH>1)grid[(gH-2)*gW+x]=heat*0.8;
+    }
+  } else {
+    // slowly cool bottom
+    for(let x=0;x<gW;x++){
+      grid[(gH-1)*gW+x]*=0.96;
+      if(gH>1)grid[(gH-2)*gW+x]*=0.94;
+    }
+  }
+  for(let y=0;y<gH-2;y++){
+    for(let x=0;x<gW;x++){
+      const xl=Math.max(0,x-1), xr=Math.min(gW-1,x+1);
+      const h=(grid[(y+1)*gW+xl]+grid[(y+1)*gW+x]+grid[(y+1)*gW+xr]+grid[(y+2)*gW+x])/4.09;
+      grid[y*gW+x]=Math.max(0,h-Math.random()*1.4);
+    }
+  }
+}
+
+function renderFire(){
+  const data=imgData.data;
+  for(let y=0;y<gH;y++){
+    for(let x=0;x<gW;x++){
+      const [r,g,b]=heatRGB(grid[y*gW+x]);
+      for(let py=0;py<SCALE;py++){
+        for(let px=0;px<SCALE;px++){
+          const i=((y*SCALE+py)*W+(x*SCALE+px))*4;
+          data[i]=r;data[i+1]=g;data[i+2]=b;data[i+3]=255;
+        }
+      }
+    }
+  }
+  ctx.putImageData(imgData,0,0);
+}
+
+(function loop(){requestAnimationFrame(loop);updateFire();renderFire();})();
+
+// ── LIGHTER LOGIC ────────────────────────────
+let lidOpen=false, lit=false;
+let cntVal=parseInt(localStorage.getItem('fireCount')||'0');
+document.getElementById('cntN').textContent=cntVal;
+
+const lid=document.getElementById('lid');
+const wheel=document.getElementById('wheel');
+const flame=document.getElementById('flame');
+const pkBtn=document.getElementById('pkBtn');
+
+lid.addEventListener('click',()=>{
+  lidOpen=!lidOpen;
+  lid.classList.toggle('open',lidOpen);
+  if(!lidOpen){
+    // close = extinguish
+    lit=false;burning=false;
+    flame.classList.remove('on');
+    pkBtn.classList.remove('show');
+  }
+});
+
+wheel.addEventListener('click',e=>{
+  e.stopPropagation();
+  if(!lidOpen) return;
+  // spawn sparks
+  spawnSparks(e.clientX,e.clientY);
+  if(!lit){
+    setTimeout(()=>{
+      lit=true;burning=true;
+      flame.classList.add('on');
+      pkBtn.classList.add('show');
+    },200);
+  }
+});
+
+pkBtn.addEventListener('click',()=>{
+  cntVal++;
+  localStorage.setItem('fireCount',cntVal);
+  const n=document.getElementById('cntN');
+  n.textContent=cntVal;
+  n.classList.add('bump');
+  setTimeout(()=>n.classList.remove('bump'),300);
+  spawnSparks(window.innerWidth/2,window.innerHeight/2);
+});
+
+function spawnSparks(cx,cy){
+  const cols=['#e8b13a','#c8362a','#1d6a3b','#f1e1bd'];
+  for(let i=0;i<18;i++){
+    const s=document.createElement('div');s.className='spark';
+    const a=(i/18)*Math.PI*2;const d=30+Math.random()*80;
+    s.style.background=cols[i%4];
+    s.style.setProperty('--dx',(Math.cos(a)*d)+'px');
+    s.style.setProperty('--dy',(Math.sin(a)*d)+'px');
+    s.style.left=cx+'px';s.style.top=cy+'px';
+    s.style.animationDelay=(Math.random()*.1)+'s';
+    document.body.appendChild(s);setTimeout(()=>s.remove(),700);
+  }
+}
+
+// ── CURSOR + MOUSE ───────────────────────────
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX/W; my=e.clientY/H;
+  cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
+  cur.classList.toggle('fire-cur',burning);
+});
+</script>
+</body></html>
