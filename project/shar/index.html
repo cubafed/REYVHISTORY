@@ -572,32 +572,75 @@ function drawSphere(cx, cy, r, t) {
   ctx.restore();
 }
 
-// ── DRAW RASTA RING ───────────────────────────
-function drawRing(cx, cy, r, t) {
+// ── DRAW RASTA RING (Saturn depth: back / front halves) ──
+const TAU = Math.PI * 2;
+
+function normAngle(a) {
+  a = a % TAU;
+  return a < 0 ? a + TAU : a;
+}
+
+function arcIntervals(start, end) {
+  const s = normAngle(start);
+  const e = normAngle(end);
+  if (Math.abs(e - s) < 1e-9 || end - start >= TAU - 1e-9) return [[0, TAU]];
+  if (e > s) return [[s, e]];
+  return [[s, TAU], [0, e]];
+}
+
+function intersectArcIntervals(segStart, segEnd, halfStart, halfEnd) {
+  const out = [];
+  for (const [a0, a1] of arcIntervals(segStart, segEnd)) {
+    for (const [b0, b1] of arcIntervals(halfStart, halfEnd)) {
+      const lo = Math.max(a0, b0);
+      const hi = Math.min(a1, b1);
+      if (hi > lo + 1e-9) out.push([lo, hi]);
+    }
+  }
+  return out;
+}
+
+function strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth) {
+  const glowA = 0.85 * depth;
+  const innerA = (depth > 0.95 ? 0.9 : 0.72) * depth;
+  const outerBlur = 22 * depth;
+  const innerBlur = 8 * depth;
+  ctx.save();
+  ctx.shadowColor = `rgba(${glowRGB},${glowA})`;
+  ctx.shadowBlur = outerBlur;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, start, end);
+  ctx.strokeStyle = col;
+  ctx.lineWidth = r * 0.058;
+  ctx.stroke();
+  ctx.shadowBlur = innerBlur;
+  ctx.lineWidth = r * 0.028;
+  ctx.strokeStyle = `rgba(${glowRGB},${innerA})`;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawRing(cx, cy, r, t, half = 'all') {
   const rx = r * 1.12;
   const ry = r * 0.1;
-  const rot = t * 0.07; // slow rotation
+  const rot = t * 0.07;
+  const depth = half === 'back' ? 0.82 : 1;
+  const halfRange =
+    half === 'back' ? [Math.PI, TAU] :
+    half === 'front' ? [0, Math.PI] :
+    [0, TAU];
   const SEGS = [
-    [rot,                    rot + Math.PI * 2 / 3, '#c8362a', '200,54,42'],
-    [rot + Math.PI * 2 / 3,  rot + Math.PI * 4 / 3, '#e8b13a', '232,177,58'],
-    [rot + Math.PI * 4 / 3,  rot + Math.PI * 2,     '#1d6a3b', '29,106,59'],
+    [rot,                    rot + TAU / 3, '#c8362a', '200,54,42'],
+    [rot + TAU / 3,          rot + TAU * 2 / 3, '#e8b13a', '232,177,58'],
+    [rot + TAU * 2 / 3,      rot + TAU,     '#1d6a3b', '29,106,59'],
   ];
-  for (const [start, end, col, glowRGB] of SEGS) {
-    ctx.save();
-    // Outer glow pass
-    ctx.shadowColor = `rgba(${glowRGB},0.85)`;
-    ctx.shadowBlur = 22;
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, start, end);
-    ctx.strokeStyle = col;
-    ctx.lineWidth = r * 0.058;
-    ctx.stroke();
-    // Inner bright pass
-    ctx.shadowBlur = 8;
-    ctx.lineWidth = r * 0.028;
-    ctx.strokeStyle = `rgba(${glowRGB},0.9)`;
-    ctx.stroke();
-    ctx.restore();
+  for (const [segStart, segEnd, col, glowRGB] of SEGS) {
+    const spans = half === 'all'
+      ? [[segStart, segEnd]]
+      : intersectArcIntervals(segStart, segEnd, halfRange[0], halfRange[1]);
+    for (const [start, end] of spans) {
+      strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth);
+    }
   }
 }
 
@@ -839,8 +882,9 @@ function loop(now) {
 
   updateBlobs(tick);
   drawBackground(tick);
-  drawRing(cx, cy, sphereR, tick);
+  drawRing(cx, cy, sphereR, tick, 'back');
   drawSphere(cx, cy, sphereR, tick);
+  drawRing(cx, cy, sphereR, tick, 'front');
 }
 
 requestAnimationFrame(loop);
