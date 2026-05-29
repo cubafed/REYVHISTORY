@@ -600,21 +600,23 @@ function intersectArcIntervals(segStart, segEnd, halfStart, halfEnd) {
   return out;
 }
 
-function strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth) {
-  const glowA = 0.85 * depth;
-  const innerA = (depth > 0.95 ? 0.9 : 0.72) * depth;
-  const outerBlur = 22 * depth;
-  const innerBlur = 8 * depth;
+function strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth, isFront) {
+  const glowA = 0.85 * depth * (isFront ? 1.05 : 1);
+  const innerA = (depth > 0.95 ? 0.95 : 0.72) * depth;
+  const outerBlur = (isFront ? 28 : 22) * depth;
+  const innerBlur = (isFront ? 10 : 8) * depth;
+  const outerW = r * (isFront ? 0.068 : 0.058);
+  const innerW = r * (isFront ? 0.034 : 0.028);
   ctx.save();
   ctx.shadowColor = `rgba(${glowRGB},${glowA})`;
   ctx.shadowBlur = outerBlur;
   ctx.beginPath();
   ctx.ellipse(cx, cy, rx, ry, 0, start, end);
   ctx.strokeStyle = col;
-  ctx.lineWidth = r * 0.058;
+  ctx.lineWidth = outerW;
   ctx.stroke();
   ctx.shadowBlur = innerBlur;
-  ctx.lineWidth = r * 0.028;
+  ctx.lineWidth = innerW;
   ctx.strokeStyle = `rgba(${glowRGB},${innerA})`;
   ctx.stroke();
   ctx.restore();
@@ -622,9 +624,10 @@ function strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth) {
 
 function drawRing(cx, cy, r, t, half = 'all') {
   const rx = r * 1.12;
-  const ry = r * 0.1;
+  const ry = r * 0.22; // tilt — front arc crosses the sphere face (Saturn)
   const rot = t * 0.07;
-  const depth = half === 'back' ? 0.82 : 1;
+  const depth = half === 'back' ? 0.78 : 1;
+  const isFront = half === 'front';
   const halfRange =
     half === 'back' ? [Math.PI, TAU] :
     half === 'front' ? [0, Math.PI] :
@@ -639,7 +642,7 @@ function drawRing(cx, cy, r, t, half = 'all') {
       ? [[segStart, segEnd]]
       : intersectArcIntervals(segStart, segEnd, halfRange[0], halfRange[1]);
     for (const [start, end] of spans) {
-      strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth);
+      strokeRingSegment(cx, cy, rx, ry, start, end, col, glowRGB, r, depth, isFront);
     }
   }
 }
