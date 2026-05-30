@@ -670,6 +670,9 @@
 <footer>
   <div class="big">ПОДВАЛ ОТКРЫТ.<br>БАСЫ ВНУТРИ.</div>
   <div class="small">ПОТУЖНОСТЬ РУ · АФИША · MMXXVI · ALL RIDDIMS RESERVED</div>
+  <div class="small" style="margin-top:18px;opacity:.35">
+    <a href="./admin.html" style="color:inherit;text-decoration:none;letter-spacing:.2em;font-size:10px">⚙ ПАНЕЛЬ УПРАВЛЕНИЯ</a>
+  </div>
 </footer>
 
 <!-- FLOATING TG -->
@@ -685,39 +688,14 @@
 <!-- Tweaks mount -->
 <div id="tweaks-root"></div>
 
+<script src="./events-data.js"></script>
 <script>
 // ── EVENTS DATA ──────────────────────────────────────────
 const MONTHS = ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
 const MONTHS_FULL = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 const DOW = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
 
-// ticketType: 'paid' | 'free' | 'donation'
-const EVENTS = [
-  { id:'kornevoi-7', date:new Date(2026,5,13,22,0), title:'КОРНЕВОЙ БАС', sub:'vol.7',
-    venue:'Подвал на Курской', price:1500, seatsLeft:34, ticketType:'paid',
-    lineup:['Иван-Заскок','Lion of Toronto','Northern Riddim','Подвал Sound System'],
-    tags:[{t:'DUB',c:'g'},{t:'STEPPERS',c:'r'}], soldOut:false },
-  { id:'ognevaya', date:new Date(2026,5,20,23,0), title:'ОГНЕВАЯ ЦЕРЕМОНИЯ', sub:null,
-    venue:'Артемьева, 13', price:2000, seatsLeft:8, ticketType:'paid',
-    lineup:['Подвал Selecta','JahMobile','Sister Bass','Огневой Дед'],
-    tags:[{t:'ROOTS',c:'y'},{t:'SKA',c:''}], soldOut:false },
-  { id:'dym', date:new Date(2026,5,27,18,0), title:'ДЫМ НАД РЕКОЙ', sub:'Open Air',
-    venue:'Берег Строгино', price:0, seatsLeft:0, ticketType:'free',
-    lineup:['Дед-Хаусман','Onezvuk','Гнусь Dub Family','Хор Подмосковный'],
-    tags:[{t:'LOVERS',c:'y'},{t:'OPEN AIR',c:'r'},{t:'FREE',c:'g'}], soldOut:true },
-  { id:'tysiacha', date:new Date(2026,6,4,22,0), title:'ТЫСЯЧА ВАТТ', sub:null,
-    venue:'Завод «Ритм»', price:2500, seatsLeft:120, ticketType:'paid',
-    lineup:['Tundra Jungle','BassMonk','ICEcave','DJ Карелия'],
-    tags:[{t:'JUNGLE',c:'g'},{t:'DnB',c:'r'}], soldOut:false },
-  { id:'solnechnyi', date:new Date(2026,6,11,16,0), title:'СОЛНЕЧНЫЙ ДЖА', sub:'All Day Open Air',
-    venue:'Серебряный Бор', price:500, seatsLeft:240, ticketType:'donation',
-    lineup:['Подвал All Stars','Иван-Заскок','Lion of Toronto','Tundra Jungle','Sister Bass','Onezvuk','BassMonk','JahMobile'],
-    tags:[{t:'ALL DAY',c:'y'},{t:'OPEN AIR',c:'r'},{t:'ДОНЕЙШН',c:'g'}], soldOut:false },
-  { id:'noch-kornya', date:new Date(2026,6,18,23,30), title:'НОЧЬ КОРНЯ', sub:null,
-    venue:'Подвал-2, Электрозаводская', price:1500, seatsLeft:52, ticketType:'paid',
-    lineup:['Иван-Заскок','Подвал Sound System','Гнусь Dub Family'],
-    tags:[{t:'DUB',c:'g'}], soldOut:false },
-];
+const EVENTS = window.AfishaData.getEvents();
 
 // ── RENDER SCHEDULE ──────────────────────────────────────
 function tagsHtml(tags){
@@ -923,6 +901,11 @@ document.getElementById('org-form').addEventListener('submit',e=>{
   e.preventDefault();
   const fd = new FormData(e.target);
   const name = fd.get('name'), contact = fd.get('contact'), type = fd.get('type');
+  window.AfishaData.addRequest({
+    name, contact, type,
+    date: fd.get('date') || '',
+    idea: fd.get('idea') || '',
+  });
   sparksAt(e.submitter.getBoundingClientRect().x + 60, e.submitter.getBoundingClientRect().y, 28);
   toast(`★ Заявка от «${name}» получена — ответим в ${contact.includes('@') && !contact.startsWith('@') ? 'почту' : 'Телеграм'}`);
   e.target.reset();
