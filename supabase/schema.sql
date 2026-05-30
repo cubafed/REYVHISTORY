@@ -149,18 +149,27 @@ ALTER TABLE dj_slots        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles        ENABLE ROW LEVEL SECURITY;
 
 -- tracks: all read
+DROP POLICY IF EXISTS "tracks_select" ON tracks;
 CREATE POLICY "tracks_select" ON tracks FOR SELECT USING (true);
 
 -- radio_state: all read, write only via RPC
+DROP POLICY IF EXISTS "radio_state_select" ON radio_state;
 CREATE POLICY "radio_state_select" ON radio_state FOR SELECT USING (true);
 
 -- chat_messages: all read, all insert (rate limit via function), delete = admin
+DROP POLICY IF EXISTS "chat_select" ON chat_messages;
+DROP POLICY IF EXISTS "chat_insert" ON chat_messages;
+DROP POLICY IF EXISTS "chat_delete" ON chat_messages;
 CREATE POLICY "chat_select" ON chat_messages FOR SELECT USING (true);
 CREATE POLICY "chat_insert" ON chat_messages FOR INSERT WITH CHECK (true);
 CREATE POLICY "chat_delete" ON chat_messages FOR DELETE
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- track_requests: all read/insert, delete = admin
+DROP POLICY IF EXISTS "req_select" ON track_requests;
+DROP POLICY IF EXISTS "req_insert" ON track_requests;
+DROP POLICY IF EXISTS "req_delete" ON track_requests;
+DROP POLICY IF EXISTS "req_update_admin" ON track_requests;
 CREATE POLICY "req_select" ON track_requests FOR SELECT USING (true);
 CREATE POLICY "req_insert" ON track_requests FOR INSERT WITH CHECK (true);
 CREATE POLICY "req_delete" ON track_requests FOR DELETE
@@ -169,10 +178,16 @@ CREATE POLICY "req_update_admin" ON track_requests FOR UPDATE
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- request_votes: all read/insert
+DROP POLICY IF EXISTS "votes_select" ON request_votes;
+DROP POLICY IF EXISTS "votes_insert" ON request_votes;
 CREATE POLICY "votes_select" ON request_votes FOR SELECT USING (true);
 CREATE POLICY "votes_insert" ON request_votes FOR INSERT WITH CHECK (true);
 
 -- dj_slots: all read approved; own pending; admin all
+DROP POLICY IF EXISTS "slots_select_approved" ON dj_slots;
+DROP POLICY IF EXISTS "slots_insert" ON dj_slots;
+DROP POLICY IF EXISTS "slots_update_admin" ON dj_slots;
+DROP POLICY IF EXISTS "slots_delete_admin" ON dj_slots;
 CREATE POLICY "slots_select_approved" ON dj_slots FOR SELECT
   USING (status = 'approved' OR dj_user = auth.uid()
          OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
@@ -183,6 +198,9 @@ CREATE POLICY "slots_delete_admin" ON dj_slots FOR DELETE
   USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 
 -- profiles: own read; admin read all
+DROP POLICY IF EXISTS "profiles_select_own" ON profiles;
+DROP POLICY IF EXISTS "profiles_update_own" ON profiles;
+DROP POLICY IF EXISTS "profiles_update_admin" ON profiles;
 CREATE POLICY "profiles_select_own" ON profiles FOR SELECT
   USING (id = auth.uid() OR EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin'));
 CREATE POLICY "profiles_update_own" ON profiles FOR UPDATE USING (id = auth.uid());
@@ -421,11 +439,22 @@ $$;
 -- ─────────────────────────────────────────────────────────────────────────
 -- Включи Realtime в Supabase Dashboard → Database → Replication для таблиц:
 --   radio_state, chat_messages, track_requests, dj_slots
--- Или выполни:
-ALTER PUBLICATION supabase_realtime ADD TABLE radio_state;
-ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
-ALTER PUBLICATION supabase_realtime ADD TABLE track_requests;
-ALTER PUBLICATION supabase_realtime ADD TABLE dj_slots;
+-- Или выполни (идемпотентно — можно запускать повторно):
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'radio_state') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE radio_state;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'chat_messages') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'track_requests') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE track_requests;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_publication_tables WHERE pubname = 'supabase_realtime' AND tablename = 'dj_slots') THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE dj_slots;
+  END IF;
+END $$;
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- ИНДЕКСЫ
