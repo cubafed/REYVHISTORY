@@ -18,6 +18,11 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split('?', 1)[0]
+        if path in ('/dj', '/dj.html', '/dj/'):
+            self.send_response(301)
+            self.send_header('Location', '/vintage/dj.html')
+            self.end_headers()
+            return
         if path.startswith('/project/'):
             target = path[8:] or '/'
             self.send_response(301)
