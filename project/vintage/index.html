@@ -565,6 +565,16 @@
 
   .listener-count{display:inline-block;position:relative;font-family:'Alfa Slab One';font-size:24px;color:var(--red);transition:transform .15s}
   .listener-count.bump{transform:scale(1.3)}
+  .react-btn{
+    font-size:20px;background:transparent;border:2px solid rgba(26,18,8,.25);
+    padding:5px 10px;cursor:pointer;border-radius:4px;transition:transform .15s,border-color .15s;
+  }
+  .react-btn:hover{transform:scale(1.3);border-color:var(--gold,#e8b13a)}
+  @keyframes reactionFloat{
+    0%{transform:translateY(0) scale(1);opacity:1}
+    80%{opacity:1}
+    100%{transform:translateY(-120px) scale(1.4);opacity:0}
+  }
 
   /* cursor sparks */
   .cursor-spark{
@@ -796,6 +806,31 @@
   <p class="eyebrow">★ Заявки слушателей ★</p>
   <h2>Кидай <span class="red">трек</span> в эфир</h2>
 
+  <!-- DJ-пульт (виден только активному DJ во время своего слота) -->
+  <div id="djConsole" style="display:none;margin-bottom:24px;padding:18px 20px;background:#1a1208;border:3px solid #e8b13a;box-shadow:6px 6px 0 #e8b13a">
+    <div style="font-family:'Alfa Slab One';font-size:18px;color:#e8b13a;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px">★ DJ-ПУЛЬТ · ВЫ В ЭФИРЕ ★</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <select id="djTrackSelect" style="font-family:'Special Elite';font-size:13px;letter-spacing:.1em;padding:8px 12px;background:#2b1c0a;color:#f1e1bd;border:2px solid #e8b13a;flex:1;min-width:200px">
+        <option value="">— выбери трек —</option>
+      </select>
+      <button id="djPlayBtn" style="font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:10px 18px;background:#1d6a3b;color:#f1e1bd;border:3px solid #f1e1bd;cursor:pointer">▶ ПОСТАВИТЬ</button>
+      <button id="djPauseBtn" style="font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:10px 18px;background:#c8362a;color:#f1e1bd;border:3px solid #f1e1bd;cursor:pointer">❚❚ ПАУЗА</button>
+    </div>
+    <div style="font-family:'Special Elite';font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(241,225,189,.4);margin-top:10px">Управление видно только вам · слушатели слышат синхронно</div>
+  </div>
+
+  <!-- Панель реакций -->
+  <div id="reactionsBar" style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
+    <span style="font-family:'Special Elite';font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.5;align-self:center">РЕАКЦИЯ :</span>
+    <button class="react-btn" data-emoji="🔥" title="Огонь">🔥</button>
+    <button class="react-btn" data-emoji="🌿" title="Roots">🌿</button>
+    <button class="react-btn" data-emoji="🎵" title="Музыка">🎵</button>
+    <button class="react-btn" data-emoji="⚡" title="Бас">⚡</button>
+    <button class="react-btn" data-emoji="❤️" title="One Love">❤️</button>
+    <button class="react-btn" data-emoji="🦁" title="Lion">🦁</button>
+  </div>
+  <div id="reactionsFloat" style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);pointer-events:none;z-index:200;display:flex;gap:8px"></div>
+
   <div class="queue-grid">
     <form class="req-form" id="reqForm">
       <h3>★ Стикер на стену</h3>
@@ -804,8 +839,10 @@
         <input type="text" id="reqNick" placeholder="Иван-Раста" maxlength="20" required>
       </div>
       <div class="field">
-        <label>Артист — трек</label>
-        <input type="text" id="reqTrack" placeholder="Bob Marley — Sun Is Shining" maxlength="60" required>
+        <label>Трек из эфира</label>
+        <select id="reqTrack" required style="font-family:'Special Elite';font-size:13px;letter-spacing:.08em;padding:8px 10px;background:#f0e8d4;border:2px solid #1a1208;color:#1a1208;width:100%">
+          <option value="">— выбери трек —</option>
+        </select>
       </div>
       <div class="field">
         <label>Сообщение в эфир (необяз.)</label>
@@ -872,6 +909,7 @@
   </div>
 </div>
 
+<script src="../assets/realtime-config.js"></script>
 <script src="../assets/radio-state.js"></script>
 <script src="../assets/audio-engine.js"></script>
 <script>
@@ -1100,17 +1138,28 @@
   // Авто-обновление "времени назад"
   setInterval(renderHistory, 30000);
 
+  // ── ЗАПОЛНИТЬ SELECT ТРЕКОВ ───────────────────────────────────────
+  function populateTrackSelects() {
+    const opts = Radio.TRACKS.map(t => `<option value="${t.id}">${t.name} — ${t.artist}</option>`).join('');
+    const reqSel = document.getElementById('reqTrack');
+    const djSel  = document.getElementById('djTrackSelect');
+    if (reqSel) reqSel.innerHTML = '<option value="">— выбери трек —</option>' + opts;
+    if (djSel)  djSel.innerHTML  = '<option value="">— выбери трек —</option>' + opts;
+  }
+  populateTrackSelects();
+
   // ── ОЧЕРЕДЬ / ЗАЯВКИ ─────────────────────────────────────────────
   const reqForm = document.getElementById('reqForm');
   const queueItems = document.getElementById('queueItems');
 
   reqForm.addEventListener('submit', e => {
     e.preventDefault();
-    const nick = document.getElementById('reqNick').value.trim();
-    const track = document.getElementById('reqTrack').value.trim();
+    const nick    = document.getElementById('reqNick').value.trim();
+    const trackId = parseInt(document.getElementById('reqTrack').value);
     const comment = document.getElementById('reqComment').value.trim();
-    if (!nick || !track) return;
-    Radio.addToQueue({ nick, track, comment });
+    if (!nick || !trackId) return;
+    const track = Radio.TRACKS.find(t => t.id === trackId);
+    Radio.addToQueue({ nick, track: track?.name || '', trackId, comment });
     reqForm.reset();
     showToast('✦ Заявка влеплена ✦');
   });
@@ -1150,7 +1199,7 @@
   }
 
   // ── СЕТКА DJ ─────────────────────────────────────────────────────
-  const DJ_SCHEDULE = [
+  const DJ_SCHEDULE_FALLBACK = [
     { day: 'ПН', time: '20:00 — 22:00', name: 'СЕЛЕКТОР ИЛЛАЙ',  genre: 'Roots & Culture',  tracks: ['Burning Spear · Marcus Garvey', 'Israel Vibration · Why Worry', 'Culture · Two Sevens Clash'] },
     { day: 'ВТ', time: '22:00 — 00:00', name: 'DJ КОРЕНЬ',       genre: 'Deep Dub Session', tracks: ['King Tubby · Dub From The Roots', 'Scientist · Dematerialise', 'Lee Perry · Roast Fish'] },
     { day: 'СР', time: '21:00 — 23:00', name: 'БАСИЛИЙ',         genre: 'Heavy Steppers',   tracks: ['Aba Shanti-I · Reign Of The Lion', 'Iration Steppas · Inna Iration', 'Channel One · Live Mix'] },
@@ -1160,16 +1209,57 @@
     { day: 'ВС', time: '18:00 — 21:00', name: 'РАСТАМАНЬ',       genre: 'Sunday Chillout',  tracks: ['Bob Marley · Three Little Birds', 'Toots & The Maytals · Pressure Drop', 'Jimmy Cliff · Many Rivers To Cross'] },
   ];
   const DAY_MAP = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
-  const todayDay = DAY_MAP[new Date().getDay()];
-  document.getElementById('djSchedule').innerHTML = DJ_SCHEDULE.map(dj => `
-    <div class="dj-card ${dj.day === todayDay ? 'today' : ''}">
-      <div class="dj-day">${dj.day}</div>
-      <div class="dj-time">${dj.time}</div>
-      <div class="dj-name">${dj.name}</div>
-      <div class="dj-genre">${dj.genre}</div>
-      <div class="dj-tracks">${dj.tracks.map(t => '· ' + t).join('<br>')}</div>
-    </div>
-  `).join('');
+
+  function renderScheduleFromSlots(slots) {
+    const el = document.getElementById('djSchedule');
+    if (!slots || slots.length === 0) {
+      renderScheduleFallback(); return;
+    }
+    const today = new Date().toISOString().slice(0,10);
+    const now = new Date();
+    el.innerHTML = slots.map(s => {
+      const isToday = s.slot_date === today;
+      const start = s.start_time?.slice(0,5);
+      const end   = s.end_time?.slice(0,5);
+      const isNow = isToday && start && end &&
+        now.getHours() * 60 + now.getMinutes() >= parseInt(start.split(':')[0])*60+parseInt(start.split(':')[1]) &&
+        now.getHours() * 60 + now.getMinutes() <  parseInt(end.split(':')[0])*60+parseInt(end.split(':')[1]);
+      const dateLabel = isToday ? DAY_MAP[new Date(s.slot_date+'T12:00:00').getDay()] : s.slot_date?.slice(5).replace('-','.');
+      return `<div class="dj-card ${isNow ? 'today' : ''}">
+        <div class="dj-day">${dateLabel}${isNow ? ' ⬤' : ''}</div>
+        <div class="dj-time">${start||''} — ${end||''}</div>
+        <div class="dj-name">${escapeHtml(s.dj_name)}</div>
+        <div class="dj-genre">${escapeHtml(s.genre||'')}</div>
+        ${s.description ? `<div class="dj-tracks">${escapeHtml(s.description)}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  function renderScheduleFallback() {
+    const todayDay = DAY_MAP[new Date().getDay()];
+    document.getElementById('djSchedule').innerHTML = DJ_SCHEDULE_FALLBACK.map(dj => `
+      <div class="dj-card ${dj.day === todayDay ? 'today' : ''}">
+        <div class="dj-day">${dj.day}</div>
+        <div class="dj-time">${dj.time}</div>
+        <div class="dj-name">${dj.name}</div>
+        <div class="dj-genre">${dj.genre}</div>
+        <div class="dj-tracks">${dj.tracks.map(t => '· ' + t).join('<br>')}</div>
+      </div>
+    `).join('');
+  }
+
+  // Загружаем расписание из Supabase или используем фолбэк
+  Radio.getSchedule().then(slots => {
+    if (slots) renderScheduleFromSlots(slots);
+    else renderScheduleFallback();
+  });
+
+  // Обновлять при изменении расписания
+  Radio.subscribe(type => {
+    if (type === 'schedule-update') {
+      Radio.getSchedule().then(slots => { if (slots) renderScheduleFromSlots(slots); });
+    }
+  });
 
   // ── UPLOAD / DRAG & DROP ─────────────────────────────────────────
   const uploadCard = document.getElementById('uploadCard');
@@ -1363,14 +1453,74 @@
 
   // ── LIVE LISTENER COUNT ─────────────────────────────────────────
   const lc = document.getElementById('listenerCount');
-  setInterval(() => {
-    const delta = Math.floor(Math.random() * 5) - 2;
-    Radio.updateListeners(delta);
-    if (delta > 0) {
-      lc.classList.add('bump');
-      setTimeout(() => lc.classList.remove('bump'), 300);
+  // В локальном режиме — случайный дрейф; в realtime — из presence
+  const cfg = window.POTUZHNOST_CONFIG || {};
+  if (!cfg.enabled) {
+    setInterval(() => {
+      const delta = Math.floor(Math.random() * 5) - 2;
+      Radio.updateListeners(delta);
+      if (delta > 0) { lc.classList.add('bump'); setTimeout(() => lc.classList.remove('bump'), 300); }
+    }, 4500);
+  }
+  Radio.subscribe((type, payload) => {
+    if (type === 'listeners') {
+      if (lc) {
+        lc.textContent = payload?.value ?? Radio.state.listeners;
+        lc.classList.add('bump');
+        setTimeout(() => lc.classList.remove('bump'), 300);
+      }
     }
-  }, 4500);
+  });
+
+  // ── РЕАКЦИИ / ЭМОДЗИ ────────────────────────────────────────────
+  document.querySelectorAll('.react-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      Radio.sendReaction(btn.dataset.emoji);
+    });
+  });
+
+  Radio.onReaction(({ emoji }) => {
+    const el = document.getElementById('reactionsFloat');
+    if (!el) return;
+    const span = document.createElement('span');
+    span.textContent = emoji;
+    span.style.cssText = `font-size:${28+Math.random()*20}px;animation:reactionFloat 2.2s ease-out forwards;opacity:1;pointer-events:none;position:absolute;left:${(Math.random()*80-40)}px`;
+    el.appendChild(span);
+    setTimeout(() => span.remove(), 2300);
+  });
+
+  // ── DJ-ПУЛЬТ (видим только активному DJ) ────────────────────────
+  async function refreshDjConsole() {
+    const console_ = document.getElementById('djConsole');
+    if (!console_) return;
+    if (!cfg.enabled) { console_.style.display = 'none'; return; }
+    const profile = Radio.getProfile();
+    if (!profile || !['dj','admin'].includes(profile.role)) { console_.style.display = 'none'; return; }
+    const slot = await Radio.activeSlotNow();
+    const isMySlot = slot && (slot.dj_user === profile.id || profile.role === 'admin');
+    console_.style.display = isMySlot ? 'block' : 'none';
+  }
+
+  document.getElementById('djPlayBtn')?.addEventListener('click', () => {
+    const trackId = parseInt(document.getElementById('djTrackSelect').value);
+    if (!trackId) { showToast('★ Выбери трек'); return; }
+    Engine.init();
+    Radio.djSetTrack(trackId).then(({ data }) => {
+      if (data?.error) showToast('★ ' + data.error);
+      else showToast('★ Трек поставлен');
+    });
+  });
+
+  document.getElementById('djPauseBtn')?.addEventListener('click', () => {
+    const playing = Radio.state.isPlaying;
+    Radio.djTogglePlay(!playing).then(() =>
+      showToast(playing ? '❚❚ Пауза' : '▶ Эфир запущен'));
+  });
+
+  Radio.subscribe(type => {
+    if (type === 'auth' || type === 'sync') refreshDjConsole();
+  });
+  refreshDjConsole();
 
   // Авто-добавление в историю при смене трека
   let lastTrackId = Radio.state.currentTrackId;

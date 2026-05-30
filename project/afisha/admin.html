@@ -275,11 +275,26 @@ main{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:40px 48p
     <button class="btn danger" id="btnReset">↺ Сбросить к исходным</button>
   </div>
 
+  <!-- AUTH BAR -->
+  <div id="adminAuthBar" style="padding:12px 18px;background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px">
+    <span style="font-family:'Special Elite';font-size:10px;letter-spacing:.24em;text-transform:uppercase" id="adminAuthStatus">★ Войди для полного доступа</span>
+    <div id="adminLoginRow" style="display:flex;gap:8px;flex:1;min-width:220px">
+      <input type="email" id="adminLoginEmail" placeholder="твой@email.com"
+        style="font-family:'Special Elite';font-size:12px;padding:6px 10px;background:rgba(241,225,189,.1);border:1px solid rgba(241,225,189,.3);color:var(--paper);flex:1;min-width:0;outline:none">
+      <button class="btn sm" id="adminLoginBtn" style="background:var(--gold);color:var(--ink);border-color:var(--gold)">Войти</button>
+    </div>
+    <button class="btn sm ghost" id="adminLogoutBtn" style="display:none;color:rgba(241,225,189,.6);border-color:rgba(241,225,189,.3)">Выйти</button>
+  </div>
+
   <!-- TABS -->
   <div class="tabs">
     <button class="tab on" data-tab="events">Афиша <span class="badge" id="tab-badge-events">0</span></button>
     <button class="tab" data-tab="archive">Архив <span class="badge" id="tab-badge-archive">0</span></button>
     <button class="tab" data-tab="requests">Заявки <span class="badge" id="tab-badge-requests" style="background:var(--gold);color:var(--ink)">0</span></button>
+    <button class="tab" data-tab="dj-apps" style="display:none" id="tab-dj-apps">DJ-заявки <span class="badge" id="tab-badge-dj" style="background:var(--red)">0</span></button>
+    <button class="tab" data-tab="schedule" style="display:none" id="tab-schedule">Расписание</button>
+    <button class="tab" data-tab="mod-chat" style="display:none" id="tab-mod-chat">Чат <span class="badge" id="tab-badge-chat">0</span></button>
+    <button class="tab" data-tab="mod-queue" style="display:none" id="tab-mod-queue">Трек-заявки <span class="badge" id="tab-badge-queue" style="background:var(--green-dark)">0</span></button>
   </div>
 
   <!-- PANEL: EVENTS -->
@@ -298,6 +313,38 @@ main{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:40px 48p
       <button class="btn green" id="btnAddArchive">+ Добавить в архив</button>
       <span style="font-family:'Special Elite';font-size:11px;letter-spacing:.18em;opacity:.55">прошедшие рейвы</span>
     </div>
+  </div>
+
+  <!-- PANEL: DJ-APPS -->
+  <div class="panel" id="panel-dj-apps">
+    <div class="ev-list" id="dj-apps-list"></div>
+  </div>
+
+  <!-- PANEL: SCHEDULE -->
+  <div class="panel" id="panel-schedule">
+    <div class="ev-list" id="schedule-list"></div>
+    <div class="add-row">
+      <button class="btn green" id="btnAddSlot">+ Добавить слот вручную</button>
+      <span style="font-family:'Special Elite';font-size:11px;letter-spacing:.18em;opacity:.55">одобренные слоты = расписание</span>
+    </div>
+  </div>
+
+  <!-- PANEL: MOD CHAT -->
+  <div class="panel" id="panel-mod-chat">
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <button class="btn danger" id="btnClearChat">★ Очистить весь чат</button>
+      <button class="btn ghost" id="btnRefreshChat">↺ Обновить</button>
+    </div>
+    <div class="ev-list" id="chat-mod-list"></div>
+  </div>
+
+  <!-- PANEL: MOD QUEUE -->
+  <div class="panel" id="panel-mod-queue">
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <button class="btn danger" id="btnClearQueue">★ Очистить всю очередь</button>
+      <button class="btn ghost" id="btnRefreshQueue">↺ Обновить</button>
+    </div>
+    <div class="ev-list" id="queue-mod-list"></div>
   </div>
 
   <!-- PANEL: REQUESTS -->
@@ -496,6 +543,8 @@ main{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:40px 48p
   </div>
 </div>
 
+<script src="../assets/realtime-config.js"></script>
+<script src="../assets/radio-state.js"></script>
 <script src="./events-data.js"></script>
 <script>
 // ── STATE ─────────────────────────────────────────────────────────────────
@@ -1013,6 +1062,272 @@ function renderAll() {
   renderArchive();
   renderRequests();
 }
+
+// ── AUTH (Supabase) ────────────────────────────────────────────────────────
+const Radio = window.PotuzhnostRadio;
+const cfg   = window.POTUZHNOST_CONFIG || {};
+
+function updateAdminAuth() {
+  const user    = Radio?.getUser();
+  const profile = Radio?.getProfile();
+  const isAdmin = Radio?.isAdmin();
+  const statusEl  = document.getElementById('adminAuthStatus');
+  const loginRow  = document.getElementById('adminLoginRow');
+  const logoutBtn = document.getElementById('adminLogoutBtn');
+
+  // Показать/скрыть admin-вкладки
+  ['tab-dj-apps','tab-schedule','tab-mod-chat','tab-mod-queue'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isAdmin ? '' : 'none';
+  });
+
+  if (user) {
+    statusEl.textContent = '★ ' + (profile?.display_name || user.email) + (isAdmin ? ' · АДМИНИСТРАТОР' : '');
+    loginRow.style.display = 'none';
+    logoutBtn.style.display = 'block';
+    if (isAdmin) {
+      renderDjApps();
+      renderScheduleAdmin();
+      renderModChat();
+      renderModQueue();
+    }
+  } else {
+    statusEl.textContent = cfg.enabled ? '★ Войди для полного доступа (DJ-заявки, расписание, модерация)' : '★ Realtime не настроен — только локальный режим';
+    loginRow.style.display = cfg.enabled ? 'flex' : 'none';
+    logoutBtn.style.display = 'none';
+  }
+}
+
+document.getElementById('adminLoginBtn')?.addEventListener('click', async () => {
+  const email = document.getElementById('adminLoginEmail').value.trim();
+  if (!email) return;
+  const { error } = await Radio.signIn(email);
+  const st = document.getElementById('adminAuthStatus');
+  if (error) st.textContent = '★ Ошибка: ' + (error.message || error);
+  else st.textContent = '★ Ссылка отправлена на ' + email;
+});
+
+document.getElementById('adminLogoutBtn')?.addEventListener('click', async () => {
+  await Radio.signOut();
+  updateAdminAuth();
+  toast('★ Вышел');
+});
+
+Radio?.subscribe(type => {
+  if (type === 'auth') updateAdminAuth();
+  if (type === 'schedule-update') { renderDjApps(); renderScheduleAdmin(); }
+  if (type === 'queue-update') renderModQueue();
+  if (type === 'chat-update') renderModChat();
+});
+
+// ── ВКЛАДКА DJ-ЗАЯВКИ ─────────────────────────────────────────────────────
+async function renderDjApps() {
+  const list = document.getElementById('dj-apps-list');
+  if (!list) return;
+  document.getElementById('tab-badge-dj').textContent = '…';
+
+  const apps = await Radio.getDjApplications();
+  const pending = apps.filter(a => a.status === 'pending');
+  document.getElementById('tab-badge-dj').textContent = pending.length;
+
+  if (!apps.length) { list.innerHTML = '<div class="empty">Заявок нет</div>'; return; }
+
+  const STATUS_ICONS = { pending:'⏳', approved:'✓', rejected:'✕' };
+  list.innerHTML = '';
+  apps.forEach(a => {
+    const item = document.createElement('div');
+    item.className = 'ev-item';
+    item.innerHTML = `
+      <div class="ev-date-cell">
+        <div class="d" style="font-size:14px">${(a.slot_date||'').slice(5).replace('-','.')}</div>
+        <div class="m">${(a.start_time||'').slice(0,5)}</div>
+        <div class="m" style="font-size:10px;opacity:.5">${(a.end_time||'').slice(0,5)}</div>
+      </div>
+      <div class="ev-info">
+        <div class="title">${a.dj_name||'—'}</div>
+        <div class="meta">${a.genre||''} · ${a.contact||''}</div>
+        ${a.description ? `<div class="lineup-preview">${a.description}</div>` : ''}
+        <div class="ev-tags"><span class="ev-tag ${a.status==='approved'?'g':a.status==='rejected'?'r':'y'}">${STATUS_ICONS[a.status]} ${a.status}</span></div>
+      </div>
+      <div class="ev-actions">
+        ${a.status === 'pending' ? `
+          <button class="btn sm green" data-approve="${a.id}">✓ Одобрить</button>
+          <button class="btn sm danger" data-reject="${a.id}">✕ Отклонить</button>
+        ` : `<span style="font-family:'Special Elite';font-size:10px;opacity:.5">${a.admin_note||''}</span>`}
+      </div>`;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll('[data-approve]').forEach(btn => btn.addEventListener('click', async () => {
+    const note = prompt('Комментарий (необяз.):') || '';
+    const { data } = await Radio.adminReviewSlot(btn.dataset.approve, true, note);
+    toast(data?.error ? '★ Ошибка: '+data.error : '✓ Заявка одобрена');
+    renderDjApps(); renderScheduleAdmin();
+  }));
+  list.querySelectorAll('[data-reject]').forEach(btn => btn.addEventListener('click', async () => {
+    const note = prompt('Причина отклонения:') || '';
+    const { data } = await Radio.adminReviewSlot(btn.dataset.reject, false, note);
+    toast(data?.error ? '★ Ошибка: '+data.error : '✕ Заявка отклонена');
+    renderDjApps();
+  }));
+}
+
+// ── ВКЛАДКА РАСПИСАНИЕ ЭФИРА ───────────────────────────────────────────────
+async function renderScheduleAdmin() {
+  const list = document.getElementById('schedule-list');
+  if (!list) return;
+
+  const slots = await Radio.getSchedule();
+  if (!slots || !slots.length) { list.innerHTML = '<div class="empty">Одобренных слотов нет · Одобри заявки DJ выше</div>'; return; }
+
+  list.innerHTML = '';
+  slots.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'ev-item';
+    item.innerHTML = `
+      <div class="ev-date-cell">
+        <div class="d" style="font-size:14px">${(s.slot_date||'').slice(5).replace('-','.')}</div>
+        <div class="m">${(s.start_time||'').slice(0,5)}</div>
+        <div class="m" style="font-size:10px;opacity:.5">${(s.end_time||'').slice(0,5)}</div>
+      </div>
+      <div class="ev-info">
+        <div class="title">${s.dj_name||'—'}</div>
+        <div class="meta">${s.genre||''}</div>
+        ${s.description ? `<div class="lineup-preview">${s.description}</div>` : ''}
+        <div class="ev-tags"><span class="ev-tag g">✓ approved</span></div>
+      </div>
+      <div class="ev-actions">
+        <button class="btn sm danger" data-revoke="${s.id}">✕ Убрать</button>
+      </div>`;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll('[data-revoke]').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Убрать слот из расписания?')) return;
+    const sb = Radio.getSupabase();
+    if (sb) await sb.from('dj_slots').update({ status:'rejected' }).eq('id', btn.dataset.revoke);
+    renderScheduleAdmin(); renderDjApps();
+    toast('★ Слот убран из расписания');
+  }));
+}
+
+document.getElementById('btnAddSlot')?.addEventListener('click', () => {
+  toast('★ Одобри заявку DJ во вкладке DJ-заявки, или попроси DJ подать заявку на /vintage/dj.html');
+});
+
+// ── ВКЛАДКА МОДЕРАЦИЯ ЧАТА ────────────────────────────────────────────────
+async function renderModChat() {
+  const list = document.getElementById('chat-mod-list');
+  if (!list) return;
+
+  const sb = Radio.getSupabase();
+  let msgs = [];
+  if (sb) {
+    const { data } = await sb.from('chat_messages').select('*').order('created_at', { ascending: false }).limit(100);
+    msgs = data || [];
+  } else {
+    msgs = (Radio.state.chat || []).slice().reverse();
+  }
+  document.getElementById('tab-badge-chat').textContent = msgs.length;
+
+  if (!msgs.length) { list.innerHTML = '<div class="empty">Чат пустой</div>'; return; }
+
+  list.innerHTML = '';
+  msgs.forEach(m => {
+    const item = document.createElement('div');
+    item.className = 'ev-item';
+    item.style.gridTemplateColumns = '1fr auto';
+    const d = new Date(m.created_at || m.at || Date.now());
+    const time = d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+    item.innerHTML = `
+      <div class="ev-info" style="grid-column:1">
+        <div class="title" style="font-size:15px">${m.is_bot||m.isBot ? '🤖 ' : ''}${m.nick||'Анон'}</div>
+        <div class="lineup-preview">${m.text||''}</div>
+        <div class="meta">${time}</div>
+      </div>
+      <div class="ev-actions" style="grid-column:2">
+        <button class="btn sm danger" data-delchat="${m.id}">✕</button>
+      </div>`;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll('[data-delchat]').forEach(btn => btn.addEventListener('click', () => {
+    if (confirm('Удалить сообщение?')) {
+      Radio.deleteChat(btn.dataset.delchat);
+      renderModChat();
+      toast('★ Удалено');
+    }
+  }));
+}
+
+document.getElementById('btnRefreshChat')?.addEventListener('click', renderModChat);
+document.getElementById('btnClearChat')?.addEventListener('click', async () => {
+  if (!confirm('Очистить весь чат? Нельзя отменить.')) return;
+  const sb = Radio.getSupabase();
+  if (sb) await sb.from('chat_messages').delete().neq('id',0);
+  else Radio.state.chat = [];
+  renderModChat();
+  toast('★ Чат очищен');
+});
+
+// ── ВКЛАДКА МОДЕРАЦИЯ ТРЕК-ЗАЯВОК ─────────────────────────────────────────
+async function renderModQueue() {
+  const list = document.getElementById('queue-mod-list');
+  if (!list) return;
+
+  const sb = Radio.getSupabase();
+  let items = [];
+  if (sb) {
+    const { data } = await sb.from('track_requests').select('*, tracks(name,artist)').eq('status','pending')
+      .order('votes', { ascending: false });
+    items = data || [];
+  } else {
+    items = Radio.state.queue || [];
+  }
+  document.getElementById('tab-badge-queue').textContent = items.length;
+
+  if (!items.length) { list.innerHTML = '<div class="empty">Очередь пустая</div>'; return; }
+
+  list.innerHTML = '';
+  items.forEach(r => {
+    const item = document.createElement('div');
+    item.className = 'ev-item';
+    item.style.gridTemplateColumns = '60px 1fr auto';
+    const trackName = r.tracks?.name || r.track || 'Трек';
+    const artist    = r.tracks?.artist || '';
+    item.innerHTML = `
+      <div class="ev-date-cell">
+        <div class="d" style="font-size:24px">👍</div>
+        <div class="m" style="font-size:14px">${r.votes||0}</div>
+      </div>
+      <div class="ev-info">
+        <div class="title" style="font-size:15px">${trackName}</div>
+        <div class="meta">${artist}</div>
+        <div class="lineup-preview">от ${r.nick||'Анон'}${r.comment ? ' · «'+r.comment+'»' : ''}</div>
+      </div>
+      <div class="ev-actions">
+        <button class="btn sm danger" data-delreq="${r.id}">✕ Убрать</button>
+      </div>`;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll('[data-delreq]').forEach(btn => btn.addEventListener('click', () => {
+    Radio.removeFromQueue(btn.dataset.delreq);
+    renderModQueue();
+    toast('★ Заявка удалена из очереди');
+  }));
+}
+
+document.getElementById('btnRefreshQueue')?.addEventListener('click', renderModQueue);
+document.getElementById('btnClearQueue')?.addEventListener('click', async () => {
+  if (!confirm('Очистить всю очередь треков?')) return;
+  await Radio.adminClearQueue();
+  renderModQueue();
+  toast('★ Очередь очищена');
+});
+
+// Инициализация Auth
+updateAdminAuth();
 renderAll();
 </script>
 </body>

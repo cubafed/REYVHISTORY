@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<title>ПОТУЖНОСТЬ РУ — DJ-заявка</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Special+Elite&family=Yeseva+One&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f1e1bd;--paper-dark:#dcc28a;--ink:#1a1208;--red:#c8362a;--gold:#e8b13a;--green:#1d6a3b;--green-dark:#0f3d22}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink);font-family:'Oswald',sans-serif;min-height:100vh}
+body{background:radial-gradient(ellipse at 15% 0%,rgba(232,177,58,.28),transparent 50%),radial-gradient(ellipse at 90% 80%,rgba(200,54,42,.12),transparent 55%),var(--paper)}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1  0 0 0 0 .07  0 0 0 0 .04  0 0 0 .5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/></svg>");
+  mix-blend-mode:multiply;opacity:.45}
+
+nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;
+  padding:18px 48px;border-bottom:3px solid var(--ink);background:linear-gradient(180deg,rgba(255,255,255,.15),transparent)}
+.brand{font-family:'Alfa Slab One';font-size:20px;letter-spacing:.04em;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand .dot{width:12px;height:12px;background:var(--red);border-radius:50%;box-shadow:0 0 0 3px var(--ink)}
+.nav-links{display:flex;gap:20px;list-style:none;font-weight:500;letter-spacing:.16em;font-size:12px;text-transform:uppercase}
+.nav-links a{color:var(--ink);text-decoration:none;position:relative;padding-bottom:3px}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--red);transition:width .2s}
+.nav-links a:hover::after,.nav-links a.on::after{width:100%}
+
+main{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:48px 24px 80px}
+
+h1{font-family:'Alfa Slab One';font-size:clamp(36px,6vw,72px);text-transform:uppercase;line-height:.9;
+  text-shadow:4px 4px 0 var(--red),6px 6px 0 var(--ink);margin-bottom:14px}
+.sub{font-family:'Special Elite';font-size:13px;letter-spacing:.22em;text-transform:uppercase;opacity:.65;margin-bottom:36px}
+
+.section{background:var(--paper-dark);border:3px solid var(--ink);padding:28px;box-shadow:6px 6px 0 var(--ink);margin-bottom:28px}
+.section-title{font-family:'Alfa Slab One';font-size:18px;text-transform:uppercase;margin-bottom:18px;letter-spacing:.04em}
+
+/* AUTH */
+#authBlock,.form-block{display:none}
+#authBlock.show,.form-block.show{display:block}
+.auth-status{font-family:'Special Elite';font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  padding:10px 16px;border:2px solid var(--ink);background:var(--paper);margin-bottom:16px;
+  display:flex;align-items:center;gap:10px}
+.auth-dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0}
+.auth-dot.on{background:var(--green-dark)}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.form-grid.single{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-family:'Special Elite';font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.7}
+.form-input,.form-select,.form-textarea{
+  font-family:'Oswald';font-size:14px;letter-spacing:.06em;
+  padding:10px 12px;background:var(--paper);border:2px solid var(--ink);
+  color:var(--ink);outline:none;transition:border-color .2s;width:100%}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);background:rgba(241,225,189,.85)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-hint{font-family:'Special Elite';font-size:10px;letter-spacing:.12em;opacity:.5}
+
+/* BUTTONS */
+.btn{font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  border:3px solid var(--ink);padding:12px 20px;cursor:pointer;background:var(--paper);color:var(--ink);
+  box-shadow:4px 4px 0 var(--ink);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.btn.primary{background:var(--red);color:var(--paper)}
+.btn.primary:hover{background:var(--gold);color:var(--ink)}
+.btn.green{background:var(--green-dark);color:var(--paper)}
+.btn.ghost{background:transparent;box-shadow:none;border-color:rgba(26,18,8,.35)}
+
+/* STATUS CARDS */
+.status-list{display:flex;flex-direction:column;gap:12px}
+.status-card{padding:16px;border:2px solid var(--ink);background:var(--paper);position:relative}
+.status-card.approved{border-color:var(--green-dark)}
+.status-card.rejected{border-color:var(--red);opacity:.7}
+.sc-title{font-family:'Alfa Slab One';font-size:17px;text-transform:uppercase}
+.sc-meta{font-family:'Special Elite';font-size:11px;letter-spacing:.16em;text-transform:uppercase;opacity:.6;margin-top:4px}
+.sc-badge{position:absolute;top:12px;right:12px;font-family:'Special Elite';font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;padding:4px 10px;border:2px solid currentColor}
+.sc-badge.pending{color:var(--gold);border-color:var(--gold)}
+.sc-badge.approved{color:var(--green-dark);border-color:var(--green-dark)}
+.sc-badge.rejected{color:var(--red);border-color:var(--red)}
+.sc-note{font-family:'Yeseva One';font-size:13px;font-style:italic;color:var(--green-dark);margin-top:8px}
+
+/* TOAST */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:9999;
+  background:var(--ink);color:var(--paper);padding:12px 22px;
+  border:3px solid var(--ink);box-shadow:5px 5px 0 var(--gold),5px 5px 0 4px var(--ink);
+  font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  white-space:nowrap;pointer-events:none;animation:toastIn .3s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes toastIn{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+
+/* NOTICE */
+.notice{padding:14px 16px;background:var(--ink);color:var(--paper);
+  font-family:'Special Elite';font-size:12px;letter-spacing:.14em;margin-bottom:24px;
+  border:2px solid var(--ink)}
+.notice a{color:var(--gold);text-decoration:none}
+
+@media(max-width:640px){
+  nav{padding:12px 16px;flex-wrap:wrap;gap:8px}
+  main{padding:28px 16px 60px}
+  .form-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="./index.html"><span class="dot"></span>ПОТУЖНОСТЬ&nbsp;РУ</a>
+  <ul class="nav-links">
+    <li><a href="./index.html">Эфир</a></li>
+    <li><a href="./dj.html" class="on">DJ-заявка</a></li>
+    <li><a href="../afisha/index.html">Афиша</a></li>
+  </ul>
+</nav>
+
+<main>
+  <h1>Хочешь<br>выступить?</h1>
+  <div class="sub">Подай заявку · Мы рассмотрим · Появишься в расписании</div>
+
+  <!-- Блок авторизации -->
+  <div class="section" id="authSection">
+    <div class="section-title">★ Вход</div>
+    <div id="authStatus" class="auth-status">
+      <span class="auth-dot" id="authDot"></span>
+      <span id="authStatusText">Не вошли</span>
+    </div>
+
+    <!-- Форма входа -->
+    <div id="loginForm">
+      <p style="font-family:'Special Elite';font-size:12px;letter-spacing:.14em;line-height:1.6;margin-bottom:16px;opacity:.7">
+        Введи email — придёт ссылка для входа. После входа ты сможешь подать заявку и следить за статусом.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <input class="form-input" id="loginEmail" type="email" placeholder="твой@email.com" style="flex:1;min-width:200px">
+        <button class="btn primary" id="loginBtn">★ Войти по ссылке</button>
+      </div>
+      <div id="loginMsg" style="font-family:'Special Elite';font-size:11px;letter-spacing:.16em;margin-top:10px;opacity:.6"></div>
+    </div>
+
+    <div id="logoutRow" style="display:none;margin-top:14px">
+      <button class="btn ghost" id="logoutBtn">Выйти</button>
+    </div>
+  </div>
+
+  <!-- Уведомление если realtime не включён -->
+  <div class="notice" id="localNotice" style="display:none">
+    ⚠ Realtime не настроен. Заявки сохраняются <strong>только в этом браузере</strong>.
+    Чтобы они попали к модераторам — настрой <a href="https://supabase.com" target="_blank">Supabase</a>
+    и вставь ключи в <code>assets/realtime-config.js</code>.
+  </div>
+
+  <!-- Форма заявки -->
+  <div class="section" id="applySection">
+    <div class="section-title">★ Подать заявку на выступление</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Твоё имя / псевдоним *</label>
+        <input class="form-input" id="fDjName" placeholder="DJ Корень" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Контакт (TG или email) *</label>
+        <input class="form-input" id="fContact" placeholder="@djkoren" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Дата выступления *</label>
+        <input class="form-input" type="date" id="fDate" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Жанр / формат</label>
+        <input class="form-input" id="fGenre" placeholder="Deep Dub, Roots, Jungle...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Начало (время) *</label>
+        <input class="form-input" type="time" id="fStart" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Конец (время) *</label>
+        <input class="form-input" type="time" id="fEnd" required>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Описание сета</label>
+        <textarea class="form-textarea" id="fDesc" placeholder="Расскажи про свой сет — жанр, настрой, что планируешь играть"></textarea>
+      </div>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn primary" id="applyBtn">★ Подать заявку ★</button>
+      <span style="font-family:'Special Elite';font-size:10px;letter-spacing:.18em;opacity:.5">Рассматриваем в течение 24 часов</span>
+    </div>
+  </div>
+
+  <!-- Мои заявки -->
+  <div class="section" id="myAppsSection" style="display:none">
+    <div class="section-title">Мои заявки</div>
+    <div class="status-list" id="myApps">
+      <div style="font-family:'Yeseva One';font-size:14px;font-style:italic;opacity:.6">Загрузка...</div>
+    </div>
+  </div>
+</main>
+
+<script src="../assets/realtime-config.js"></script>
+<script src="../assets/radio-state.js"></script>
+<script>
+const Radio = window.PotuzhnostRadio;
+const cfg   = window.POTUZHNOST_CONFIG || {};
+
+let toastTimer;
+function toast(msg) {
+  clearTimeout(toastTimer);
+  let el = document.getElementById('__toast');
+  if (!el) { el = document.createElement('div'); el.id = '__toast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.style.opacity = '1'; el.style.display = '';
+  toastTimer = setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.style.display = 'none', 300); }, 2500);
+}
+
+// Дата по умолчанию — завтра
+const tomorrow = new Date(Date.now() + 86400000);
+document.getElementById('fDate').value = tomorrow.toISOString().slice(0,10);
+document.getElementById('fStart').value = '20:00';
+document.getElementById('fEnd').value   = '22:00';
+
+// Уведомление про локальный режим
+if (!cfg.enabled) document.getElementById('localNotice').style.display = 'block';
+
+// ── AUTH ────────────────────────────────────────────────────────────────
+function updateAuthUI() {
+  const user = Radio.getUser();
+  const profile = Radio.getProfile();
+  const dot  = document.getElementById('authDot');
+  const text = document.getElementById('authStatusText');
+  const loginForm = document.getElementById('loginForm');
+  const logoutRow = document.getElementById('logoutRow');
+  const applySection = document.getElementById('applySection');
+  const mySection = document.getElementById('myAppsSection');
+
+  if (user) {
+    dot.classList.add('on');
+    text.textContent = (profile?.display_name || user.email) + (profile?.role === 'admin' ? ' · АДМИН' : profile?.role === 'dj' ? ' · DJ' : '');
+    loginForm.style.display = 'none';
+    logoutRow.style.display = 'block';
+    applySection.style.display = 'block';
+    mySection.style.display = 'block';
+    loadMyApps();
+  } else {
+    dot.classList.remove('on');
+    text.textContent = 'Не вошли';
+    loginForm.style.display = 'block';
+    logoutRow.style.display = 'none';
+    if (cfg.enabled) {
+      applySection.style.display = 'none';
+    } else {
+      applySection.style.display = 'block';
+    }
+    mySection.style.display = 'none';
+  }
+}
+
+document.getElementById('loginBtn').addEventListener('click', async () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) return;
+  const msg = document.getElementById('loginMsg');
+  msg.textContent = '★ Отправляем ссылку...';
+  const { error } = await Radio.signIn(email);
+  if (error) { msg.textContent = '★ Ошибка: ' + (error.message || error); }
+  else { msg.textContent = '★ Ссылка отправлена на ' + email + ' — проверь почту и перейди по ней'; }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await Radio.signOut();
+  updateAuthUI();
+  toast('★ Вышел');
+});
+
+Radio.subscribe(type => {
+  if (type === 'auth') updateAuthUI();
+});
+updateAuthUI();
+
+// ── ПОДАТЬ ЗАЯВКУ ───────────────────────────────────────────────────────
+document.getElementById('applyBtn').addEventListener('click', async () => {
+  const djName = document.getElementById('fDjName').value.trim();
+  const contact = document.getElementById('fContact').value.trim();
+  const slotDate = document.getElementById('fDate').value;
+  const startTime = document.getElementById('fStart').value;
+  const endTime = document.getElementById('fEnd').value;
+  const genre = document.getElementById('fGenre').value.trim();
+  const description = document.getElementById('fDesc').value.trim();
+
+  if (!djName || !contact || !slotDate || !startTime || !endTime) {
+    toast('★ Заполни обязательные поля');
+    return;
+  }
+  if (startTime >= endTime) {
+    toast('★ Время конца должно быть позже начала');
+    return;
+  }
+
+  const btn = document.getElementById('applyBtn');
+  btn.disabled = true; btn.textContent = '★ Отправляем...';
+
+  const { id, error } = await Radio.submitDjApplication({ djName, contact, slotDate, startTime, endTime, genre, description });
+
+  btn.disabled = false; btn.textContent = '★ Подать заявку ★';
+
+  if (error) {
+    toast('★ Ошибка: ' + (error.message || JSON.stringify(error)));
+  } else {
+    toast('★★★ Заявка подана! Ожидай ответа');
+    document.getElementById('fDesc').value = '';
+    if (id) loadMyApps();
+  }
+});
+
+// ── МОИ ЗАЯВКИ ──────────────────────────────────────────────────────────
+async function loadMyApps() {
+  const list = document.getElementById('myApps');
+  list.innerHTML = '<div style="font-family:\'Yeseva One\';font-size:14px;font-style:italic;opacity:.6">Загрузка...</div>';
+
+  const apps = await Radio.getDjApplications();
+  const user = Radio.getUser();
+  const filtered = user ? apps.filter(a => a.dj_user === user.id || !a.dj_user) : apps;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="font-family:\'Yeseva One\';font-size:14px;font-style:italic;opacity:.5">Заявок пока нет</div>';
+    return;
+  }
+
+  const STATUS_LABELS = { pending: '⏳ На рассмотрении', approved: '✓ ОДОБРЕНО', rejected: '✕ Отклонено' };
+  list.innerHTML = filtered.map(a => `
+    <div class="status-card ${a.status}">
+      <span class="sc-badge ${a.status}">${STATUS_LABELS[a.status] || a.status}</span>
+      <div class="sc-title">${a.dj_name || a.djName || '—'}</div>
+      <div class="sc-meta">${a.slot_date || a.slotDate || '—'} · ${a.start_time || a.startTime || ''}–${a.end_time || a.endTime || ''} · ${a.genre || ''}</div>
+      ${a.description || a.desc ? `<div class="sc-meta" style="margin-top:6px;opacity:.55">${a.description || a.desc}</div>` : ''}
+      ${a.admin_note ? `<div class="sc-note">💬 ${a.admin_note}</div>` : ''}
+    </div>`).join('');
+}
+
+Radio.subscribe(type => {
+  if (type === 'schedule-update') loadMyApps();
+});
+</script>
+</body>
+</html>
