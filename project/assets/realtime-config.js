@@ -10,10 +10,10 @@
 //      выполни в SQL: UPDATE profiles SET role='admin' WHERE email='твой@email.com';
 
 window.POTUZHNOST_CONFIG = {
-  enabled: false,            // ← поставь true после заполнения ключей
+  enabled: true,
 
-  supabaseUrl:     '',       // https://xxxxxxxx.supabase.co
-  supabaseAnonKey: '',       // eyJ...
+  supabaseUrl:     'https://woxystwyudfjegzgzrr.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndveHlzdHd5dWRmamVnemd6enJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwODU2OTUsImV4cCI6MjA5NTY2MTY5NX0.uWUNDutmcMxN4cKxAIvQXjlftxgeilp8r9tAs-j9bOI',
 
   // Настройки эфира
   radio: {
