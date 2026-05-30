@@ -147,6 +147,25 @@
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='1' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     mix-blend-mode:overlay;
   }
+
+  /* ── MOBILE RESPONSIVE ───────────────────── */
+  @media(max-width:640px){
+    nav{padding:10px 14px;gap:6px;flex-wrap:wrap}
+    nav .brand{font-size:16px}
+    .nav-links{gap:2px;flex-wrap:wrap}
+    nav .modes{gap:3px;order:3;width:100%}
+    nav .mode-btn{font-size:9px;padding:6px 10px;letter-spacing:.12em;flex:1;text-align:center}
+    nav .back{display:none}
+    .dock{flex-wrap:wrap;gap:10px;padding:12px 16px;
+      border-radius:14px;bottom:16px;
+      left:12px;right:12px;transform:none;
+      width:auto;max-width:calc(100% - 24px)}
+    .dock .track-info{min-width:0;flex:1}
+    .dock .track-name{font-size:13px}
+    .dock .prog-wrap{width:100%;order:4;flex:1 1 100%}
+    .dock .prog{flex:1;width:auto;min-width:0}
+    #jahText span{font-size:clamp(28px,10vw,56px)}
+  }
 </style>
 </head>
 <body>
@@ -162,11 +181,12 @@
 <nav>
   <a href="../vintage/index.html" class="brand"><span class="dot"></span> ПОТУЖНОСТЬ РУ</a>
   <div class="nav-links" style="display:flex;gap:4px">
-    <a href="../vintage/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">эфир</a>
-    <a href="../taro/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">таро</a>
-    <a href="../fire/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">огонь</a>
-    <a href="../chai/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">чай</a>
-    <a href="../shar/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:var(--ink);opacity:.7;text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">шар</a>
+    <a href="../vintage/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:rgba(241,225,189,.7);text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">эфир</a>
+    <a href="../taro/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:rgba(241,225,189,.7);text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">таро</a>
+    <a href="../fire/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:rgba(241,225,189,.7);text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">огонь</a>
+    <a href="../chai/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:rgba(241,225,189,.7);text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">чай</a>
+    <a href="../shar/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:rgba(241,225,189,.7);text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">шар</a>
+    <a href="../afisha/index.html" style="font-family:'Major Mono Display';font-size:10px;letter-spacing:.18em;color:rgba(232,177,58,.85);text-decoration:none;padding:5px 9px;border:1px solid transparent;transition:all .2s">афиша</a>
   </div>
   <div class="modes">
     <button class="mode-btn active" data-mode="mandala">Мандала</button>
