@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<title>ПОТУЖНОСТЬ РУ — Архив рейвов</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Oswald:wght@400;500;700&family=Special+Elite&family=Yeseva+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#ede0c4;
+    --paper-dark:#d9c89a;
+    --paper-aged:#c9b080;
+    --ink:#1a1208;
+    --red:#c8362a;
+    --gold:#e8b13a;
+    --green:#1d6a3b;
+    --green-dark:#0f3d22;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:'Oswald',sans-serif;overflow-x:hidden}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(200,160,60,.28), transparent 55%),
+      radial-gradient(ellipse at 90% 70%, rgba(200,54,42,.12), transparent 55%),
+      var(--paper);
+  }
+  /* aged paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .12  0 0 0 0 .09  0 0 0 0 .05  0 0 0 .7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/></svg>");
+    mix-blend-mode:multiply;opacity:.6;
+  }
+  /* vignette */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:98;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(60,35,10,.5) 100%);
+    mix-blend-mode:multiply;
+  }
+
+  /* NAV */
+  nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:3px solid var(--ink);background:linear-gradient(180deg,rgba(255,255,255,.15),transparent)}
+  .brand{font-family:'Alfa Slab One';font-size:20px;letter-spacing:.04em;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  .brand .dot{width:12px;height:12px;background:var(--red);border-radius:50%;box-shadow:0 0 0 3px var(--ink)}
+  nav ul{display:flex;gap:24px;list-style:none;font-weight:500;letter-spacing:.16em;font-size:12px;text-transform:uppercase}
+  nav a{color:var(--ink);text-decoration:none;position:relative;padding-bottom:3px}
+  nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--red);transition:width .2s}
+  nav a:hover::after,nav a.on::after{width:100%}
+  nav a.on{color:var(--red)}
+
+  /* MASTHEAD */
+  .masthead{
+    position:relative;padding:56px 48px 48px;border-bottom:3px solid var(--ink);overflow:hidden;
+  }
+  .mh-bg{
+    position:absolute;inset:0;pointer-events:none;z-index:0;
+    background:repeating-linear-gradient(
+      0deg,
+      transparent,transparent 44px,
+      rgba(26,18,8,.06) 44px,rgba(26,18,8,.06) 46px
+    );
+  }
+  .mh-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto}
+  .mh-eyebrow{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.36em;text-transform:uppercase;
+    color:var(--green-dark);margin-bottom:10px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .mh-eyebrow::before,.mh-eyebrow::after{content:"";flex:1;height:1px;background:currentColor;opacity:.4}
+  .mh-title{
+    font-family:'Alfa Slab One';font-size:clamp(64px,10vw,160px);line-height:.86;
+    text-transform:uppercase;letter-spacing:-.01em;color:var(--ink);
+    text-shadow:5px 5px 0 var(--red),7px 7px 0 var(--ink);
+  }
+  .mh-title .aged{
+    display:inline-block;background:var(--paper-aged);
+    padding:0 16px;transform:rotate(-1.5deg);
+    text-shadow:4px 4px 0 var(--ink);
+  }
+  .mh-meta{
+    display:flex;gap:40px;align-items:center;flex-wrap:wrap;
+    margin-top:24px;font-family:'Special Elite';font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;
+  }
+  .mh-meta .sep{width:24px;height:1px;background:currentColor;opacity:.5}
+  .mh-stat{text-align:center}
+  .mh-stat b{display:block;font-family:'Alfa Slab One';font-size:36px;color:var(--ink);letter-spacing:-.01em;opacity:1}
+  .mh-stamps{position:absolute;right:48px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:16px;z-index:1}
+  .mh-stamp{font-family:'Special Elite';font-size:10px;letter-spacing:.22em;text-transform:uppercase;border:2px solid currentColor;padding:6px 12px;opacity:.7}
+  .mh-stamp.r{color:var(--red);transform:rotate(8deg)}
+  .mh-stamp.g{color:var(--green-dark);transform:rotate(-6deg)}
+  .mh-stamp.k{color:var(--ink);transform:rotate(3deg)}
+
+  /* FILTER BAR */
+  .archive-controls{
+    position:relative;z-index:5;
+    padding:20px 48px;border-bottom:2px solid var(--ink);
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    background:rgba(237,224,196,.8);backdrop-filter:blur(4px);
+    position:sticky;top:0;
+  }
+  .ac-lbl{font-family:'Special Elite';font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.55;white-space:nowrap}
+  .ac-chips{display:flex;gap:7px;flex-wrap:wrap;flex:1}
+  .ac-chip{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    padding:7px 12px;border:2px solid var(--ink);background:var(--paper);
+    cursor:pointer;transition:all .14s;white-space:nowrap;
+  }
+  .ac-chip:hover{background:rgba(232,177,58,.5);transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--ink)}
+  .ac-chip.on{background:var(--ink);color:var(--paper);transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--gold)}
+  .ac-chip.year.on{background:var(--green-dark)}
+  .ac-count{font-family:'Alfa Slab One';font-size:18px;white-space:nowrap;transition:color .2s}
+  .ac-sep{width:1px;background:var(--ink);opacity:.2;align-self:stretch;margin:0 4px}
+
+  /* ARCHIVE GRID */
+  .archive-section{padding:56px 48px 60px;position:relative}
+  .archive-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+    gap:36px;
+  }
+
+  /* ARCHIVE CARD */
+  .arc-card{
+    position:relative;cursor:pointer;
+    background:var(--paper-dark);
+    border:3px solid var(--ink);
+    box-shadow:8px 8px 0 var(--ink);
+    transition:transform .15s,box-shadow .15s;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+  }
+  .arc-card:nth-child(3n+1){transform:rotate(-.4deg)}
+  .arc-card:nth-child(3n+2){transform:rotate(.5deg);box-shadow:8px 8px 0 var(--red),8px 8px 0 4px var(--ink)}
+  .arc-card:nth-child(3n+3){transform:rotate(-.7deg);box-shadow:8px 8px 0 var(--green-dark),8px 8px 0 4px var(--ink)}
+  .arc-card:hover{transform:rotate(0) translate(-4px,-4px) !important;box-shadow:12px 12px 0 var(--ink) !important}
+  .arc-card.fout{display:none}
+
+  /* photo placeholder */
+  .arc-photo{
+    height:200px;position:relative;overflow:hidden;
+    background:var(--ink);display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .arc-photo-inner{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+  }
+  .arc-photo svg{position:absolute;inset:0;width:100%;height:100%}
+  .arc-photo .ph-label{
+    position:relative;z-index:2;
+    font-family:'Alfa Slab One';font-size:13px;letter-spacing:.1em;
+    text-transform:uppercase;color:rgba(241,225,189,.3);text-align:center;
+    padding:0 16px;
+  }
+  /* halftone overlay on photo */
+  .arc-photo::after{
+    content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(circle at 1px 1px,rgba(241,225,189,.12) 1px,transparent 1.5px) 0 0/5px 5px;
+    mix-blend-mode:screen;
+  }
+
+  /* ПРОШЁЛ stamp */
+  .arc-played{
+    position:absolute;top:24px;right:-28px;z-index:10;
+    font-family:'Alfa Slab One';font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--paper);background:var(--red);
+    padding:6px 44px;transform:rotate(20deg);
+    border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);
+    pointer-events:none;
+  }
+
+  /* card body */
+  .arc-body{padding:20px 20px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .arc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .arc-date{
+    font-family:'Alfa Slab One';font-size:38px;line-height:.9;color:var(--ink);
+    text-shadow:2px 2px 0 var(--gold);
+  }
+  .arc-date .arc-month{display:block;font-size:13px;color:var(--red);letter-spacing:.14em;margin-top:4px}
+  .arc-year{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);padding:4px 10px;align-self:flex-start;
+  }
+  .arc-title{font-family:'Alfa Slab One';font-size:26px;line-height:.95;text-transform:uppercase}
+  .arc-title .red{color:var(--red);font-style:italic}
+  .arc-venue{font-family:'Yeseva One';font-size:14px;font-style:italic;color:var(--green-dark)}
+  .arc-lineup{font-family:'Oswald',sans-serif;font-weight:500;font-size:13px;letter-spacing:.04em;line-height:1.4;opacity:.8}
+  .arc-footer{
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:2px dashed rgba(26,18,8,.3);padding-top:12px;margin-top:auto;gap:8px;flex-wrap:wrap;
+  }
+  .arc-tags{display:flex;gap:5px;flex-wrap:wrap}
+  .arc-tag{font-family:'Special Elite';font-size:10px;letter-spacing:.18em;text-transform:uppercase;padding:4px 8px;border:2px solid var(--ink);background:var(--paper)}
+  .arc-tag.g{background:var(--green-dark);color:var(--paper)}
+  .arc-tag.r{background:var(--red);color:var(--paper)}
+  .arc-tag.y{background:var(--gold)}
+  .arc-headcount{font-family:'Special Elite';font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.65}
+  .arc-headcount b{font-family:'Alfa Slab One';font-size:16px;color:var(--ink);letter-spacing:.02em;opacity:1}
+
+  /* FEATURED first card */
+  .arc-card.featured{
+    grid-column:span 2;
+  }
+  .arc-card.featured .arc-photo{height:280px}
+  .arc-card.featured .arc-title{font-size:38px}
+  .arc-card.featured .arc-date{font-size:52px}
+
+  /* LIGHTBOX */
+  .lightbox{
+    position:fixed;inset:0;z-index:300;
+    background:rgba(15,8,2,.9);backdrop-filter:blur(6px);
+    display:none;align-items:center;justify-content:center;padding:24px;
+  }
+  .lightbox.open{display:flex}
+  .lb-inner{
+    background:var(--paper);border:3px solid var(--ink);max-width:680px;width:100%;
+    position:relative;box-shadow:16px 16px 0 var(--red),16px 16px 0 5px var(--ink);
+    animation:lbIn .3s cubic-bezier(.34,1.56,.64,1);
+    max-height:90vh;overflow-y:auto;
+  }
+  @keyframes lbIn{from{transform:translateY(30px) rotate(-2deg);opacity:0}to{transform:none;opacity:1}}
+  .lb-photo{
+    height:260px;background:var(--ink);position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .lb-photo svg{position:absolute;inset:0;width:100%;height:100%}
+  .lb-photo .lb-ph-lbl{position:relative;z-index:2;font-family:'Special Elite';font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:rgba(241,225,189,.3)}
+  .lb-stamp{
+    position:absolute;top:18px;right:-20px;
+    font-family:'Alfa Slab One';font-size:14px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--paper);background:var(--red);padding:6px 36px;transform:rotate(18deg);
+    border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);z-index:3;pointer-events:none;
+  }
+  .lb-body{padding:24px 26px 22px;display:flex;flex-direction:column;gap:12px}
+  .lb-close{
+    position:absolute;top:12px;left:12px;z-index:10;
+    font-family:'Alfa Slab One';font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);border:none;padding:7px 12px;cursor:pointer;
+  }
+  .lb-close:hover{background:var(--red)}
+  .lb-date-row{display:flex;align-items:baseline;gap:14px}
+  .lb-day{font-family:'Alfa Slab One';font-size:64px;line-height:.9;text-shadow:3px 3px 0 var(--gold)}
+  .lb-month{font-family:'Alfa Slab One';font-size:20px;color:var(--red);letter-spacing:.12em}
+  .lb-year{font-family:'Special Elite';font-size:13px;letter-spacing:.22em;opacity:.65}
+  .lb-title{font-family:'Alfa Slab One';font-size:36px;line-height:.95;text-transform:uppercase}
+  .lb-title .red{color:var(--red);font-style:italic}
+  .lb-venue{font-family:'Yeseva One';font-size:16px;font-style:italic;color:var(--green-dark)}
+  .lb-lineup-head{font-family:'Special Elite';font-size:10px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin-top:4px}
+  .lb-lineup{font-family:'Oswald',sans-serif;font-weight:500;font-size:15px;letter-spacing:.04em;line-height:1.5}
+  .lb-stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+    border-top:2px dashed rgba(26,18,8,.3);padding-top:14px;margin-top:4px;
+  }
+  .lb-stat .n{font-family:'Alfa Slab One';font-size:28px;line-height:1;color:var(--ink)}
+  .lb-stat .l{font-family:'Special Elite';font-size:10px;letter-spacing:.22em;text-transform:uppercase;opacity:.6;margin-top:4px}
+  .lb-tags{display:flex;gap:6px;flex-wrap:wrap}
+
+  /* YEAR DIVIDERS */
+  .year-divider{
+    grid-column:1/-1;
+    display:flex;align-items:center;gap:18px;padding:4px 0 8px;
+  }
+  .year-divider .yd-year{font-family:'Alfa Slab One';font-size:48px;line-height:1;text-shadow:3px 3px 0 var(--gold)}
+  .year-divider::after{content:"";flex:1;height:3px;background:var(--ink)}
+  .year-divider .yd-count{font-family:'Special Elite';font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.6}
+
+  /* NO RESULTS */
+  .no-results{
+    grid-column:1/-1;text-align:center;padding:60px 24px;
+    font-family:'Yeseva One';font-size:22px;font-style:italic;
+    color:var(--green-dark);opacity:.7;border:2px dashed var(--ink);
+  }
+
+  /* TICKER */
+  .ticker{background:var(--ink);color:var(--paper);overflow:hidden;padding:14px 0;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+  .ticker-track{display:flex;gap:60px;white-space:nowrap;animation:ticker 42s linear infinite;font-family:'Alfa Slab One';font-size:24px;letter-spacing:.04em;text-transform:uppercase}
+  .ticker-track span{display:flex;align-items:center;gap:60px}
+  .ticker-track .star{color:var(--gold);font-size:16px}
+
+  /* FOOTER */
+  footer{position:relative;padding:50px 48px 36px;text-align:center;border-top:3px solid var(--ink)}
+  footer .big{font-family:'Alfa Slab One';font-size:clamp(36px,5vw,60px);line-height:.9;text-transform:uppercase}
+  footer .small{font-family:'Special Elite';letter-spacing:.24em;font-size:11px;text-transform:uppercase;margin-top:18px;opacity:.6}
+
+  /* ANIMATIONS */
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+  /* MOBILE */
+  @media(max-width:880px){
+    nav{padding:14px 22px;flex-wrap:wrap;gap:10px}
+    nav ul{gap:10px;font-size:11px}
+    .masthead{padding:36px 22px 30px}
+    .mh-stamps{display:none}
+    .mh-title{text-shadow:3px 3px 0 var(--red),5px 5px 0 var(--ink)}
+    .archive-controls{padding:14px 16px;position:relative;top:auto}
+    .archive-section{padding:36px 22px 40px}
+    .archive-grid{grid-template-columns:1fr;gap:24px}
+    .arc-card.featured{grid-column:span 1}
+    .mh-meta{gap:20px}
+    .mh-stat b{font-size:28px}
+  }
+  @media(max-width:520px){
+    nav{padding:10px 14px}
+    nav ul{gap:6px;font-size:10px}
+    nav a{padding:4px 6px;letter-spacing:.12em}
+    .masthead{padding:24px 16px 20px}
+    .mh-title{font-size:clamp(44px,14vw,80px)}
+    .archive-controls{padding:10px 12px;gap:8px}
+    .ac-chip{font-size:10px;padding:6px 9px}
+    .archive-section{padding:28px 14px 30px}
+    .arc-photo{height:160px}
+    .arc-body{padding:14px 14px 12px}
+    .lb-stats{grid-template-columns:1fr 1fr}
+    .lb-photo{height:180px}
+    .lb-day{font-size:48px}
+    .lb-title{font-size:26px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="../vintage/index.html"><span class="dot"></span>ПОТУЖНОСТЬ&nbsp;РУ <span style="font-family:'Special Elite';font-size:10px;letter-spacing:.2em;margin-left:8px;opacity:.55">EST. MMXXVI</span></a>
+  <ul>
+    <li><a href="../vintage/index.html">Эфир</a></li>
+    <li><a href="../zalipay/index.html">Залипай</a></li>
+    <li><a href="../taro/index.html">Таро</a></li>
+    <li><a href="../chai/index.html">Чай</a></li>
+    <li><a href="../shar/index.html">Шар</a></li>
+    <li><a href="../afisha/index.html">Афиша</a></li>
+    <li><a href="./archive.html" class="on">Архив</a></li>
+  </ul>
+</nav>
+
+<section class="masthead">
+  <div class="mh-bg"></div>
+  <div class="mh-inner">
+    <div class="mh-eyebrow">★ Летопись Подвала ★</div>
+    <h1 class="mh-title">АРХ<span class="aged">ИВ</span><br>РЕЙВОВ</h1>
+    <div class="mh-meta">
+      <div class="mh-stat"><b id="stat-total">24</b>рейва</div>
+      <span class="sep"></span>
+      <div class="mh-stat"><b id="stat-years">3</b>года</div>
+      <span class="sep"></span>
+      <div class="mh-stat"><b id="stat-people">~4 200</b>участников</div>
+      <span class="sep"></span>
+      <div class="mh-stat"><b id="stat-artists">61</b>артист</div>
+    </div>
+  </div>
+  <div class="mh-stamps">
+    <div class="mh-stamp r">★ ЛЕГЕНДЫ ЖИВУТ ★</div>
+    <div class="mh-stamp g">ОДИН БАС · ОДИН КОРЕНЬ</div>
+    <div class="mh-stamp k">ПОДВАЛ SOUND SYSTEM</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>КОРНЕВОЙ БАС vol.1&ndash;6 <span class="star">✦</span> ОГНЕВАЯ ЦЕРЕМОНИЯ <span class="star">✦</span> СОЛНЕЧНЫЙ ФЕСТИВАЛЬ <span class="star">✦</span> ЗИМНИЙ ДУБ <span class="star">✦</span> NIGHT OF THE ROOTS <span class="star">✦</span> ПОДВАЛ ВСЕГДА ОТКРЫТ <span class="star">✦</span></span>
+    <span>КОРНЕВОЙ БАС vol.1&ndash;6 <span class="star">✦</span> ОГНЕВАЯ ЦЕРЕМОНИЯ <span class="star">✦</span> СОЛНЕЧНЫЙ ФЕСТИВАЛЬ <span class="star">✦</span> ЗИМНИЙ ДУБ <span class="star">✦</span> NIGHT OF THE ROOTS <span class="star">✦</span> ПОДВАЛ ВСЕГДА ОТКРЫТ <span class="star">✦</span></span>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="archive-controls" id="archive-controls">
+  <span class="ac-lbl">ГОД :</span>
+  <div class="ac-chips" id="year-chips"></div>
+  <span class="ac-sep"></span>
+  <span class="ac-lbl">ЖАНР :</span>
+  <div class="ac-chips" id="genre-chips"></div>
+  <span class="ac-sep"></span>
+  <span class="ac-count" id="arc-count">24 рейва</span>
+</div>
+
+<!-- ARCHIVE -->
+<section class="archive-section">
+  <div class="archive-grid" id="archive-grid">
+    <!-- rendered by JS -->
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-inner">
+    <button class="lb-close" id="lb-close">✕ ЗАКРЫТЬ</button>
+    <div class="lb-photo" id="lb-photo">
+      <svg id="lb-svg" viewBox="0 0 680 260" preserveAspectRatio="xMidYMid slice"></svg>
+      <div class="lb-stamp" id="lb-stamp">ПРОШЁЛ</div>
+      <span class="lb-ph-lbl" id="lb-ph-lbl"></span>
+    </div>
+    <div class="lb-body">
+      <div class="lb-date-row">
+        <span class="lb-day" id="lb-day">13</span>
+        <span class="lb-month" id="lb-month">ИЮН</span>
+        <span class="lb-year" id="lb-year">2025</span>
+      </div>
+      <div class="lb-title" id="lb-title"></div>
+      <div class="lb-venue" id="lb-venue"></div>
+      <div class="lb-lineup-head">ЛАЙНАП ★</div>
+      <div class="lb-lineup" id="lb-lineup"></div>
+      <div class="lb-stats">
+        <div class="lb-stat"><div class="n" id="lb-people">—</div><div class="l">Участников</div></div>
+        <div class="lb-stat"><div class="n" id="lb-artists">—</div><div class="l">Артистов</div></div>
+        <div class="lb-stat"><div class="n" id="lb-hours">—</div><div class="l">Часов</div></div>
+      </div>
+      <div class="lb-tags" id="lb-tags"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="big">ИСТОРИЯ<br>ПРОДОЛЖАЕТСЯ.</div>
+  <div class="small">ПОТУЖНОСТЬ РУ · АРХИВ · MMXXIV–MMXXVI · ALL RIDDIMS REMEMBERED</div>
+</footer>
+
+<script>
+const MONTHS = ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
+
+// ── ARCHIVE DATA ──────────────────────────────────────────
+const ARCHIVE = [
+  // 2026
+  { id:'kb6', date:new Date(2026,4,2), title:'КОРНЕВОЙ БАС', sub:'vol.6', venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Northern Riddim','Подвал Sound System','Sister Bass'],
+    tags:[{t:'DUB',c:'g'},{t:'STEPPERS',c:'r'}], people:320, hours:8, year:2026, featured:true,
+    bgColors:['#0f3d22','#1d6a3b','#e8b13a'], shape:'rings' },
+  { id:'zimroot', date:new Date(2026,2,14), title:'ЗИМНИЙ КОРЕНЬ', sub:null, venue:'Завод «Ритм», цех 3',
+    lineup:['Tundra Jungle','BassMonk','Дед-Хаусман'],
+    tags:[{t:'DUB',c:'g'},{t:'DnB',c:'r'}], people:180, hours:7, year:2026,
+    bgColors:['#1a1a2e','#16213e','#e8b13a'], shape:'wave' },
+  { id:'feb26', date:new Date(2026,1,7), title:'НОЧЬ КОРНЯ', sub:'#4', venue:'Подвал-2, Электрозаводская',
+    lineup:['Подвал Sound System','Гнусь Dub Family','JahMobile'],
+    tags:[{t:'DUB',c:'g'},{t:'LOVERS',c:'y'}], people:210, hours:7, year:2026,
+    bgColors:['#1a1208','#2b1c0a','#c8362a'], shape:'dots' },
+
+  // 2025
+  { id:'kb5', date:new Date(2025,10,15), title:'КОРНЕВОЙ БАС', sub:'vol.5', venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Lion of Toronto','Northern Riddim','Подвал Sound System','Sister Bass'],
+    tags:[{t:'ROOTS',c:'y'},{t:'DUB',c:'g'},{t:'STEPPERS',c:'r'}], people:390, hours:8, year:2025, featured:false,
+    bgColors:['#0f3d22','#c8362a','#e8b13a'], shape:'rays' },
+  { id:'autumn25', date:new Date(2025,9,4), title:'ОСЕННИЙ СТЕППЕР', sub:null, venue:'Артемьева, 13',
+    lineup:['Подвал Selecta','JahMobile','Огневой Дед'],
+    tags:[{t:'STEPPERS',c:'r'},{t:'SKA',c:''}], people:160, hours:6, year:2025,
+    bgColors:['#2b1c0a','#e8b13a','#1a1208'], shape:'lines' },
+  { id:'solar25', date:new Date(2025,7,16), title:'СОЛНЕЧНЫЙ ДЖА', sub:'Фестиваль', venue:'Серебряный Бор',
+    lineup:['Подвал All Stars','Иван-Заскок','Lion of Toronto','Tundra Jungle','Sister Bass','Onezvuk','BassMonk','JahMobile','Дед-Хаусман','Northern Riddim'],
+    tags:[{t:'ALL DAY',c:'y'},{t:'OPEN AIR',c:'r'},{t:'ROOTS',c:'g'}], people:680, hours:10, year:2025,
+    bgColors:['#c8362a','#e8b13a','#1d6a3b'], shape:'sun' },
+  { id:'jun25', date:new Date(2025,5,28), title:'ДЫМ НАД РЕКОЙ', sub:'vol.2', venue:'Берег Строгино',
+    lineup:['Дед-Хаусман','Onezvuk','Гнусь Dub Family'],
+    tags:[{t:'LOVERS',c:'y'},{t:'OPEN AIR',c:'r'}], people:240, hours:8, year:2025,
+    bgColors:['#1d6a3b','#0f3d22','#e8b13a'], shape:'wave' },
+  { id:'kb4', date:new Date(2025,4,10), title:'КОРНЕВОЙ БАС', sub:'vol.4', venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Northern Riddim','Подвал Sound System'],
+    tags:[{t:'DUB',c:'g'},{t:'STEPPERS',c:'r'}], people:300, hours:8, year:2025,
+    bgColors:['#0f3d22','#1d6a3b','#c8362a'], shape:'rings' },
+  { id:'mar25', date:new Date(2025,2,22), title:'ВЕСНА В ПОДВАЛЕ', sub:null, venue:'Завод «Ритм»',
+    lineup:['BassMonk','ICEcave','DJ Карелия','Sister Bass'],
+    tags:[{t:'JUNGLE',c:'g'},{t:'DnB',c:'r'}], people:210, hours:7, year:2025,
+    bgColors:['#1a1a2e','#c8362a','#e8b13a'], shape:'dots' },
+  { id:'nyeve25', date:new Date(2025,0,4), title:'НОВОГОДНИЙ БАС', sub:null, venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Подвал Sound System','JahMobile','Northern Riddim'],
+    tags:[{t:'DUB',c:'g'},{t:'ROOTS',c:'y'}], people:280, hours:9, year:2025,
+    bgColors:['#1a1208','#0f3d22','#e8b13a'], shape:'rays' },
+
+  // 2024
+  { id:'kb3', date:new Date(2024,11,7), title:'КОРНЕВОЙ БАС', sub:'vol.3', venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Lion of Toronto','Подвал Sound System'],
+    tags:[{t:'DUB',c:'g'},{t:'STEPPERS',c:'r'}], people:310, hours:8, year:2024, featured:false,
+    bgColors:['#0f3d22','#e8b13a','#c8362a'], shape:'rings' },
+  { id:'solar24', date:new Date(2024,7,10), title:'СОЛНЕЧНЫЙ ДЖА', sub:'24', venue:'Берег Строгино',
+    lineup:['Подвал All Stars','Иван-Заскок','Lion of Toronto','BassMonk','JahMobile'],
+    tags:[{t:'ALL DAY',c:'y'},{t:'OPEN AIR',c:'r'}], people:520, hours:10, year:2024,
+    bgColors:['#c8362a','#e8b13a','#0f3d22'], shape:'sun' },
+  { id:'kb2', date:new Date(2024,5,15), title:'КОРНЕВОЙ БАС', sub:'vol.2', venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Northern Riddim','Подвал Sound System','Sister Bass'],
+    tags:[{t:'DUB',c:'g'},{t:'ROOTS',c:'y'}], people:270, hours:7, year:2024,
+    bgColors:['#1d6a3b','#c8362a','#e8b13a'], shape:'wave' },
+  { id:'kb1', date:new Date(2024,3,6), title:'КОРНЕВОЙ БАС', sub:'vol.1', venue:'Подвал на Курской',
+    lineup:['Иван-Заскок','Подвал Sound System'],
+    tags:[{t:'DUB',c:'g'}], people:120, hours:6, year:2024,
+    bgColors:['#0f3d22','#1d6a3b','#f1e1bd'], shape:'dots' },
+];
+
+// ── PHOTO GENERATOR (SVG canvas pattern) ──────────────────
+function makeSvgBg(ev, w, h){
+  const [c1,c2,c3] = ev.bgColors;
+  const shapes = {
+    rays: `<rect width="${w}" height="${h}" fill="${c1}"/>
+      <g opacity=".6">
+        ${[...Array(16)].map((_,i)=>`<polygon points="${w/2},${h/2} ${w/2+Math.cos(i*22.5*Math.PI/180)*w},${h/2+Math.sin(i*22.5*Math.PI/180)*w} ${w/2+Math.cos((i+.4)*22.5*Math.PI/180)*w},${h/2+Math.sin((i+.4)*22.5*Math.PI/180)*w}" fill="${i%2===0?c2:c3}"/>`).join('')}
+      </g>
+      <circle cx="${w/2}" cy="${h/2}" r="${h*.35}" fill="${c1}" opacity=".8"/>
+      <circle cx="${w/2}" cy="${h/2}" r="${h*.2}" fill="${c2}" opacity=".6"/>`,
+    rings: `<rect width="${w}" height="${h}" fill="${c1}"/>
+      ${[.85,.65,.45,.25].map((r,i)=>`<circle cx="${w/2}" cy="${h/2}" r="${Math.min(w,h)*r/2}" fill="none" stroke="${i%2?c2:c3}" stroke-width="${Math.min(w,h)*.06}" opacity=".5"/>`).join('')}
+      <circle cx="${w/2}" cy="${h/2}" r="${Math.min(w,h)*.1}" fill="${c2}" opacity=".8"/>`,
+    wave: `<rect width="${w}" height="${h}" fill="${c1}"/>
+      ${[...Array(6)].map((_,i)=>`<path d="M0,${h*.1+i*(h*.15)} Q${w*.25},${h*.1+i*(h*.15)-h*.06} ${w*.5},${h*.1+i*(h*.15)} T${w},${h*.1+i*(h*.15)}" fill="none" stroke="${i%2?c2:c3}" stroke-width="3" opacity=".5"/>`).join('')}`,
+    dots: `<rect width="${w}" height="${h}" fill="${c1}"/>
+      <pattern id="dots${ev.id}" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="12" cy="12" r="4" fill="${c2}" opacity=".4"/>
+      </pattern>
+      <rect width="${w}" height="${h}" fill="url(#dots${ev.id})"/>
+      <circle cx="${w*.5}" cy="${h*.5}" r="${h*.25}" fill="${c3}" opacity=".25"/>`,
+    lines: `<rect width="${w}" height="${h}" fill="${c1}"/>
+      ${[...Array(14)].map((_,i)=>`<line x1="0" y1="${i*(h/13)}" x2="${w}" y2="${i*(h/13)}" stroke="${i%3===0?c2:c3}" stroke-width="${i%3===0?3:1.5}" opacity=".4"/>`).join('')}`,
+    sun: `<rect width="${w}" height="${h}" fill="${c1}"/>
+      <circle cx="${w*.5}" cy="${h*.5}" r="${h*.45}" fill="${c2}" opacity=".35"/>
+      <circle cx="${w*.5}" cy="${h*.5}" r="${h*.28}" fill="${c3}" opacity=".4"/>
+      <circle cx="${w*.5}" cy="${h*.5}" r="${h*.12}" fill="${c2}" opacity=".7"/>`,
+  };
+  return shapes[ev.shape] || shapes.dots;
+}
+
+// ── RENDER GRID ───────────────────────────────────────────
+let activeYear = null;
+let activeGenre = null;
+
+function renderGrid(){
+  const grid = document.getElementById('archive-grid');
+  grid.innerHTML = '';
+
+  const filtered = ARCHIVE.filter(ev => {
+    if(activeYear && ev.year !== activeYear) return false;
+    if(activeGenre && !ev.tags.find(t=>t.t===activeGenre)) return false;
+    return true;
+  });
+
+  // Group by year
+  const years = [...new Set(ARCHIVE.map(e=>e.year))].sort((a,b)=>b-a);
+  years.forEach(yr => {
+    const evs = filtered.filter(e=>e.year===yr);
+    if(!evs.length) return;
+
+    // Year divider
+    const yd = document.createElement('div');
+    yd.className = 'year-divider';
+    yd.innerHTML = `<span class="yd-year">${yr}</span><span class="yd-count">${evs.length} рейв${evs.length===1?'':evs.length<5?'а':'ов'}</span>`;
+    grid.appendChild(yd);
+
+    evs.forEach(ev => {
+      const card = document.createElement('div');
+      card.className = 'arc-card' + (ev.featured?'  featured':'');
+      card.dataset.id = ev.id;
+      const d = ev.date;
+      const W = ev.featured ? 640 : 320;
+      const H = ev.featured ? 280 : 200;
+      card.innerHTML = `
+        <div class="arc-photo">
+          <div class="arc-photo-inner">
+            <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              ${makeSvgBg(ev, W, H)}
+            </svg>
+            <div class="ph-label">${ev.venue.split(',')[0].toUpperCase()}</div>
+          </div>
+        </div>
+        <div class="arc-played">ПРОШЁЛ</div>
+        <div class="arc-body">
+          <div class="arc-top">
+            <div class="arc-date">
+              ${String(d.getDate()).padStart(2,'0')}
+              <span class="arc-month">${MONTHS[d.getMonth()]}</span>
+            </div>
+            <span class="arc-year">${ev.year}</span>
+          </div>
+          <div class="arc-title">${ev.title}${ev.sub?` <span class="red">${ev.sub}</span>`:''}</div>
+          <div class="arc-venue">${ev.venue}</div>
+          <div class="arc-lineup">${ev.lineup.slice(0,4).join(' · ')}${ev.lineup.length>4?` +${ev.lineup.length-4}`:''}</div>
+          <div class="arc-footer">
+            <div class="arc-tags">${ev.tags.map(t=>`<span class="arc-tag ${t.c}">${t.t}</span>`).join('')}</div>
+            <div class="arc-headcount"><b>~${ev.people}</b> чел.</div>
+          </div>
+        </div>`;
+      card.addEventListener('click', () => openLightbox(ev));
+      grid.appendChild(card);
+    });
+  });
+
+  if(!filtered.length){
+    const nr = document.createElement('div');
+    nr.className='no-results';
+    nr.textContent='★ Под этот фильтр рейвов не нашлось — Джа говорит: приходи на следующий ★';
+    grid.appendChild(nr);
+  }
+
+  document.getElementById('arc-count').textContent = `${filtered.length} рейв${filtered.length===1?'':filtered.length<5?'а':'ов'}`;
+}
+
+// ── BUILD FILTER CHIPS ────────────────────────────────────
+function buildFilters(){
+  // Years
+  const yc = document.getElementById('year-chips');
+  const years = [...new Set(ARCHIVE.map(e=>e.year))].sort((a,b)=>b-a);
+  years.forEach(yr => {
+    const btn = document.createElement('button');
+    btn.className = 'ac-chip year';
+    btn.textContent = yr;
+    btn.addEventListener('click', () => {
+      if(activeYear===yr){ activeYear=null; btn.classList.remove('on'); }
+      else { activeYear=yr; yc.querySelectorAll('.ac-chip').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+      renderGrid();
+    });
+    yc.appendChild(btn);
+  });
+
+  // Genres
+  const gc = document.getElementById('genre-chips');
+  const seenG = new Set();
+  const genres = [];
+  ARCHIVE.forEach(e=>e.tags.forEach(t=>{if(!seenG.has(t.t)){seenG.add(t.t);genres.push(t);}}));
+  genres.forEach(tag => {
+    const btn = document.createElement('button');
+    btn.className = 'ac-chip genre';
+    btn.textContent = tag.t;
+    btn.addEventListener('click', () => {
+      if(activeGenre===tag.t){ activeGenre=null; btn.classList.remove('on'); }
+      else { activeGenre=tag.t; gc.querySelectorAll('.ac-chip').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+      renderGrid();
+    });
+    gc.appendChild(btn);
+  });
+}
+
+// ── LIGHTBOX ──────────────────────────────────────────────
+function openLightbox(ev){
+  const d = ev.date;
+  document.getElementById('lb-day').textContent = String(d.getDate()).padStart(2,'0');
+  document.getElementById('lb-month').textContent = MONTHS[d.getMonth()];
+  document.getElementById('lb-year').textContent = ev.year;
+  document.getElementById('lb-title').innerHTML = ev.title+(ev.sub?` <span class="red">${ev.sub}</span>`:'');
+  document.getElementById('lb-venue').textContent = ev.venue;
+  document.getElementById('lb-lineup').textContent = ev.lineup.join(' · ');
+  document.getElementById('lb-people').textContent = '~'+ev.people;
+  document.getElementById('lb-artists').textContent = ev.lineup.length;
+  document.getElementById('lb-hours').textContent = ev.hours+'ч';
+  document.getElementById('lb-tags').innerHTML = ev.tags.map(t=>`<span class="arc-tag ${t.c}">${t.t}</span>`).join('');
+  document.getElementById('lb-ph-lbl').textContent = ev.venue.split(',')[0].toUpperCase();
+  // svg bg
+  const svg = document.getElementById('lb-svg');
+  svg.innerHTML = makeSvgBg(ev, 680, 260);
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); }
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target===document.getElementById('lightbox')) closeLightbox(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox(); });
+
+buildFilters();
+renderGrid();
+</script>
+</body>
+</html>

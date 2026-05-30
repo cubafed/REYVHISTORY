@@ -1,0 +1,1276 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<title>ПОТУЖНОСТЬ РУ — Афиша рейвов</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Bowlby+One+SC&family=Rubik+Mono+One&family=Oswald:wght@400;500;700&family=Special+Elite&family=Yeseva+One&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f1e1bd;
+    --paper-dark:#dcc28a;
+    --ink:#1a1208;
+    --red:#c8362a;
+    --gold:#e8b13a;
+    --green:#1d6a3b;
+    --green-dark:#0f3d22;
+    --hd-font:'Alfa Slab One', serif;
+  }
+  /* palette: SOLAR (default) */
+  :root.palette-night{
+    --paper:#1a1208;--paper-dark:#2b1c0a;--ink:#f1e1bd;
+    --red:#ff5b3e;--gold:#ffd166;--green:#5ab377;--green-dark:#2e7a48;
+  }
+  :root.palette-bloodgold{
+    --paper:#f4e3b4;--paper-dark:#d9b870;--ink:#180a05;
+    --red:#a01818;--gold:#f0a01a;--green:#114a25;--green-dark:#0a3216;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:'Oswald',sans-serif;overflow-x:hidden}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 18% 8%, rgba(232,177,58,.38), transparent 50%),
+      radial-gradient(ellipse at 92% 78%, rgba(200,54,42,.2), transparent 55%),
+      radial-gradient(ellipse at 50% 130%, rgba(29,106,59,.25), transparent 55%),
+      var(--paper);
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:99;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1  0 0 0 0 .07  0 0 0 0 .04  0 0 0 .6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/></svg>");
+    mix-blend-mode:multiply;opacity:.5;
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:98;
+    background:
+      radial-gradient(ellipse at center, transparent 55%, rgba(40,20,5,.45) 100%),
+      radial-gradient(circle at 1px 1px, rgba(26,18,8,.18) 1px, transparent 1.6px) 0 0/9px 9px;
+    mix-blend-mode:multiply;
+  }
+  body.no-anim .smoke,
+  body.no-anim .sun-rays,
+  body.no-anim .ticker-track,
+  body.no-anim .flag-strip path,
+  body.no-anim .pulse-dot,
+  body.no-anim .flicker{animation:none !important}
+
+  /* NAV */
+  nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;border-bottom:2px solid var(--ink);background:linear-gradient(180deg, rgba(255,255,255,.18), transparent)}
+  nav .brand{font-family:'Alfa Slab One';font-size:22px;letter-spacing:.04em;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  nav .brand .dot{width:14px;height:14px;background:var(--red);border-radius:50%;box-shadow:0 0 0 3px var(--ink);animation:pulse 1.6s infinite}
+  .pulse-dot{animation:pulse 1.6s infinite}
+  nav ul{display:flex;gap:28px;list-style:none;font-weight:500;letter-spacing:.18em;font-size:13px;text-transform:uppercase}
+  nav a{color:var(--ink);text-decoration:none;position:relative;padding-bottom:4px}
+  nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--red);transition:width .25s}
+  nav a:hover::after,nav a.on::after{width:100%}
+  nav a.on{color:var(--red)}
+
+  /* HERO */
+  .hero{position:relative;padding:60px 48px 60px;text-align:center;overflow:hidden}
+  .sun-rays{position:absolute;left:50%;top:80px;transform:translateX(-50%);width:1100px;height:1100px;pointer-events:none;z-index:0;animation:spin 90s linear infinite;opacity:.7}
+  .stamp{position:absolute;font-family:'Special Elite';border:2px solid currentColor;padding:8px 14px;text-transform:uppercase;letter-spacing:.2em;font-size:11px;opacity:.9;z-index:2;background:rgba(241,225,189,.18);backdrop-filter:blur(2px)}
+  .stamp.s1{top:90px;left:60px;color:var(--red);transform:rotate(-10deg)}
+  .stamp.s2{top:120px;right:80px;color:var(--green-dark);transform:rotate(8deg)}
+  .stamp.s3{bottom:30px;left:120px;color:var(--ink);transform:rotate(-4deg)}
+  .stamp.s4{bottom:40px;right:80px;color:var(--red);transform:rotate(5deg)}
+
+  .eyebrow{position:relative;z-index:2;font-family:'Special Elite';letter-spacing:.34em;font-size:13px;text-transform:uppercase;color:var(--green-dark);margin-bottom:14px}
+  h1.poster-title{
+    position:relative;z-index:2;
+    font-family:var(--hd-font);
+    font-size:clamp(72px, 12vw, 200px);
+    line-height:.86;letter-spacing:-.01em;text-transform:uppercase;color:var(--ink);
+    text-shadow:6px 6px 0 var(--red), 8px 8px 0 var(--ink);
+  }
+  h1.poster-title .b{color:var(--green-dark);text-shadow:6px 6px 0 var(--gold), 8px 8px 0 var(--ink)}
+  h1.poster-title .ru{display:inline-block;background:var(--red);color:var(--paper);padding:0 22px;transform:rotate(-3deg);text-shadow:6px 6px 0 var(--ink);margin-left:8px}
+  .sub{font-family:'Yeseva One';font-size:24px;letter-spacing:.04em;margin-top:30px;position:relative;z-index:2}
+  .sub em{font-style:italic;color:var(--red)}
+
+  /* COUNTDOWN */
+  .cd-wrap{
+    position:relative;z-index:3;margin:46px auto 0;max-width:980px;
+    border:3px solid var(--ink);background:var(--paper-dark);
+    padding:22px 28px;box-shadow:10px 10px 0 var(--red), 10px 10px 0 4px var(--ink);
+  }
+  .cd-top{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+  .cd-eyebrow{font-family:'Special Elite';letter-spacing:.26em;font-size:12px;text-transform:uppercase;color:var(--ink);opacity:.7}
+  .cd-event{font-family:'Alfa Slab One';font-size:26px;line-height:1;letter-spacing:.02em;text-transform:uppercase;text-align:right}
+  .cd-event small{display:block;font-family:'Special Elite';font-size:11px;letter-spacing:.22em;opacity:.7;margin-top:6px;font-weight:400}
+  .cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:6px}
+  .cd-cell{
+    background:var(--paper);border:2px solid var(--ink);padding:14px 6px;text-align:center;
+    box-shadow:inset 0 -6px 0 rgba(0,0,0,.08);position:relative;overflow:hidden;
+  }
+  .cd-cell .num{font-family:'Alfa Slab One';font-size:clamp(40px,6vw,72px);line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+  .cd-cell .lbl{font-family:'Special Elite';font-size:10px;letter-spacing:.24em;text-transform:uppercase;margin-top:8px;opacity:.7}
+  .cd-cell::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(255,255,255,.2), transparent 30%);pointer-events:none}
+  .cd-cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+  .btn{
+    font-family:'Alfa Slab One';font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+    border:3px solid var(--ink);padding:14px 24px;cursor:pointer;background:var(--paper);color:var(--ink);
+    box-shadow:5px 5px 0 var(--ink);transition:transform .12s, box-shadow .12s;
+  }
+  .btn:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn.primary{background:var(--red);color:var(--paper);box-shadow:5px 5px 0 var(--ink)}
+  .btn.primary:hover{background:var(--gold);color:var(--ink)}
+  .btn.ghost{background:transparent}
+
+  /* TICKER */
+  .ticker{background:var(--ink);color:var(--paper);border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);overflow:hidden;padding:16px 0;margin-top:60px}
+  .ticker-track{display:flex;gap:60px;white-space:nowrap;animation:ticker 38s linear infinite;font-family:'Alfa Slab One';font-size:26px;letter-spacing:.04em;text-transform:uppercase}
+  .ticker-track span{display:flex;align-items:center;gap:60px}
+  .ticker-track .star{color:var(--gold);font-size:18px}
+
+  /* SCHEDULE WRAPPER */
+  .schedule-wrap{position:relative;padding:60px 48px 40px}
+  .schedule-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:30px;gap:24px;flex-wrap:wrap}
+  .schedule-head h2{font-family:'Alfa Slab One';font-size:clamp(48px,6vw,80px);text-transform:uppercase;line-height:.9}
+  .schedule-head h2 .red{color:var(--red);font-style:italic;display:inline-block;transform:rotate(-2deg)}
+  .schedule-head .legend{display:flex;gap:8px;flex-wrap:wrap}
+  .badge{font-family:'Special Elite';font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:8px 14px;border:2px solid var(--ink);background:var(--paper);white-space:nowrap}
+  .badge.r{background:var(--red);color:var(--paper)}
+  .badge.g{background:var(--green-dark);color:var(--paper)}
+  .badge.y{background:var(--gold)}
+
+  /* LAYOUT 1 — LIST */
+  body.layout-list .schedule.cards{display:none}
+  body.layout-cards .schedule.list{display:none}
+
+  .schedule.list{display:flex;flex-direction:column;gap:0}
+  .ev-row{
+    display:grid;grid-template-columns:160px 1fr 220px;gap:30px;align-items:center;
+    padding:26px 14px;border-bottom:2px solid var(--ink);
+    position:relative;transition:background .25s, transform .2s;cursor:pointer;
+  }
+  .ev-row:first-child{border-top:2px solid var(--ink)}
+  .ev-row::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:0;background:var(--red);transition:width .25s;z-index:0;
+  }
+  .ev-row:hover{background:rgba(232,177,58,.34);transform:translateX(4px)}
+  .ev-row:hover::before{width:6px}
+  .ev-row.sold-out{opacity:.55}
+  .ev-row.sold-out::after{content:"SOLD OUT";position:absolute;top:50%;right:230px;transform:translateY(-50%) rotate(-8deg);font-family:'Alfa Slab One';font-size:24px;letter-spacing:.1em;color:var(--red);border:3px solid var(--red);padding:4px 10px;background:rgba(241,225,189,.6)}
+
+  .ev-date{position:relative;z-index:1;text-align:center;border-right:2px dashed rgba(26,18,8,.4);padding-right:18px}
+  .ev-date .day{font-family:'Alfa Slab One';font-size:64px;line-height:1;color:var(--ink)}
+  .ev-date .month{font-family:'Alfa Slab One';font-size:20px;letter-spacing:.14em;color:var(--red);margin-top:2px}
+  .ev-date .dow{font-family:'Special Elite';font-size:11px;letter-spacing:.28em;text-transform:uppercase;margin-top:8px;opacity:.7}
+
+  .ev-info{position:relative;z-index:1}
+  .ev-info .meta{font-family:'Special Elite';font-size:12px;letter-spacing:.22em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+  .ev-info h3{font-family:'Alfa Slab One';font-size:34px;line-height:1;text-transform:uppercase;color:var(--ink)}
+  .ev-info h3 .red{color:var(--red);font-style:italic;display:inline-block}
+  .ev-info .lineup{font-family:'Yeseva One';font-size:16px;font-style:italic;margin-top:10px;color:var(--green-dark);line-height:1.35}
+  .ev-info .tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+
+  .ev-cta{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+  .ev-price{font-family:'Alfa Slab One';font-size:26px;color:var(--ink)}
+  .ev-price small{font-family:'Special Elite';font-size:11px;letter-spacing:.2em;display:block;text-align:right;opacity:.7;margin-top:2px;font-weight:400}
+  .ev-buy{font-family:'Alfa Slab One';font-size:13px;letter-spacing:.06em;text-transform:uppercase;border:3px solid var(--ink);background:var(--red);color:var(--paper);padding:10px 18px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .12s, box-shadow .12s, background .15s}
+  .ev-buy:hover{background:var(--gold);color:var(--ink);transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .ev-buy:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+
+  /* LAYOUT 2 — POSTER CARDS */
+  .schedule.cards{display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:32px}
+  .ev-card{
+    position:relative;border:3px solid var(--ink);background:var(--paper);
+    padding:24px 22px 22px;display:flex;flex-direction:column;gap:14px;
+    box-shadow:8px 8px 0 var(--ink);transition:transform .15s, box-shadow .15s;
+    overflow:hidden;cursor:pointer;
+  }
+  .ev-card:nth-child(3n+1){background:var(--paper-dark)}
+  .ev-card:nth-child(3n+2){box-shadow:8px 8px 0 var(--red), 8px 8px 0 4px var(--ink)}
+  .ev-card:nth-child(3n+3){box-shadow:8px 8px 0 var(--green-dark), 8px 8px 0 4px var(--ink)}
+  .ev-card:hover{transform:translate(-4px,-4px);box-shadow:12px 12px 0 var(--ink)}
+  .ev-card:nth-child(3n+2):hover{box-shadow:12px 12px 0 var(--red), 12px 12px 0 4px var(--ink)}
+  .ev-card:nth-child(3n+3):hover{box-shadow:12px 12px 0 var(--green-dark), 12px 12px 0 4px var(--ink)}
+  .ev-card::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(circle at 1px 1px, rgba(26,18,8,.18) 1px, transparent 1.6px) 0 0/6px 6px;
+    opacity:.18;mix-blend-mode:multiply;
+  }
+  .ev-card .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;position:relative}
+  .ev-card .card-date{font-family:'Alfa Slab One';font-size:42px;line-height:.9;text-transform:uppercase}
+  .ev-card .card-date .m{display:block;font-size:14px;color:var(--red);letter-spacing:.14em;margin-top:4px}
+  .ev-card .card-no{font-family:'Special Elite';font-size:11px;letter-spacing:.22em;text-transform:uppercase;text-align:right;opacity:.7}
+  .ev-card .card-no .price{display:block;font-family:'Alfa Slab One';font-size:20px;letter-spacing:.02em;color:var(--ink);margin-top:4px;opacity:1}
+  .ev-card h3{font-family:'Alfa Slab One';font-size:30px;line-height:.95;text-transform:uppercase;position:relative}
+  .ev-card h3 .red{color:var(--red);font-style:italic}
+  .ev-card .lineup{font-family:'Yeseva One';font-size:14px;font-style:italic;color:var(--green-dark);line-height:1.35;position:relative}
+  .ev-card .where{font-family:'Special Elite';font-size:12px;letter-spacing:.18em;text-transform:uppercase;opacity:.75;position:relative}
+  .ev-card .card-tags{display:flex;gap:6px;flex-wrap:wrap;position:relative}
+  .ev-card .card-cta{display:flex;justify-content:space-between;align-items:center;border-top:2px dashed rgba(26,18,8,.4);padding-top:14px;margin-top:auto;position:relative}
+  .ev-card .seats{font-family:'Special Elite';font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+  .ev-card .seats b{font-family:'Alfa Slab One';font-size:15px;color:var(--red);letter-spacing:.04em;margin-right:4px;font-weight:400}
+  .ev-card.sold .ev-buy{background:transparent;color:var(--ink);border-color:var(--ink);text-decoration:line-through;pointer-events:none}
+  .ev-card.sold::after{content:"SOLD OUT";position:absolute;top:30px;right:-30px;transform:rotate(20deg);font-family:'Alfa Slab One';font-size:28px;letter-spacing:.06em;color:var(--paper);background:var(--red);padding:6px 40px;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);z-index:2}
+
+  /* INFO STRIP */
+  .info-strip{
+    display:grid;grid-template-columns:repeat(3, 1fr);gap:24px;
+    padding:50px 48px;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);
+    background:linear-gradient(180deg, transparent, rgba(0,0,0,.04));
+  }
+  .info-col h4{font-family:'Alfa Slab One';font-size:22px;text-transform:uppercase;margin-bottom:10px}
+  .info-col h4 .red{color:var(--red)}
+  .info-col p{font-family:'Special Elite';font-size:13px;letter-spacing:.08em;line-height:1.7;opacity:.85}
+
+  /* FLAG STRIP */
+  .flag-strip{position:relative;height:60px;overflow:hidden;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink);background:#000}
+  .flag-strip svg{position:absolute;inset:0;width:100%;height:100%}
+
+  /* FOOTER */
+  footer{position:relative;padding:60px 48px 40px;text-align:center}
+  footer .big{font-family:'Alfa Slab One';font-size:clamp(40px, 5vw, 64px);line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+  footer .small{font-family:'Special Elite';letter-spacing:.24em;font-size:12px;text-transform:uppercase;margin-top:20px;opacity:.7}
+
+  /* SMOKE / FX */
+  .smoke{position:absolute;border-radius:50%;filter:blur(40px);mix-blend-mode:multiply;pointer-events:none;opacity:.5;animation:drift 24s ease-in-out infinite}
+  .smoke.s1{width:340px;height:340px;background:rgba(29,106,59,.6);top:240px;left:-80px}
+  .smoke.s2{width:280px;height:280px;background:rgba(232,177,58,.6);bottom:-60px;right:60px;animation-delay:-8s}
+  .smoke.s3{width:220px;height:220px;background:rgba(200,54,42,.5);top:60%;left:38%;animation-delay:-14s}
+  :root.palette-night body .smoke{mix-blend-mode:screen}
+
+  /* TICKET FLY-AWAY */
+  .ticket-fly{
+    position:fixed;z-index:200;pointer-events:none;
+    background:var(--gold);color:var(--ink);
+    border:3px solid var(--ink);padding:10px 16px;
+    font-family:'Alfa Slab One';font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+    box-shadow:4px 4px 0 var(--ink);
+    animation:ticketFly 1s ease-out forwards;
+  }
+  @keyframes ticketFly{
+    0%{transform:translate(-50%,-50%) scale(.5) rotate(-10deg);opacity:0}
+    20%{transform:translate(-50%,-50%) scale(1.1) rotate(-4deg);opacity:1}
+    100%{transform:translate(-50%, calc(-50% - 240px)) scale(.6) rotate(8deg);opacity:0}
+  }
+
+  /* SPARK BURST */
+  .sp{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:150;animation:spOut .85s ease-out forwards;box-shadow:0 0 12px currentColor}
+  @keyframes spOut{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2);opacity:0}}
+
+  /* FLICKER */
+  .flicker{animation:flick 4s steps(1,end) infinite}
+  @keyframes flick{0%,98%{opacity:1}99%{opacity:.4}100%{opacity:1}}
+
+  /* TICKET MODAL */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(15,8,2,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:300;padding:24px}
+  .modal-backdrop.open{display:flex}
+  .ticket-stub{
+    background:var(--paper);color:var(--ink);border:3px solid var(--ink);
+    max-width:520px;width:100%;padding:0;position:relative;
+    box-shadow:14px 14px 0 var(--red), 14px 14px 0 4px var(--ink);
+    animation:stubIn .35s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes stubIn{from{transform:translateY(40px) rotate(-2deg);opacity:0}to{transform:none;opacity:1}}
+  .stub-head{padding:20px 22px;border-bottom:2px dashed var(--ink);background:var(--gold);display:flex;justify-content:space-between;align-items:center}
+  .stub-head .lbl{font-family:'Alfa Slab One';font-size:18px;letter-spacing:.06em;text-transform:uppercase}
+  .stub-head .x{cursor:pointer;font-family:'Special Elite';font-size:14px;letter-spacing:.18em;background:transparent;border:2px solid var(--ink);padding:4px 10px;color:var(--ink)}
+  .stub-body{padding:24px 22px;display:flex;flex-direction:column;gap:14px}
+  .stub-body h3{font-family:'Alfa Slab One';font-size:28px;line-height:.95;text-transform:uppercase}
+  .stub-meta{display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:2px dashed var(--ink);border-bottom:2px dashed var(--ink);padding:14px 0}
+  .stub-meta div .lbl2{font-family:'Special Elite';font-size:10px;letter-spacing:.24em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+  .stub-meta div .val{font-family:'Alfa Slab One';font-size:18px}
+  .stub-foot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+  .stub-code{font-family:'Special Elite';font-size:12px;letter-spacing:.2em;opacity:.7}
+  .stub-code b{font-family:'Alfa Slab One';font-size:18px;letter-spacing:.04em;color:var(--red);font-weight:400}
+
+  /* TWEAKS PANEL chrome lives in tweaks-panel.jsx; we just host it. */
+
+  /* FREE / DONATION event styles */
+  .ev-free .ev-price, .ev-free .card-no .price{color:var(--green);font-size:14px;letter-spacing:.08em;text-transform:uppercase}
+  .ev-buy.free-btn{background:var(--green);color:var(--paper);border-color:var(--ink)}
+  .ev-buy.free-btn:hover{background:var(--gold);color:var(--ink)}
+  .ev-buy.dona-btn{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+  .ev-buy.dona-btn:hover{background:var(--green);color:var(--paper)}
+
+  /* ORGANIZER SECTION */
+  .org-section{
+    position:relative;padding:60px 48px;background:var(--ink);color:var(--paper);
+    border-top:3px solid var(--paper);border-bottom:3px solid var(--paper);
+  }
+  .org-section h2{font-family:'Alfa Slab One';font-size:clamp(40px,6vw,80px);text-transform:uppercase;line-height:.88;margin-bottom:30px}
+  .org-section h2 .gd{color:var(--gold)}
+  .org-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+  .org-copy p{font-family:'Special Elite';font-size:15px;letter-spacing:.08em;line-height:1.7;margin-bottom:20px;opacity:.9}
+  .org-formats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+  .org-pill{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    padding:10px 16px;border:2px solid rgba(241,225,189,.4);
+    display:flex;align-items:center;gap:8px;
+  }
+  .org-pill .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .org-pill.paid .dot{background:var(--gold)}
+  .org-pill.free .dot{background:var(--green)}
+  .org-pill.dona .dot{background:var(--red)}
+  .org-pill.collab .dot{background:var(--paper)}
+  .org-tg-btn{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'Alfa Slab One';font-size:15px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--paper);color:var(--ink);border:3px solid var(--paper);
+    padding:16px 26px;cursor:pointer;text-decoration:none;
+    box-shadow:5px 5px 0 rgba(241,225,189,.3);transition:transform .12s, box-shadow .12s, background .15s;
+  }
+  .org-tg-btn .tg-icon{width:24px;height:24px;flex-shrink:0}
+  .org-tg-btn:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:translate(-2px,-2px);box-shadow:7px 7px 0 rgba(241,225,189,.3)}
+  .org-status{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-family:'Special Elite';font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+  .org-status .blink{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.6s infinite}
+
+  .org-form{display:flex;flex-direction:column;gap:14px}
+  .org-form input, .org-form select, .org-form textarea{
+    font-family:'Special Elite';font-size:13px;letter-spacing:.12em;
+    padding:14px 16px;background:rgba(241,225,189,.08);
+    border:2px solid rgba(241,225,189,.35);color:var(--paper);
+    outline:none;transition:border-color .2s;width:100%;
+  }
+  .org-form input::placeholder, .org-form textarea::placeholder{color:rgba(241,225,189,.35)}
+  .org-form input:focus, .org-form select:focus, .org-form textarea:focus{border-color:var(--gold)}
+  .org-form select option{background:var(--ink);color:var(--paper)}
+  .org-form textarea{resize:vertical;min-height:88px}
+  .org-form .org-submit{
+    font-family:'Alfa Slab One';font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+    border:3px solid var(--paper);background:var(--red);color:var(--paper);
+    padding:16px 22px;cursor:pointer;box-shadow:5px 5px 0 rgba(241,225,189,.25);
+    transition:transform .12s, box-shadow .12s, background .15s;
+  }
+  .org-form .org-submit:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);transform:translate(-2px,-2px);box-shadow:7px 7px 0 rgba(241,225,189,.25)}
+  .org-section .stamp-org{position:absolute;font-family:'Alfa Slab One';font-size:clamp(18px,2.5vw,30px);letter-spacing:.04em;text-transform:uppercase;color:rgba(241,225,189,.08);top:50%;right:48px;transform:translateY(-50%) rotate(-90deg);white-space:nowrap;pointer-events:none;z-index:0}
+
+  /* FLOATING TG BUTTON */
+  .tg-float{
+    position:fixed;right:28px;bottom:80px;z-index:90;
+    display:flex;align-items:center;gap:10px;
+    font-family:'Alfa Slab One';font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--ink);color:var(--paper);border:3px solid var(--paper);
+    padding:12px 18px 12px 14px;
+    box-shadow:4px 4px 0 rgba(0,0,0,.4);transition:transform .15s, box-shadow .15s;
+    text-decoration:none;
+  }
+  .tg-float:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--gold)}
+  .tg-float .tg-ico{width:20px;height:20px;fill:var(--gold);flex-shrink:0}
+  .tg-float .tg-pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;margin-left:4px}
+
+  /* BASS BUTTON */
+  .bass-fab{
+    position:fixed;right:28px;bottom:162px;z-index:90;
+    font-family:'Alfa Slab One';font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--red);color:var(--paper);border:3px solid var(--ink);
+    padding:12px 14px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;
+    line-height:1;
+  }
+  .bass-fab:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .bass-fab:active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink)}
+  .bass-fab.boom{animation:bassShake .25s ease-out}
+  @keyframes bassShake{0%{transform:scale(1)}25%{transform:scale(1.3) rotate(-4deg)}75%{transform:scale(0.9) rotate(2deg)}100%{transform:scale(1)}}
+
+  /* RANDOM EVENT highlight */
+  .ev-row.hl, .ev-card.hl{outline:4px solid var(--gold);outline-offset:2px;animation:hlPulse .6s ease-out}
+  @keyframes hlPulse{0%{box-shadow:0 0 0 0 rgba(232,177,58,.8)}100%{box-shadow:0 0 0 24px rgba(232,177,58,0)}}
+
+  /* ORG section responsive */
+  @media(max-width:820px){.org-inner{grid-template-columns:1fr}.org-section{padding:36px 22px}}
+
+  /* FILTER BAR */
+  .filter-bar{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    margin-bottom:24px;padding:16px 14px;
+    border:2px solid var(--ink);background:rgba(241,225,189,.28);
+  }
+  .filter-lbl{font-family:'Special Elite';font-size:10px;letter-spacing:.28em;text-transform:uppercase;opacity:.55;white-space:nowrap}
+  .filter-chips{display:flex;gap:7px;flex-wrap:wrap;flex:1}
+  .filter-sep{width:1px;background:var(--ink);opacity:.2;align-self:stretch;flex-shrink:0;margin:0 4px}
+  .filter-chip{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    padding:7px 11px;border:2px solid var(--ink);background:var(--paper);
+    cursor:pointer;transition:all .14s;white-space:nowrap;
+  }
+  .filter-chip:hover{background:rgba(232,177,58,.5);transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--ink)}
+  .filter-chip.on{transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--ink)}
+  .filter-chip.on-g{background:var(--green-dark);color:var(--paper);border-color:var(--ink)}
+  .filter-chip.on-r{background:var(--red);color:var(--paper);border-color:var(--ink)}
+  .filter-chip.on-y{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+  .filter-chip.on-def{background:var(--ink);color:var(--paper)}
+  .filter-reset{
+    font-family:'Special Elite';font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    padding:7px 12px;border:2px solid transparent;background:transparent;
+    cursor:pointer;color:var(--red);transition:all .14s;opacity:.45;
+  }
+  .filter-reset.active{opacity:1;border-color:var(--red)}
+  .filter-reset:hover{background:rgba(200,54,42,.1)}
+  .filter-count{
+    font-family:'Alfa Slab One';font-size:17px;white-space:nowrap;
+    transition:color .2s;
+  }
+  .ev-row.fout,.ev-card.fout{display:none}
+  .no-results{
+    font-family:'Yeseva One';font-size:22px;font-style:italic;
+    text-align:center;padding:50px 24px;color:var(--green-dark);opacity:.7;
+    border:2px dashed var(--ink);margin:10px 0;
+  }
+
+  /* responsive */
+  @media (max-width:880px){
+    nav{padding:16px 22px;gap:12px;flex-wrap:wrap}
+    nav ul{gap:10px;font-size:11px}
+    .hero{padding:30px 22px 40px}
+    .schedule-wrap{padding:36px 22px 30px}
+    .ev-row{grid-template-columns:90px 1fr;gap:18px}
+    .ev-row .ev-cta{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center}
+    .ev-date .day{font-size:48px}
+    .ev-info h3{font-size:24px}
+    .cd-grid{grid-template-columns:repeat(4,1fr);gap:8px}
+    .cd-cell{padding:8px 4px}
+    .cd-cell .num{font-size:clamp(28px,8vw,56px)}
+    .info-strip{grid-template-columns:1fr;padding:30px 22px}
+    .ev-row.sold-out::after{right:auto;left:50%;top:auto;bottom:-12px;transform:translateX(-50%) rotate(-4deg)}
+    .schedule.cards{grid-template-columns:1fr}
+    .tg-float{right:14px;bottom:70px;padding:10px 14px;font-size:11px}
+    .bass-fab{right:14px;bottom:148px;padding:10px 12px;font-size:10px}
+    .cd-wrap{box-shadow:6px 6px 0 var(--red),6px 6px 0 4px var(--ink)}
+  }
+  @media(max-width:520px){
+    nav{padding:12px 14px}
+    nav ul{gap:6px;font-size:10px}
+    nav ul a{padding:3px 6px;letter-spacing:.12em}
+    h1.poster-title{font-size:clamp(48px,14vw,100px);text-shadow:3px 3px 0 var(--red),5px 5px 0 var(--ink)}
+    h1.poster-title .ru{padding:0 12px}
+    .stamp{display:none}
+    .cd-top{flex-direction:column;align-items:flex-start;gap:8px}
+    .cd-event{text-align:left;font-size:20px}
+    .cd-cta{flex-direction:column}
+    .cd-cta .btn{width:100%;text-align:center}
+    .ev-row{grid-template-columns:70px 1fr;gap:12px;padding:18px 10px}
+    .ev-date .day{font-size:38px}
+    .ev-date .month{font-size:16px}
+    .ev-info h3{font-size:20px}
+    .ev-info .lineup{font-size:13px}
+    .filter-bar{gap:6px;padding:12px 10px}
+    .filter-chip{font-size:10px;padding:6px 9px}
+    .org-tg-btn{width:100%;justify-content:center}
+    .stub-meta{grid-template-columns:1fr}
+    .tg-float{display:none}
+    .bass-fab{right:14px;bottom:70px}
+  }
+
+  @keyframes spin{from{transform:translateX(-50%) rotate(0)}to{transform:translateX(-50%) rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.15)}66%{transform:translate(-30px,30px) scale(.9)}}
+  @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body class="layout-list">
+
+<nav>
+  <a class="brand" href="../vintage/index.html"><span class="dot"></span>ПОТУЖНОСТЬ&nbsp;РУ <span style="font-family:'Special Elite';font-size:11px;letter-spacing:.2em;margin-left:10px;opacity:.6">EST. MMXXVI</span></a>
+  <ul>
+    <li><a href="../vintage/index.html">Эфир</a></li>
+    <li><a href="../zalipay/index.html">Залипай</a></li>
+    <li><a href="../taro/index.html">Таро</a></li>
+    <li><a href="../chai/index.html">Чай</a></li>
+    <li><a href="../shar/index.html">Шар</a></li>
+    <li><a href="./index.html" class="on">Афиша</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="smoke s1"></div>
+  <div class="smoke s2"></div>
+  <div class="smoke s3"></div>
+
+  <svg class="sun-rays" viewBox="0 0 1100 1100" aria-hidden="true">
+    <defs><polygon id="ray" points="550,0 540,540 560,540" fill="#e8b13a" opacity=".35"/></defs>
+    <g>
+      <use href="#ray"/><use href="#ray" transform="rotate(15 550 550)"/>
+      <use href="#ray" transform="rotate(30 550 550)"/><use href="#ray" transform="rotate(45 550 550)"/>
+      <use href="#ray" transform="rotate(60 550 550)"/><use href="#ray" transform="rotate(75 550 550)"/>
+      <use href="#ray" transform="rotate(90 550 550)"/><use href="#ray" transform="rotate(105 550 550)"/>
+      <use href="#ray" transform="rotate(120 550 550)"/><use href="#ray" transform="rotate(135 550 550)"/>
+      <use href="#ray" transform="rotate(150 550 550)"/><use href="#ray" transform="rotate(165 550 550)"/>
+      <use href="#ray" transform="rotate(180 550 550)"/><use href="#ray" transform="rotate(195 550 550)"/>
+      <use href="#ray" transform="rotate(210 550 550)"/><use href="#ray" transform="rotate(225 550 550)"/>
+      <use href="#ray" transform="rotate(240 550 550)"/><use href="#ray" transform="rotate(255 550 550)"/>
+      <use href="#ray" transform="rotate(270 550 550)"/><use href="#ray" transform="rotate(285 550 550)"/>
+      <use href="#ray" transform="rotate(300 550 550)"/><use href="#ray" transform="rotate(315 550 550)"/>
+      <use href="#ray" transform="rotate(330 550 550)"/><use href="#ray" transform="rotate(345 550 550)"/>
+    </g>
+    <circle cx="550" cy="550" r="180" fill="#e8b13a" opacity=".5"/>
+    <circle cx="550" cy="550" r="120" fill="#c8362a" opacity=".35"/>
+  </svg>
+
+  <div class="stamp s1">★ ПОДВАЛ SOUND ★</div>
+  <div class="stamp s2">№ 014 · СЕЗОН VI</div>
+  <div class="stamp s3">МОСКВА · ВЕЩЕСТВЕННО</div>
+  <div class="stamp s4 flicker">18+ · ВХОД ПО БРАСЛЕТУ</div>
+
+  <p class="eyebrow" id="hero-eyebrow">★ Расписание рейвов ★</p>
+  <h1 class="poster-title">АФИША<br><span class="b">РЕЙВОВ</span><span class="ru">РУ</span></h1>
+  <p class="sub" id="hero-sub">Подвал Sound System · <em>Сезон Весна-Лето 2026</em> · 6 ночей подряд</p>
+
+  <!-- COUNTDOWN -->
+  <div class="cd-wrap">
+    <div class="cd-top">
+      <div>
+        <div class="cd-eyebrow">★ Ближайший рейв через ★</div>
+      </div>
+      <div class="cd-event">
+        <span id="cd-event-name">КОРНЕВОЙ БАС vol.7</span>
+        <small id="cd-event-when">сб · 13 июня · 22:00</small>
+      </div>
+    </div>
+    <div class="cd-grid">
+      <div class="cd-cell"><div class="num" id="cd-d">00</div><div class="lbl">дней</div></div>
+      <div class="cd-cell"><div class="num" id="cd-h">00</div><div class="lbl">часов</div></div>
+      <div class="cd-cell"><div class="num" id="cd-m">00</div><div class="lbl">минут</div></div>
+      <div class="cd-cell"><div class="num" id="cd-s">00</div><div class="lbl">секунд</div></div>
+    </div>
+    <div class="cd-cta">
+      <button class="btn primary" id="cdBuy">★ Билет на ближайший</button>
+      <button class="btn ghost" id="cdShare">Поделиться расписанием</button>
+      <a class="btn ghost" href="./archive.html">📼 Архив прошедших</a>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span>★ ШЕСТЬ НОЧЕЙ <span class="star">✦</span> ОДИН СЕЗОН <span class="star">✦</span> ПОДВАЛ ОТКРЫТ <span class="star">✦</span> JAH BLESS THE NORTH <span class="star">✦</span> БРОНЬ ОНЛАЙН <span class="star">✦</span></span>
+    <span>★ ШЕСТЬ НОЧЕЙ <span class="star">✦</span> ОДИН СЕЗОН <span class="star">✦</span> ПОДВАЛ ОТКРЫТ <span class="star">✦</span> JAH BLESS THE NORTH <span class="star">✦</span> БРОНЬ ОНЛАЙН <span class="star">✦</span></span>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<section class="schedule-wrap">
+  <div class="schedule-head">
+    <h2>Распи<span class="red">сание</span></h2>
+    <div class="legend">
+      <span class="badge g">DUB</span>
+      <span class="badge r">STEPPERS</span>
+      <span class="badge y">ROOTS</span>
+      <span class="badge">SKA</span>
+      <span class="badge g">JUNGLE</span>
+      <span class="badge r">OPEN AIR</span>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filter-bar">
+    <span class="filter-lbl">ФИЛЬТР :</span>
+    <div class="filter-chips" id="filter-chips"></div>
+    <button class="filter-reset" id="filter-reset">× Сбросить</button>
+    <div class="filter-count" id="filter-count">6 событий</div>
+  </div>
+
+  <div class="schedule list" id="schedule-list"><!-- filled by JS --></div>
+  <div class="schedule cards" id="schedule-cards"><!-- filled by JS --></div>
+</section>
+
+<!-- ORGANIZER SECTION -->
+<section class="org-section" id="org-section">
+  <div class="stamp-org">ОРГАНИЗАТОРАМ · ОРГАНИЗАТОРАМ · ОРГАНИЗАТОРАМ</div>
+  <div class="org-inner">
+    <div class="org-copy">
+      <h2>ХОЧЕШЬ<br>ПОСТАВИТЬ<br><span class="gd">РЕЙВ?</span></h2>
+      <p>Принимаем заявки от диджеев, коллективов, лейблов и просто корней.<br>Работаем в любых форматах — главное, чтобы бас был правильный.</p>
+      <div class="org-formats">
+        <div class="org-pill paid"><span class="dot"></span>Платный</div>
+        <div class="org-pill free"><span class="dot"></span>Бесплатный</div>
+        <div class="org-pill dona"><span class="dot"></span>Донейшн</div>
+        <div class="org-pill collab"><span class="dot"></span>Коллаборация</div>
+      </div>
+      <a class="org-tg-btn" id="org-tg-link" href="https://t.me/potuzhnost_ru" target="_blank" rel="noopener">
+        <svg class="tg-icon" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
+        <span id="tg-btn-label">Написать в Телеграм</span>
+      </a>
+      <div class="org-status">
+        <span class="blink"></span>
+        <span id="org-status-lbl">Организатор в сети</span>
+      </div>
+    </div>
+    <form class="org-form" id="org-form">
+      <input type="text" name="name" placeholder="Имя / Коллектив / Псевдоним" required/>
+      <select name="type">
+        <option value="paid">★ Платный ивент</option>
+        <option value="free">★ Бесплатный ивент</option>
+        <option value="donation">★ Донейшн-формат</option>
+        <option value="collab">★ Коллаборация с лейблом</option>
+        <option value="oneoff">★ Разовое мероприятие</option>
+      </select>
+      <input type="text" name="date" placeholder="Желаемая дата (например, август 2026)"/>
+      <textarea name="idea" placeholder="Идея рейва — жанр, настрой, что планируешь"></textarea>
+      <input type="text" name="contact" placeholder="Твой Telegram @handle или email" required/>
+      <button type="submit" class="org-submit">★ Отправить заявку ★</button>
+    </form>
+  </div>
+</section>
+
+<!-- FLAG STRIP -->
+<div class="flag-strip">
+  <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+    <defs>
+      <pattern id="flagWave" x="0" y="0" width="1200" height="60" patternUnits="userSpaceOnUse">
+        <rect width="1200" height="20" fill="#1d6a3b"/>
+        <rect y="20" width="1200" height="20" fill="#e8b13a"/>
+        <rect y="40" width="1200" height="20" fill="#c8362a"/>
+      </pattern>
+    </defs>
+    <path fill="url(#flagWave)">
+      <animate attributeName="d" dur="6s" repeatCount="indefinite"
+        values="M 0,8 Q 300,28 600,8 T 1200,8 L 1200,60 L 0,60 Z;
+                M 0,20 Q 300,0 600,20 T 1200,20 L 1200,60 L 0,60 Z;
+                M 0,8 Q 300,28 600,8 T 1200,8 L 1200,60 L 0,60 Z"/>
+    </path>
+  </svg>
+</div>
+
+<!-- INFO STRIP -->
+<section class="info-strip">
+  <div class="info-col">
+    <h4>★ <span class="red">Как</span> попасть</h4>
+    <p>Нажми "Билет" — придёт QR в почту. На входе сканируем, выдаём бумажный браслет. Без QR — не пускаем. Возврат за 72 часа.</p>
+  </div>
+  <div class="info-col">
+    <h4>★ <span class="red">Где</span> подвал</h4>
+    <p>Точный адрес — после оплаты. Закрытые площадки: бывшая котельная, склад на Артемьева, открытый берег. Метро 5-10 мин.</p>
+  </div>
+  <div class="info-col">
+    <h4>★ <span class="red">Что</span> взять</h4>
+    <p>Тёплое сверху, удобную обувь, наличку на бар, паспорт 18+. Без фото со вспышкой и без агрессии. One Love policy на двери.</p>
+  </div>
+</section>
+
+<!-- TICKET MODAL -->
+<div class="modal-backdrop" id="modal">
+  <div class="ticket-stub" role="dialog">
+    <div class="stub-head">
+      <div class="lbl">★ Бронь ★</div>
+      <button class="x" id="modalClose">ЗАКРЫТЬ</button>
+    </div>
+    <div class="stub-body">
+      <h3 id="stub-title">КОРНЕВОЙ БАС vol.7</h3>
+      <div class="stub-meta">
+        <div><div class="lbl2">Когда</div><div class="val" id="stub-when">сб · 13 июня · 22:00</div></div>
+        <div><div class="lbl2">Где</div><div class="val" id="stub-where">Подвал на Курской</div></div>
+        <div><div class="lbl2">Лайнап</div><div class="val" id="stub-lineup" style="font-size:14px;font-family:'Yeseva One';font-style:italic;color:var(--green-dark)">—</div></div>
+        <div><div class="lbl2">Цена</div><div class="val" id="stub-price">1500 ₽</div></div>
+      </div>
+      <div class="stub-foot">
+        <div class="stub-code">КОД БРОНИ · <b id="stub-code">PZ-0000</b></div>
+        <button class="btn primary" id="stub-confirm">★ Подтвердить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="big">ПОДВАЛ ОТКРЫТ.<br>БАСЫ ВНУТРИ.</div>
+  <div class="small">ПОТУЖНОСТЬ РУ · АФИША · MMXXVI · ALL RIDDIMS RESERVED</div>
+</footer>
+
+<!-- FLOATING TG -->
+<a class="tg-float" id="tg-float" href="https://t.me/potuzhnost_ru" target="_blank" rel="noopener">
+  <svg class="tg-ico" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.932z"/></svg>
+  АНОНСЫ
+  <span class="tg-pulse"></span>
+</a>
+
+<!-- BASS FAB -->
+<button class="bass-fab" id="bassFab" title="Дать баса">🔊<br>БАС</button>
+
+<!-- Tweaks mount -->
+<div id="tweaks-root"></div>
+
+<script>
+// ── EVENTS DATA ──────────────────────────────────────────
+const MONTHS = ['ЯНВ','ФЕВ','МАР','АПР','МАЙ','ИЮН','ИЮЛ','АВГ','СЕН','ОКТ','НОЯ','ДЕК'];
+const MONTHS_FULL = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const DOW = ['ВС','ПН','ВТ','СР','ЧТ','ПТ','СБ'];
+
+// ticketType: 'paid' | 'free' | 'donation'
+const EVENTS = [
+  { id:'kornevoi-7', date:new Date(2026,5,13,22,0), title:'КОРНЕВОЙ БАС', sub:'vol.7',
+    venue:'Подвал на Курской', price:1500, seatsLeft:34, ticketType:'paid',
+    lineup:['Иван-Заскок','Lion of Toronto','Northern Riddim','Подвал Sound System'],
+    tags:[{t:'DUB',c:'g'},{t:'STEPPERS',c:'r'}], soldOut:false },
+  { id:'ognevaya', date:new Date(2026,5,20,23,0), title:'ОГНЕВАЯ ЦЕРЕМОНИЯ', sub:null,
+    venue:'Артемьева, 13', price:2000, seatsLeft:8, ticketType:'paid',
+    lineup:['Подвал Selecta','JahMobile','Sister Bass','Огневой Дед'],
+    tags:[{t:'ROOTS',c:'y'},{t:'SKA',c:''}], soldOut:false },
+  { id:'dym', date:new Date(2026,5,27,18,0), title:'ДЫМ НАД РЕКОЙ', sub:'Open Air',
+    venue:'Берег Строгино', price:0, seatsLeft:0, ticketType:'free',
+    lineup:['Дед-Хаусман','Onezvuk','Гнусь Dub Family','Хор Подмосковный'],
+    tags:[{t:'LOVERS',c:'y'},{t:'OPEN AIR',c:'r'},{t:'FREE',c:'g'}], soldOut:true },
+  { id:'tysiacha', date:new Date(2026,6,4,22,0), title:'ТЫСЯЧА ВАТТ', sub:null,
+    venue:'Завод «Ритм»', price:2500, seatsLeft:120, ticketType:'paid',
+    lineup:['Tundra Jungle','BassMonk','ICEcave','DJ Карелия'],
+    tags:[{t:'JUNGLE',c:'g'},{t:'DnB',c:'r'}], soldOut:false },
+  { id:'solnechnyi', date:new Date(2026,6,11,16,0), title:'СОЛНЕЧНЫЙ ДЖА', sub:'All Day Open Air',
+    venue:'Серебряный Бор', price:500, seatsLeft:240, ticketType:'donation',
+    lineup:['Подвал All Stars','Иван-Заскок','Lion of Toronto','Tundra Jungle','Sister Bass','Onezvuk','BassMonk','JahMobile'],
+    tags:[{t:'ALL DAY',c:'y'},{t:'OPEN AIR',c:'r'},{t:'ДОНЕЙШН',c:'g'}], soldOut:false },
+  { id:'noch-kornya', date:new Date(2026,6,18,23,30), title:'НОЧЬ КОРНЯ', sub:null,
+    venue:'Подвал-2, Электрозаводская', price:1500, seatsLeft:52, ticketType:'paid',
+    lineup:['Иван-Заскок','Подвал Sound System','Гнусь Dub Family'],
+    tags:[{t:'DUB',c:'g'}], soldOut:false },
+];
+
+// ── RENDER SCHEDULE ──────────────────────────────────────
+function tagsHtml(tags){
+  return tags.map(t=>`<span class="badge ${t.c}">${t.t}</span>`).join('');
+}
+function priceDisplay(e){
+  if(e.ticketType==='free') return {label:'СВОБОДНЫЙ ВХОД', sub:'', btnClass:'free-btn', btnText:'★ Войти'};
+  if(e.ticketType==='donation') return {label:`ОТ ${e.price}₽`, sub:'донейшн', btnClass:'dona-btn', btnText:'★ Поддержать'};
+  return {label:`${e.price}₽`, sub:e.soldOut?'продано':`осталось ${e.seatsLeft}`, btnClass:'', btnText:e.soldOut?'нет билетов':'★ Билет'};
+}
+function makeCode(seed){
+  const s = (seed||'PZ').toUpperCase().slice(0,2);
+  const n = (Math.floor(Math.random()*9000)+1000);
+  return `${s}-${n}`;
+}
+function renderList(){
+  const root = document.getElementById('schedule-list');
+  root.innerHTML = '';
+  EVENTS.forEach((e,i)=>{
+    const row = document.createElement('article');
+    const pd = priceDisplay(e);
+    row.className = 'ev-row' + (e.soldOut?' sold-out':'') + (e.ticketType!=='paid'?' ev-free':'');
+    row.dataset.id = e.id;
+    const d = e.date;
+    row.innerHTML = `
+      <div class="ev-date">
+        <div class="day">${String(d.getDate()).padStart(2,'0')}</div>
+        <div class="month">${MONTHS[d.getMonth()]}</div>
+        <div class="dow">${DOW[d.getDay()]} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div>
+      </div>
+      <div class="ev-info">
+        <div class="meta">№${String(i+1).padStart(2,'0')} · ${e.venue}</div>
+        <h3>${e.title}${e.sub?` <span class="red">${e.sub}</span>`:''}</h3>
+        <div class="lineup">${e.lineup.join(' · ')}</div>
+        <div class="tags">${tagsHtml(e.tags)}</div>
+      </div>
+      <div class="ev-cta">
+        <div class="ev-price ${pd.btnClass}">${pd.label}<small>${pd.sub}</small></div>
+        <button class="ev-buy ${pd.btnClass}">${e.soldOut && e.ticketType!=='free'?'нет билетов':pd.btnText}</button>
+      </div>
+    `;
+    row.querySelector('.ev-buy').addEventListener('click',(ev)=>{
+      ev.stopPropagation();
+      if(e.soldOut)return;
+      sparksAt(ev.clientX, ev.clientY, 18);
+      flyTicket(ev.clientX, ev.clientY, e);
+      setTimeout(()=>openModal(e), 600);
+    });
+    row.addEventListener('click',()=>openModal(e));
+    root.appendChild(row);
+  });
+}
+function renderCards(){
+  const root = document.getElementById('schedule-cards');
+  root.innerHTML = '';
+  EVENTS.forEach((e,i)=>{
+    const card = document.createElement('article');
+    const cpd = priceDisplay(e);
+    card.className = 'ev-card' + (e.soldOut?' sold':'') + (e.ticketType!=='paid'?' ev-free':'');
+    card.dataset.id = e.id;
+    const d = e.date;
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="card-date">${String(d.getDate()).padStart(2,'0')}<span class="m">${MONTHS[d.getMonth()]} · ${DOW[d.getDay()]}</span></div>
+        <div class="card-no">№${String(i+1).padStart(2,'0')}<span class="price">${cpd.label}</span></div>
+      </div>
+      <h3>${e.title}${e.sub?` <span class="red">${e.sub}</span>`:''}</h3>
+      <div class="where">${e.venue} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div>
+      <div class="lineup">${e.lineup.join(' · ')}</div>
+      <div class="card-tags">${tagsHtml(e.tags)}</div>
+      <div class="card-cta">
+        <div class="seats">${e.soldOut && e.ticketType!=='free'?'<b>0</b> мест':`<b>${e.seatsLeft||'∞'}</b> мест`}</div>
+        <button class="ev-buy ${cpd.btnClass}">${e.soldOut && e.ticketType!=='free'?'нет билетов':cpd.btnText+' →'}</button>
+      </div>
+    `;
+    card.querySelector('.ev-buy').addEventListener('click',(ev)=>{
+      ev.stopPropagation();
+      if(e.soldOut)return;
+      sparksAt(ev.clientX, ev.clientY, 18);
+      flyTicket(ev.clientX, ev.clientY, e);
+      setTimeout(()=>openModal(e), 600);
+    });
+    card.addEventListener('click',()=>openModal(e));
+    root.appendChild(card);
+  });
+}
+renderList(); renderCards();
+
+// ── COUNTDOWN ────────────────────────────────────────────
+function nextEvent(){
+  const now = new Date();
+  return EVENTS.find(e => !e.soldOut && e.date > now) || EVENTS[0];
+}
+function fmtCdEvent(e){
+  const d = e.date;
+  return {
+    name: e.title + (e.sub?` ${e.sub}`:''),
+    when: `${DOW[d.getDay()].toLowerCase()} · ${d.getDate()} ${MONTHS_FULL[d.getMonth()]} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+  };
+}
+let nextEv = nextEvent();
+function refreshCdLabels(){
+  const f = fmtCdEvent(nextEv);
+  document.getElementById('cd-event-name').textContent = f.name;
+  document.getElementById('cd-event-when').textContent = f.when;
+}
+refreshCdLabels();
+
+function tickCountdown(){
+  const now = new Date();
+  let diff = nextEv.date - now;
+  if(diff < 0){
+    nextEv = nextEvent();
+    refreshCdLabels();
+    diff = Math.max(0, nextEv.date - now);
+  }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff/3600000) % 24;
+  const m = Math.floor(diff/60000) % 60;
+  const s = Math.floor(diff/1000) % 60;
+  document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+}
+tickCountdown(); setInterval(tickCountdown, 1000);
+
+document.getElementById('cdBuy').addEventListener('click', ev=>{
+  sparksAt(ev.clientX, ev.clientY, 24);
+  openModal(nextEv);
+});
+document.getElementById('cdShare').addEventListener('click', ev=>{
+  sparksAt(ev.clientX, ev.clientY, 14);
+  toast('★ Ссылка скопирована — отправь корням');
+});
+
+// ── MODAL ────────────────────────────────────────────────
+const modal = document.getElementById('modal');
+function openModal(e){
+  document.getElementById('stub-title').innerHTML = e.title + (e.sub?` <span style="color:var(--red);font-style:italic">${e.sub}</span>`:'');
+  document.getElementById('stub-when').textContent = fmtCdEvent(e).when;
+  document.getElementById('stub-where').textContent = e.venue;
+  document.getElementById('stub-lineup').textContent = e.lineup.join(' · ');
+  document.getElementById('stub-price').textContent = e.price + ' ₽';
+  document.getElementById('stub-code').textContent = makeCode(e.id);
+  modal.classList.add('open');
+}
+function closeModal(){ modal.classList.remove('open'); }
+document.getElementById('modalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+document.getElementById('stub-confirm').addEventListener('click', ev=>{
+  sparksAt(ev.clientX, ev.clientY, 30);
+  toast('★ Бронь подтверждена. QR в почте.');
+  closeModal();
+});
+
+// ── FX ───────────────────────────────────────────────────
+function sparksAt(cx,cy,n){
+  if(document.body.classList.contains('no-anim')) return;
+  const cs=['#e8b13a','#c8362a','#1d6a3b','#f1e1bd'];
+  for(let i=0;i<n;i++){
+    const sp=document.createElement('div');sp.className='sp';
+    const a=(i/n)*Math.PI*2+Math.random()*.4,d=40+Math.random()*120;
+    sp.style.background=cs[i%4];sp.style.color=cs[i%4];
+    sp.style.setProperty('--dx',(Math.cos(a)*d)+'px');
+    sp.style.setProperty('--dy',(Math.sin(a)*d)+'px');
+    sp.style.left=cx+'px';sp.style.top=cy+'px';
+    sp.style.animationDelay=(Math.random()*.15)+'s';
+    document.body.appendChild(sp);setTimeout(()=>sp.remove(),950);
+  }
+}
+function flyTicket(cx,cy,e){
+  if(document.body.classList.contains('no-anim')) return;
+  const t=document.createElement('div');
+  t.className='ticket-fly';
+  t.textContent='★ '+e.title+' ★';
+  t.style.left=cx+'px';t.style.top=cy+'px';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),1000);
+}
+let toastEl=null;
+function toast(msg){
+  if(toastEl)toastEl.remove();
+  toastEl=document.createElement('div');
+  Object.assign(toastEl.style,{
+    position:'fixed',left:'50%',bottom:'90px',transform:'translateX(-50%)',
+    background:'var(--ink)',color:'var(--paper)',
+    padding:'14px 22px',border:'3px solid var(--ink)',
+    boxShadow:'5px 5px 0 var(--gold), 5px 5px 0 4px var(--ink)',
+    fontFamily:"'Alfa Slab One'",fontSize:'14px',letterSpacing:'.06em',
+    textTransform:'uppercase',zIndex:400,opacity:0,transition:'opacity .25s, transform .25s',
+  });
+  toastEl.textContent=msg;document.body.appendChild(toastEl);
+  requestAnimationFrame(()=>{toastEl.style.opacity=1;toastEl.style.transform='translateX(-50%) translateY(-4px)';});
+  setTimeout(()=>{toastEl.style.opacity=0;setTimeout(()=>toastEl&&toastEl.remove(),300);},2200);
+}
+
+// ── ESC closes modal ─────────────────────────────────────
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── ORG FORM ─────────────────────────────────────────────
+document.getElementById('org-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const name = fd.get('name'), contact = fd.get('contact'), type = fd.get('type');
+  sparksAt(e.submitter.getBoundingClientRect().x + 60, e.submitter.getBoundingClientRect().y, 28);
+  toast(`★ Заявка от «${name}» получена — ответим в ${contact.includes('@') && !contact.startsWith('@') ? 'почту' : 'Телеграм'}`);
+  e.target.reset();
+});
+
+// ── ORGANIZER STATUS CYCLE ────────────────────────────────
+const ORG_STATUSES = [
+  {txt:'Организатор в сети', on:true},
+  {txt:'Отвечает в течение часа', on:true},
+  {txt:'Слушает новый трек', on:true},
+  {txt:'Сейчас в подвале', on:true},
+  {txt:'Вернётся вечером', on:false},
+];
+let orgSI = 0;
+function cycleOrgStatus(){
+  const s = ORG_STATUSES[orgSI % ORG_STATUSES.length]; orgSI++;
+  const lbl = document.getElementById('org-status-lbl');
+  const dot = document.querySelector('.org-status .blink');
+  if(lbl){ lbl.textContent = s.txt; }
+  if(dot){ dot.style.background = s.on ? 'var(--green)' : 'var(--red)'; }
+}
+setInterval(cycleOrgStatus, 6000);
+
+// ── BASS WEB AUDIO ────────────────────────────────────────
+let bassCtx = null;
+function dropBass(cx, cy){
+  if(!bassCtx) bassCtx = new AudioContext();
+  const t = bassCtx.currentTime;
+  // Low sub thump
+  const osc = bassCtx.createOscillator();
+  const gain = bassCtx.createGain();
+  const dist = bassCtx.createWaveShaper();
+  const curve = new Float32Array(256);
+  for(let i=0;i<256;i++) curve[i] = (i/128-1) > 0 ? 1 : (i/128-1)*2;
+  dist.curve = curve;
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(60, t);
+  osc.frequency.exponentialRampToValueAtTime(30, t + 0.4);
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.7, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+  osc.connect(dist); dist.connect(gain); gain.connect(bassCtx.destination);
+  osc.start(t); osc.stop(t + 1.3);
+  // Hi click
+  const osc2 = bassCtx.createOscillator();
+  const g2 = bassCtx.createGain();
+  osc2.type = 'square'; osc2.frequency.value = 200;
+  g2.gain.setValueAtTime(0.3, t); g2.gain.exponentialRampToValueAtTime(0.001, t+0.08);
+  osc2.connect(g2); g2.connect(bassCtx.destination);
+  osc2.start(t); osc2.stop(t+0.1);
+  // Visual shake
+  document.body.style.transition = 'transform 0.05s';
+  document.body.style.transform = 'translateY(-4px)';
+  setTimeout(()=>{ document.body.style.transform = 'translateY(3px)'; }, 50);
+  setTimeout(()=>{ document.body.style.transform = ''; }, 100);
+  sparksAt(cx, cy, 30);
+  toast('🔊 БАС ОПУЩЕН');
+}
+const bassFab = document.getElementById('bassFab');
+bassFab.addEventListener('click', e=>{
+  bassFab.classList.remove('boom');
+  void bassFab.offsetWidth;
+  bassFab.classList.add('boom');
+  setTimeout(()=>bassFab.classList.remove('boom'), 300);
+  dropBass(e.clientX, e.clientY);
+});
+
+// ── RANDOM EVENT HIGHLIGHT ────────────────────────────────
+function highlightRandom(){
+  const all = [...document.querySelectorAll('.ev-row:not(.sold-out),.ev-card:not(.sold)')];
+  if(!all.length) return;
+  all.forEach(el=>el.classList.remove('hl'));
+  const pick = all[Math.floor(Math.random()*all.length)];
+  pick.classList.add('hl');
+  pick.scrollIntoView({behavior:'smooth',block:'center'});
+  const title = pick.querySelector('h3');
+  if(title) toast('✦ СЛУЧАЙНЫЙ РЕЙВ: '+title.textContent.trim());
+  setTimeout(()=>pick.classList.remove('hl'), 2000);
+}
+
+// ── RASTA WISDOM EASTER EGG (scroll) ─────────────────────
+const WISDOMS = [
+  '✦ Бас не обманет. Верь корням.',
+  '★ Рейв — это не вечеринка. Это практика.',
+  '✦ Джа видит очередь у кассы.',
+  '★ Один Лав. Одна очередь в гардероб.',
+  '✦ Ритм — язык, который не надо учить.',
+  '★ Подвал закрывается. Сердце — нет.',
+  '✦ Три часа ночи — это утро для тех, кто понял.',
+];
+let wisdomShown = false;
+window.addEventListener('scroll', ()=>{
+  if(wisdomShown) return;
+  const scrollBottom = window.scrollY + window.innerHeight;
+  const docH = document.body.scrollHeight;
+  if(scrollBottom > docH - 200){
+    wisdomShown = true;
+    setTimeout(()=>toast(WISDOMS[Math.floor(Math.random()*WISDOMS.length)]), 400);
+  }
+});
+
+// ── FILTERS ──────────────────────────────────────────────
+let activeFilters = new Set();
+let activeTypeFilter = null;
+
+// Color mapping for tag badges
+const TAG_COLOR_MAP = {};
+EVENTS.forEach(e => e.tags.forEach(t => { if(!TAG_COLOR_MAP[t.t]) TAG_COLOR_MAP[t.t] = t.c; }));
+
+function chipOnClass(c){
+  if(c==='g') return 'on on-g';
+  if(c==='r') return 'on on-r';
+  if(c==='y') return 'on on-y';
+  return 'on on-def';
+}
+
+function buildFilterBar(){
+  const chips = document.getElementById('filter-chips');
+  chips.innerHTML = '';
+
+  // Collect unique genre tags (preserve order of first occurrence)
+  const seenTags = new Set(), genreTags = [];
+  EVENTS.forEach(e => e.tags.forEach(t => {
+    if(!seenTags.has(t.t) && t.t !== 'FREE' && t.t !== 'ДОНЕЙШН'){
+      seenTags.add(t.t); genreTags.push(t);
+    }
+  }));
+
+  const makeChip = (label, colorClass, onClick) => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-chip';
+    btn.textContent = label;
+    btn.addEventListener('click', () => onClick(btn, colorClass));
+    return btn;
+  };
+
+  // Genre chips
+  genreTags.forEach(tag => {
+    chips.appendChild(makeChip(tag.t, tag.c, (btn, c) => {
+      if(activeFilters.has(tag.t)){
+        activeFilters.delete(tag.t);
+        btn.className = 'filter-chip';
+      } else {
+        activeFilters.add(tag.t);
+        btn.className = 'filter-chip ' + chipOnClass(c);
+      }
+      applyFilters();
+    }));
+  });
+
+  // Separator
+  const sep = document.createElement('span');
+  sep.className = 'filter-sep'; chips.appendChild(sep);
+
+  // Ticket type chips
+  [
+    {label:'ПЛАТНЫЕ', key:'paid', c:'y'},
+    {label:'БЕСПЛАТНЫЕ', key:'free', c:'g'},
+    {label:'ДОНЕЙШН', key:'donation', c:''},
+  ].forEach(type => {
+    const btn = makeChip(type.label, type.c, (b, c) => {
+      if(activeTypeFilter === type.key){
+        activeTypeFilter = null;
+        b.className = 'filter-chip';
+      } else {
+        activeTypeFilter = type.key;
+        chips.querySelectorAll('[data-ttype]').forEach(x => x.className = 'filter-chip');
+        b.className = 'filter-chip ' + chipOnClass(c);
+      }
+      applyFilters();
+    });
+    btn.dataset.ttype = type.key;
+    chips.appendChild(btn);
+  });
+}
+
+function applyFilters(){
+  const noFilter = activeFilters.size === 0 && !activeTypeFilter;
+  let vis = 0, total = EVENTS.length;
+
+  ['schedule-list','schedule-cards'].forEach(sid => {
+    const wrap = document.getElementById(sid);
+    if(!wrap) return;
+    wrap.querySelectorAll('.ev-row,.ev-card').forEach(el => {
+      const ev = EVENTS.find(e => e.id === el.dataset.id);
+      if(!ev){ el.classList.remove('fout'); return; }
+      let show = true;
+      if(activeFilters.size > 0){
+        const evTagSet = new Set(ev.tags.map(t => t.t));
+        show = [...activeFilters].some(f => evTagSet.has(f));
+      }
+      if(activeTypeFilter && show) show = ev.ticketType === activeTypeFilter;
+      el.classList.toggle('fout', !show);
+      if(show && sid === 'schedule-list') vis++;
+    });
+
+    // No-results msg
+    let noRes = wrap.querySelector('.no-results');
+    const allHidden = wrap.querySelectorAll('.ev-row:not(.fout),.ev-card:not(.fout)').length === 0;
+    if(!noFilter && allHidden){
+      if(!noRes){
+        noRes = document.createElement('div');
+        noRes.className = 'no-results';
+        noRes.textContent = '\u2726 \u0414\u0436\u0430 \u0433\u043e\u0432\u043e\u0440\u0438\u0442: \u0442\u0430\u043a\u0438\u0445 \u0440\u0435\u0439\u0432\u043e\u0432 \u043f\u043e\u043a\u0430 \u043d\u0435\u0442 \u2014 \u0441\u043d\u0438\u043c\u0438 \u0444\u0438\u043b\u044c\u0442\u0440 \u2014 \u0431\u0430\u0441 \u0437\u043d\u0430\u0435\u0442';
+        wrap.appendChild(noRes);
+      }
+    } else { if(noRes) noRes.remove(); }
+  });
+
+  // visible count for list layout
+  const listVis = document.querySelectorAll('.schedule.list .ev-row:not(.fout)').length;
+  const countEl = document.getElementById('filter-count');
+  if(countEl){
+    if(noFilter){
+      countEl.textContent = `${total} \u0441\u043e\u0431\u044b\u0442\u0438\u0439`;
+      countEl.style.color = 'var(--ink)';
+    } else {
+      const n = listVis || document.querySelectorAll('.schedule.cards .ev-card:not(.fout)').length;
+      countEl.textContent = `${n} \u0438\u0437 ${total}`;
+      countEl.style.color = n === 0 ? 'var(--red)' : 'var(--green-dark)';
+    }
+  }
+
+  const resetBtn = document.getElementById('filter-reset');
+  if(resetBtn) resetBtn.classList.toggle('active', !noFilter);
+}
+
+document.getElementById('filter-reset').addEventListener('click', () => {
+  activeFilters.clear();
+  activeTypeFilter = null;
+  document.querySelectorAll('.filter-chip').forEach(c => c.className = 'filter-chip');
+  applyFilters();
+});
+
+buildFilterBar();
+
+// ── KONAMI CODE Easter Egg ────────────────────────────────
+const KONAMI = [38,38,40,40,37,39,37,39,66,65];
+let konamiIdx = 0;
+document.addEventListener('keydown', ev=>{
+  if(ev.keyCode===KONAMI[konamiIdx]) konamiIdx++; else konamiIdx=0;
+  if(konamiIdx===KONAMI.length){
+    konamiIdx=0;
+    // drop 60 sparks from random positions
+    for(let i=0;i<60;i++) setTimeout(()=>{
+      sparksAt(Math.random()*window.innerWidth, Math.random()*window.innerHeight, 6);
+    }, i*40);
+    toast('★★★ JAH BLESS THE NORTH ★★★');
+    dropBass(window.innerWidth/2, window.innerHeight/2);
+  }
+});
+</script>
+
+<!-- React + Babel for Tweaks panel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="./tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "layout": "list",
+  "palette": "bloodgold",
+  "headFont": "alfa",
+  "bgAnim": true,
+  "title1": "АФИША",
+  "title2": "РЕЙВОВ",
+  "subtitle": "Подвал Sound System · Сезон Весна-Лето 2026 · 6 ночей подряд",
+  "tgHandle": "potuzhnost_ru",
+  "contactEmail": "",
+  "orgVisible": true
+}/*EDITMODE-END*/;
+
+function applyAll(t){
+  // layout
+  document.body.classList.remove('layout-list','layout-cards');
+  document.body.classList.add('layout-'+t.layout);
+  // palette
+  document.documentElement.classList.remove('palette-solar','palette-night','palette-bloodgold');
+  document.documentElement.classList.add('palette-'+t.palette);
+  // bg anim
+  document.body.classList.toggle('no-anim', !t.bgAnim);
+  // header font
+  const fontMap = { alfa:"'Alfa Slab One', serif", bowlby:"'Bowlby One SC', sans-serif", rubik:"'Rubik Mono One', sans-serif", yeseva:"'Yeseva One', serif" };
+  document.documentElement.style.setProperty('--hd-font', fontMap[t.headFont] || fontMap.alfa);
+  // hero copy
+  const title = document.querySelector('h1.poster-title');
+  if(title){
+    title.innerHTML = `${t.title1}<br><span class="b">${t.title2}</span><span class="ru">РУ</span>`;
+  }
+  const sub = document.getElementById('hero-sub');
+  if(sub){
+    sub.innerHTML = t.subtitle.replace(/(Сезон[^·]+)/, '<em>$1</em>');
+  }
+  // TG links
+  const handle = (t.tgHandle||'potuzhnost_ru').replace(/^@/,'');
+  const tgUrl = `https://t.me/${handle}`;
+  const floatBtn = document.getElementById('tg-float');
+  const orgTgLink = document.getElementById('org-tg-link');
+  const tgBtnLabel = document.getElementById('tg-btn-label');
+  if(floatBtn) floatBtn.href = tgUrl;
+  if(orgTgLink) orgTgLink.href = tgUrl;
+  if(tgBtnLabel) tgBtnLabel.textContent = `Написать @${handle}`;
+  // organizer section visibility
+  const orgSec = document.getElementById('org-section');
+  if(orgSec) orgSec.style.display = t.orgVisible ? '' : 'none';
+}
+
+function TweaksApp(){
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  React.useEffect(()=>{ applyAll(t); }, [t]);
+  return (
+    <TweaksPanel title="Tweaks · Афиша">
+      <TweakSection label="Макет" />
+      <TweakRadio label="Раскладка" value={t.layout}
+        options={[{value:'list',label:'Расписание'},{value:'cards',label:'Карточки-плакаты'}]}
+        onChange={v=>setTweak('layout', v)} />
+
+      <TweakSection label="Палитра" />
+      <TweakRadio label="Цвета" value={t.palette}
+        options={[{value:'solar',label:'Солнце'},{value:'night',label:'Ночь'},{value:'bloodgold',label:'Кровь+золото'}]}
+        onChange={v=>setTweak('palette', v)} />
+
+      <TweakSection label="Типографика" />
+      <TweakRadio label="Шрифт заголовка" value={t.headFont}
+        options={[{value:'alfa',label:'Alfa Slab'},{value:'bowlby',label:'Bowlby'},{value:'rubik',label:'Rubik Mono'},{value:'yeseva',label:'Yeseva'}]}
+        onChange={v=>setTweak('headFont', v)} />
+
+      <TweakSection label="Фон" />
+      <TweakToggle label="Анимация фона" value={t.bgAnim} onChange={v=>setTweak('bgAnim', v)} />
+
+      <TweakSection label="Шапка" />
+      <TweakText label="Заголовок 1" value={t.title1} onChange={v=>setTweak('title1', v)} />
+      <TweakText label="Заголовок 2" value={t.title2} onChange={v=>setTweak('title2', v)} />
+      <TweakText label="Подзаголовок" value={t.subtitle} onChange={v=>setTweak('subtitle', v)} />
+
+      <TweakSection label="Контакты" />
+      <TweakText label="Telegram @handle" value={t.tgHandle} placeholder="potuzhnost_ru" onChange={v=>setTweak('tgHandle', v)} />
+      <TweakText label="Email организатора" value={t.contactEmail} placeholder="info@..." onChange={v=>setTweak('contactEmail', v)} />
+      <TweakToggle label="Секция для организаторов" value={t.orgVisible} onChange={v=>setTweak('orgVisible', v)} />
+
+      <TweakSection label="Инструменты" />
+      <TweakButton label="✨ Случайный рейв" onClick={()=>highlightRandom()} />
+    </TweaksPanel>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<TweaksApp />);
+</script>
+
+</body>
+</html>
